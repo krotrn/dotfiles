@@ -13,7 +13,7 @@ local moveactivewindow = 'grep -q "true" <<< $(hyprctl activewindow -j | jq -r .
 -- 1. APPLICATIONS
 -- ═══════════════════════════════════════════════════════════════════
 
-hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("kitty"))                                                     -- Terminal
+hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("wezterm"))                                                     -- Terminal
 hl.bind("SUPER + E", hl.dsp.exec_cmd("thunar"))                                                         -- File Manager
 hl.bind("SUPER + C", hl.dsp.exec_cmd("code"))                                                           -- VS Code
 hl.bind("SUPER + B", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/Scripts/browser-launcher.sh")) -- Browser
