@@ -1,0 +1,50 @@
+# Editor
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code — only track User/settings.json
+.config/Code/Cache/
+.config/Code/CachedConfigurations/
+.config/Code/CachedData/
+.config/Code/CachedProfilesData/
+.config/Code/Code Cache/
+.config/Code/Crashpad/
+.config/Code/DawnGraphiteCache/
+.config/Code/DawnWebGPUCache/
+.config/Code/Dictionaries/
+.config/Code/GPUCache/
+.config/Code/Local State
+.config/Code/Local Storage/
+.config/Code/Network Persistent State
+.config/Code/Preferences
+.config/Code/Service Worker/
+.config/Code/Session Storage/
+.config/Code/Shared Dictionary/
+.config/Code/SharedStorage*
+.config/Code/TransportSecurity
+.config/Code/Trust Tokens*
+.config/Code/WebStorage/
+.config/Code/Backups/
+.config/Code/Workspaces/
+.config/Code/blob_storage/
+.config/Code/languagepacks.json
+.config/Code/logs/
+.config/Code/machineid
+.config/Code/Cookies*
+.config/Code/DIPS*
+.config/Code/.org.chromium*
+.config/Code/User/History/
+.config/Code/User/globalStorage/
+.config/Code/User/workspaceStorage/
+.config/Code/User/chatLanguageModels.json
+
+# VLC runtime state
+.config/vlc/vlcrc
+
+# GPU screen recorder
+.config/gpu-screen-recorder/restore_token

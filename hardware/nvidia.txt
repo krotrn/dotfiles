@@ -1,0 +1,4 @@
+# NVIDIA-specific packages (auto-detected)
+nvidia-open
+lib32-nvidia-utils
+libva-nvidia-driver

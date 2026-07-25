@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# ──────────────────────────────────────────────────
+#  dotfiles — manage your dotfiles from anywhere
+# ──────────────────────────────────────────────────
+set -euo pipefail
+
+# Resolve the dotfiles repo root (this script lives in <repo>/bin/)
+DOTFILES_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+
+# ── Colours ──
+CYAN='\033[0;36m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+usage() {
+    echo -e "${CYAN}${BOLD}dotfiles${NC} — manage your dotfiles"
+    echo
+    echo -e "  ${GREEN}dotfiles link${NC}           Re-create all symlinks"
+    echo -e "  ${GREEN}dotfiles save [msg]${NC}     Stage, commit & push changes"
+    echo -e "  ${GREEN}dotfiles status${NC}         Show git status of dotfiles"
+    echo -e "  ${GREEN}dotfiles diff${NC}           Show uncommitted changes"
+    echo -e "  ${GREEN}dotfiles packages${NC}       Export current installed packages to lists"
+    echo -e "  ${GREEN}dotfiles edit${NC}           Open dotfiles dir in \$EDITOR"
+    echo -e "  ${GREEN}dotfiles cd${NC}             Print dotfiles path (use: cd \$(dotfiles cd))"
+    echo
+}
+
+cmd_link() {
+    echo -e "${CYAN}Re-linking dotfiles...${NC}"
+    bash "$DOTFILES_DIR/scripts/06-configs.sh"
+}
+
+cmd_save() {
+    local msg="${1:-Update dotfiles $(date +%Y-%m-%d)}"
+    cd "$DOTFILES_DIR"
+    git add -A
+    if git diff --cached --quiet; then
+        echo -e "${YELLOW}Nothing to commit.${NC}"
+        return
+    fi
+    git status -s
+    echo
+    git commit -m "$msg"
+    if git remote get-url origin &>/dev/null; then
+        git push
+        echo -e "${GREEN}✔ Committed and pushed: ${msg}${NC}"
+    else
+        echo -e "${GREEN}✔ Committed: ${msg}${NC}"
+        echo -e "${YELLOW}  (no remote configured — skipped push)${NC}"
+    fi
+}
+
+cmd_status() {
+    cd "$DOTFILES_DIR"
+    echo -e "${CYAN}Dotfiles repo: ${DOTFILES_DIR}${NC}"
+    echo
+    git status -s
+    local changes
+    changes=$(git status -s | wc -l)
+    if [ "$changes" -eq 0 ]; then
+        echo -e "${GREEN}✔ Everything is clean.${NC}"
+    else
+        echo -e "${YELLOW}${changes} file(s) changed. Run 'dotfiles save' to commit.${NC}"
+    fi
+}
+
+cmd_diff() {
+    cd "$DOTFILES_DIR"
+    git diff
+}
+
+cmd_packages() {
+    echo -e "${CYAN}Exporting package lists...${NC}"
+
+    # Official (native) explicitly-installed packages
+    pacman -Qqen | sort > "$DOTFILES_DIR/packages.txt"
+    echo -e "  ✔ packages.txt      ($(wc -l < "$DOTFILES_DIR/packages.txt") packages)"
+
+    # AUR (foreign) explicitly-installed packages
+    pacman -Qqem | sort > "$DOTFILES_DIR/aur-packages.txt"
+    echo -e "  ✔ aur-packages.txt  ($(wc -l < "$DOTFILES_DIR/aur-packages.txt") packages)"
+
+    echo -e "${GREEN}Package lists updated.${NC}"
+    echo -e "${YELLOW}Run 'dotfiles save' to commit the changes.${NC}"
+}
+
+cmd_edit() {
+    ${EDITOR:-nano} "$DOTFILES_DIR"
+}
+
+cmd_cd() {
+    echo "$DOTFILES_DIR"
+}
+
+# ── Main ──
+case "${1:-}" in
+    link)       cmd_link ;;
+    save)       shift; cmd_save "$@" ;;
+    status|st)  cmd_status ;;
+    diff)       cmd_diff ;;
+    packages|pkg) cmd_packages ;;
+    edit)       cmd_edit ;;
+    cd)         cmd_cd ;;
+    -h|--help|help|"")
+                usage ;;
+    *)
+        echo "Unknown command: $1"
+        usage
+        exit 1
+        ;;
+esac

@@ -1,0 +1,3 @@
+# ASUS-specific packages (auto-detected)
+asusctl
+rog-control-center

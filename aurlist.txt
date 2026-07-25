@@ -1,3 +1,0 @@
-ddcutil-service
-ddcutil-service-debug
-noctalia-git

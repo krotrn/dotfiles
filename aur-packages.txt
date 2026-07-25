@@ -1,3 +1,48 @@
+# ── AUR Packages ──
+# Installed via yay after official packages
+
+# Browsers
+brave-bin
+
+# Editors / IDEs
+visual-studio-code-bin
+
+# Hyprland Extras
+hyprlauncher
+hyprshot
+satty
+
+# Themes / Icons / Cursors
+bibata-cursor-theme
+humanity-icon-theme
+numix-circle-icon-theme-git
+yaru-icon-theme
+noctalia-git
+matugen
+
+# Node Version Managers
+fnm
+nvm
+
+# Filesystem Tools
+btrfs-assistant
+update-grub
+
+# Hardware Monitoring
 ddcutil-service
 ddcutil-service-debug
-noctalia-git
+
+# Screen Recording
+gpu-screen-recorder
+
+# Display Management
+nwg-displays
+nwg-look
+
+# Chaotic-AUR (must be set up first via 03-chaotic-aur.sh)
+chaotic-keyring
+chaotic-mirrorlist
+
+# Other
+gcolor3
+uwsm
