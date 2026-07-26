@@ -1,0 +1,101 @@
+{
+    "telemetry.sqmId": "",
+    "telemetry.machineId": "af7c46d49998fe393eb1ca6331ca53e13f543ab4bad6a01e916ac572334be5ea",
+    "telemetry.devDeviceId": "5ad97514-abb8-4436-82d7-1a08edfa8f04",
+    "backupWorkspaces": {
+        "workspaces": [],
+        "folders": [
+            {
+                "folderUri": "file:///home/krotrn/dotfiles"
+            }
+        ],
+        "emptyWindows": []
+    },
+    "windowControlHeight": 35,
+    "profileAssociations": {
+        "workspaces": {
+            "file:///home/krotrn/.config/hypr": "__default__profile__",
+            "file:///home/krotrn/dotfiles": "__default__profile__"
+        },
+        "emptyWindows": {}
+    },
+    "unifiedStateSync.hasTrajectorySummariesMigrated": true,
+    "overrideStore.migratedSecureMode": true,
+    "antigravityUnifiedStateSync.browserPreferences.hasAddedLocalhostToAllowlist": true,
+    "antigravityUnifiedStateSync.oauthToken.hasLegacyMigrated": true,
+    "antigravityUnifiedStateSync.browserPreferences.hasBrowserAllowlistMigrated": true,
+    "windowsState": {
+        "lastActiveWindow": {
+            "folder": "file:///home/krotrn/dotfiles",
+            "backupPath": "/home/krotrn/.config/Antigravity IDE/Backups/ce33a24448978c13166522f91205d5be",
+            "uiState": {
+                "mode": 0,
+                "x": 0,
+                "y": 0,
+                "width": 958,
+                "height": 521
+            }
+        },
+        "openedWindows": []
+    },
+    "unifiedStateSync.hasUserStatusMigrated": true,
+    "antigravityUnifiedStateSync.seenNuxOneTimeMigration": true,
+    "artifactReviewState.migratedFromInitState": true,
+    "theme": "vs-dark",
+    "themeBackground": "#1f1f1f",
+    "windowSplash": {
+        "zoomLevel": 0,
+        "baseTheme": "vs-dark",
+        "colorInfo": {
+            "foreground": "#cccccc",
+            "background": "#1f1f1f",
+            "editorBackground": "#1f1f1f",
+            "titleBarBackground": "#181818",
+            "titleBarBorder": "#2b2b2b",
+            "activityBarBackground": "#181818",
+            "activityBarBorder": "#2b2b2b",
+            "sideBarBackground": "#181818",
+            "sideBarBorder": "#2b2b2b",
+            "statusBarBackground": "#181818",
+            "statusBarBorder": "#2b2b2b",
+            "statusBarNoFolderBackground": "#1f1f1f"
+        },
+        "layoutInfo": {
+            "sideBarSide": "right",
+            "editorPartMinWidth": 220,
+            "titleBarHeight": 35,
+            "activityBarWidth": 42,
+            "sideBarWidth": 0,
+            "auxiliaryBarWidth": 300,
+            "statusBarHeight": 22,
+            "windowBorder": false
+        }
+    },
+    "sidebarWorkspaces.migratedFromInitState": true,
+    "sidebarWorkspaces.cleanedUpEmptyScratchWorkspaces": true,
+    "windowSplashWorkspaceOverride": {
+        "layoutInfo": {
+            "sideBarWidth": 238,
+            "auxiliaryBarWidth": 300,
+            "workspaces": {
+                "764c07c3c6a9b4fe800f7213512d57bb": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": true
+                },
+                "3a2dd315953a375243bf90198b277ef4": {
+                    "sideBarVisible": false,
+                    "auxiliaryBarVisible": true
+                },
+                "35d1d81a267103ac6cdfc9156eb69b33": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": true
+                },
+                "32366625462577ffa5da46b267ae00fe": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": false
+                }
+            }
+        }
+    },
+    "unifiedStateSync.hasWindowPreferencesMigrated": true
+}

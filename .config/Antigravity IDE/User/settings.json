@@ -1,4 +1,6 @@
 {
+    "workbench.sideBar.location": "right",
+    "explorer.confirmDelete": false,
     "git.autofetch": true,
     "terminal.integrated.unicodeVersion": "11",
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
