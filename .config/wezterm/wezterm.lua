@@ -105,4 +105,5 @@ config.keys = {
 	},
 }
 
+config.color_scheme = "Noctalia"
 return config
