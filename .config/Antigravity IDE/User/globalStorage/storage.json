@@ -7,6 +7,12 @@
         "folders": [
             {
                 "folderUri": "file:///home/krotrn/dotfiles"
+            },
+            {
+                "folderUri": "file:///home/krotrn/.config/hypr"
+            },
+            {
+                "folderUri": "file:///home/krotrn/.config/Antigravity%20IDE"
             }
         ],
         "emptyWindows": []
@@ -15,7 +21,8 @@
     "profileAssociations": {
         "workspaces": {
             "file:///home/krotrn/.config/hypr": "__default__profile__",
-            "file:///home/krotrn/dotfiles": "__default__profile__"
+            "file:///home/krotrn/dotfiles": "__default__profile__",
+            "file:///home/krotrn/.config/Antigravity%20IDE": "__default__profile__"
         },
         "emptyWindows": {}
     },
@@ -26,17 +33,40 @@
     "antigravityUnifiedStateSync.browserPreferences.hasBrowserAllowlistMigrated": true,
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/krotrn/dotfiles",
-            "backupPath": "/home/krotrn/.config/Antigravity IDE/Backups/ce33a24448978c13166522f91205d5be",
+            "folder": "file:///home/krotrn/.config/hypr",
+            "backupPath": "/home/krotrn/.config/Antigravity IDE/Backups/a3e4e60b749b318e1552cd84f3d5d559",
             "uiState": {
                 "mode": 0,
                 "x": 0,
                 "y": 0,
-                "width": 958,
-                "height": 521
+                "width": 1920,
+                "height": 1080
             }
         },
-        "openedWindows": []
+        "openedWindows": [
+            {
+                "folder": "file:///home/krotrn/.config/hypr",
+                "backupPath": "/home/krotrn/.config/Antigravity IDE/Backups/a3e4e60b749b318e1552cd84f3d5d559",
+                "uiState": {
+                    "mode": 0,
+                    "x": 0,
+                    "y": 0,
+                    "width": 1920,
+                    "height": 1080
+                }
+            },
+            {
+                "folder": "file:///home/krotrn/dotfiles",
+                "backupPath": "/home/krotrn/.config/Antigravity IDE/Backups/ce33a24448978c13166522f91205d5be",
+                "uiState": {
+                    "mode": 0,
+                    "x": 0,
+                    "y": 0,
+                    "width": 958,
+                    "height": 1042
+                }
+            }
+        ]
     },
     "unifiedStateSync.hasUserStatusMigrated": true,
     "antigravityUnifiedStateSync.seenNuxOneTimeMigration": true,
@@ -75,7 +105,7 @@
     "sidebarWorkspaces.cleanedUpEmptyScratchWorkspaces": true,
     "windowSplashWorkspaceOverride": {
         "layoutInfo": {
-            "sideBarWidth": 238,
+            "sideBarWidth": 300,
             "auxiliaryBarWidth": 300,
             "workspaces": {
                 "764c07c3c6a9b4fe800f7213512d57bb": {
@@ -83,16 +113,20 @@
                     "auxiliaryBarVisible": true
                 },
                 "3a2dd315953a375243bf90198b277ef4": {
-                    "sideBarVisible": false,
-                    "auxiliaryBarVisible": true
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": false
                 },
                 "35d1d81a267103ac6cdfc9156eb69b33": {
                     "sideBarVisible": true,
                     "auxiliaryBarVisible": true
                 },
                 "32366625462577ffa5da46b267ae00fe": {
+                    "sideBarVisible": false,
+                    "auxiliaryBarVisible": true
+                },
+                "04c399d9faa6e581426c250a38577e05": {
                     "sideBarVisible": true,
-                    "auxiliaryBarVisible": false
+                    "auxiliaryBarVisible": true
                 }
             }
         }

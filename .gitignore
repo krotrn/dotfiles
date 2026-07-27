@@ -43,8 +43,50 @@ Thumbs.db
 .config/Code/User/workspaceStorage/
 .config/Code/User/chatLanguageModels.json
 
+# Antigravity IDE — only track User/settings.json
+.config/Antigravity IDE/Cache/
+.config/Antigravity IDE/CachedConfigurations/
+.config/Antigravity IDE/CachedData/
+.config/Antigravity IDE/CachedProfilesData/
+.config/Antigravity IDE/Code Cache/
+.config/Antigravity IDE/Crashpad/
+.config/Antigravity IDE/DawnGraphiteCache/
+.config/Antigravity IDE/DawnWebGPUCache/
+.config/Antigravity IDE/Dictionaries/
+.config/Antigravity IDE/GPUCache/
+.config/Antigravity IDE/Local State
+.config/Antigravity IDE/Local Storage/
+.config/Antigravity IDE/Network Persistent State
+.config/Antigravity IDE/Preferences
+.config/Antigravity IDE/Service Worker/
+.config/Antigravity IDE/Session Storage/
+.config/Antigravity IDE/Shared Dictionary/
+.config/Antigravity IDE/SharedStorage*
+.config/Antigravity IDE/TransportSecurity
+.config/Antigravity IDE/Trust Tokens*
+.config/Antigravity IDE/WebStorage/
+.config/Antigravity IDE/Backups/
+.config/Antigravity IDE/Workspaces/
+.config/Antigravity IDE/blob_storage/
+.config/Antigravity IDE/code.lock
+.config/Antigravity IDE/languagepacks.json
+.config/Antigravity IDE/logs/
+.config/Antigravity IDE/machineid
+.config/Antigravity IDE/Cookies*
+.config/Antigravity IDE/DIPS*
+.config/Antigravity IDE/.org.chromium*
+.config/Antigravity IDE/User/History/
+.config/Antigravity IDE/User/globalStorage/
+.config/Antigravity IDE/User/workspaceStorage/
+.config/Antigravity IDE/User/chatLanguageModels.json
+.config/Antigravity IDE/Network Persistent State
+.config/Antigravity IDE/Cache/Cache_Data/index-dir/the-real-index
+
+
 # VLC runtime state
 .config/vlc/vlcrc
 
 # GPU screen recorder
 .config/gpu-screen-recorder/restore_token
+.config/Antigravity IDE/Network Persistent State
+.config/Antigravity IDE/Cache/Cache_Data/index-dir/the-real-index

@@ -122,36 +122,57 @@ hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURC
 -- ═══════════════════════════════════════════════════════════════════
 -- https://github.com/gfhdhytghd/hymission
 
-hl.bind("SUPER + Tab", hl.plugin.hymission.toggle) -- Toggle Overview
-hl.bind("SUPER + SHIFT + Tab", function()          -- Toggle Reverse
-    hl.plugin.hymission.toggle("reverse")
-end)
-hl.bind("SUPER + CTRL + Tab", hl.plugin.hymission.close) -- Close Overview
-hl.bind("SUPER + CTRL + A", function()                   -- Overview (forceall)
-    hl.plugin.hymission.toggle("forceall")
-end)
-hl.bind("SUPER + CTRL + C", function() -- Overview (current workspace)
-    hl.plugin.hymission.toggle("onlycurrentworkspace")
-end)
-hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout) -- Debug Layout
+if hl.plugin and hl.plugin.hymission then
+    hl.bind("SUPER + Tab", hl.plugin.hymission.toggle) -- Toggle Overview
+    hl.bind("SUPER + SHIFT + Tab", function()          -- Toggle Reverse
+        hl.plugin.hymission.toggle("reverse")
+    end)
+    hl.bind("SUPER + CTRL + Tab", hl.plugin.hymission.close) -- Close Overview
+    hl.bind("SUPER + CTRL + A", function()                   -- Overview (forceall)
+        hl.plugin.hymission.toggle("forceall")
+    end)
+    hl.bind("SUPER + CTRL + C", function() -- Overview (current workspace)
+        hl.plugin.hymission.toggle("onlycurrentworkspace")
+    end)
+    hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout) -- Debug Layout
 
--- Hymission gestures
-hl.plugin.hymission.gesture({
-    fingers   = 4,
-    direction = "vertical",
-    action    = "toggle",
-    recommand = true,
-})
+    -- Hymission gestures
+    hl.plugin.hymission.gesture({
+        fingers   = 4,
+        direction = "vertical",
+        action    = "toggle",
+        recommand = true,
+    })
 
-hl.plugin.hymission.gesture({
-    fingers   = 3,
-    direction = "horizontal",
-    action    = "scroll",
-    mode      = "layout",
-})
+    hl.plugin.hymission.gesture({
+        fingers   = 3,
+        direction = "horizontal",
+        action    = "scroll",
+        mode      = "layout",
+    })
 
-hl.plugin.hymission.gesture({
-    fingers   = 3,
-    direction = "horizontal",
-    action    = "workspace",
-})
+    hl.plugin.hymission.gesture({
+        fingers   = 3,
+        direction = "horizontal",
+        action    = "workspace",
+    })
+else
+    hl.bind("SUPER + Tab", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle() end
+    end)
+    hl.bind("SUPER + SHIFT + Tab", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("reverse") end
+    end)
+    hl.bind("SUPER + CTRL + Tab", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.close() end
+    end)
+    hl.bind("SUPER + CTRL + A", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("forceall") end
+    end)
+    hl.bind("SUPER + CTRL + C", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("onlycurrentworkspace") end
+    end)
+    hl.bind("SUPER + M", function()
+        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.debug_current_layout() end
+    end)
+end
