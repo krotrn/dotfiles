@@ -218,7 +218,7 @@ alias df='df -h'                      # human readable disk usage
 alias du='du -sh'                     # human readable dir size
 alias free='free -h'                  # human readable memory
 
-export EDITOR='nano'
+export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
 # bun completions

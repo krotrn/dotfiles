@@ -53,6 +53,9 @@ hl.config({
         snap = {
             enabled = true,
         },
+        gaps_in = 1,
+        gaps_out = 1,
+        border_size = 0,
     },
 })
 -- ── Permissions ──────────────────────────────────────────────────
