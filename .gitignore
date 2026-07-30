@@ -39,6 +39,7 @@ Thumbs.db
 .config/Code/DIPS*
 .config/Code/.org.chromium*
 .config/Code/User/History/
+.config/Code/code.lock
 .config/Code/User/globalStorage/
 .config/Code/User/workspaceStorage/
 .config/Code/User/chatLanguageModels.json
