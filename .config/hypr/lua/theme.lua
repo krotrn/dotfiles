@@ -38,18 +38,28 @@ hl.config({
         inactive_opacity   = 0.85,
         fullscreen_opacity = 1.0,
 
+        dim_inactive       = true,
+        dim_strength       = 0.15,
+
         shadow = {
-            enabled = true,
+            enabled      = true,
+            range        = 15,
+            render_power = 3,
+            color        = "rgba(00000055)",
+            offset       = { 0, 2 },
+            scale        = 1.0,
         },
 
         blur = {
             enabled          = true,
-            size             = 1,
-            passes           = 3,
+            size             = 2,
+            passes           = 2,
             new_optimizations = true,
             ignore_opacity   = true,
             xray             = false,
             special          = true,
+            popups           = true,
+            popups_ignorealpha = 0.2,
         },
     },
 })

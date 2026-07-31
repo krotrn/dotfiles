@@ -118,7 +118,43 @@ hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURC
     { locked = true, repeating = true })
 
 -- ═══════════════════════════════════════════════════════════════════
--- 7. HYMISSION (Mission Control Overview)
+-- 7. ADDITIONAL BINDS
+-- ═══════════════════════════════════════════════════════════════════
+
+-- Pseudo-tiling & split (dwindle layout)
+hl.bind("SUPER + P", hl.dsp.window.pseudo())                           -- Toggle Pseudo
+hl.bind("SUPER + J", hl.dsp.exec_cmd("hyprctl dispatch togglesplit"))   -- Toggle Split
+
+-- Pin floating window (stays on all workspaces)
+hl.bind("SUPER + SHIFT + P", hl.dsp.window.pin())                      -- Pin Window
+
+-- Center floating window
+hl.bind("SUPER + SHIFT + C", hl.dsp.window.center())                   -- Center Window
+
+-- Brightness controls (laptop)
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"),
+    { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),
+    { locked = true, repeating = true })
+
+-- Clipboard history (cliphist)
+hl.bind("SUPER + V", hl.dsp.exec_cmd(
+    "cliphist list | wofi --dmenu | cliphist decode | wl-copy"))        -- Clipboard History
+
+-- Group (tabbed windows)
+hl.bind("SUPER + G", hl.dsp.group.toggle())                            -- Toggle Group
+hl.bind("SUPER + SHIFT + G", hl.dsp.exec_cmd("hyprctl dispatch lockgroups toggle")) -- Lock Group
+hl.bind("ALT + Left", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"))   -- Prev Tab
+hl.bind("ALT + Right", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"))  -- Next Tab
+
+-- Urgent window focus
+hl.bind("SUPER + U", hl.dsp.focus({ window = "urgent" }))              -- Focus Urgent
+
+-- Exit Hyprland (emergency)
+hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))  -- Exit Hyprland
+
+-- ═══════════════════════════════════════════════════════════════════
+-- 8. HYMISSION (Mission Control Overview)
 -- ═══════════════════════════════════════════════════════════════════
 -- https://github.com/gfhdhytghd/hymission
 

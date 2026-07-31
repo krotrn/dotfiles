@@ -127,3 +127,31 @@ hl.window_rule({
     center = true,
     size   = {1200, 900},
 })
+
+-- ═══════════════════════════════════════════════════════════════════
+-- GAMING — Immediate render, no blur
+-- ═══════════════════════════════════════════════════════════════════
+hl.window_rule({
+    match     = { class = "^[Ss]team_app_.*$" },
+    immediate = true,
+    no_blur   = true,
+    xray      = false,
+})
+
+-- ═══════════════════════════════════════════════════════════════════
+-- FILE DIALOGS — float and center
+-- ═══════════════════════════════════════════════════════════════════
+hl.window_rule({
+    match  = { title = "^(Open|Save|Save As|Select|Choose|Pick).*$" },
+    float  = true,
+    center = true,
+    size   = { 900, 600 },
+})
+
+-- ═══════════════════════════════════════════════════════════════════
+-- WEZTERM — terminal opacity
+-- ═══════════════════════════════════════════════════════════════════
+hl.window_rule({
+    match   = { class = "^org\\.wezfurlong\\.wezterm$" },
+    opacity = "0.95 0.90",
+})

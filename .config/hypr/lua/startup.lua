@@ -17,15 +17,26 @@ hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 -- ── Electron / Chromium ──────────────────────────────────────────
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
 
+-- ── Toolkit Backends ─────────────────────────────────────────────
+hl.env("GDK_BACKEND", "wayland,x11,*")
+hl.env("SDL_VIDEODRIVER", "wayland")
+hl.env("CLUTTER_BACKEND", "wayland")
+hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+
 -- ── Nvidia (uncomment if using Nvidia GPU) ───────────────────────
-hl.env("WLR_NO_HARDWARE_CURSORS", "1")
 hl.env("LIBVA_DRIVER_NAME", "nvidia")
 hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("NVD_BACKEND", "direct")
+hl.env("__GL_GSYNC_ALLOWED", "1")
+hl.env("__GL_VRR_ALLOWED", "1")
 
 -- ── Autostart (exec-once) ────────────────────────────────────────
 hl.on("hyprland.start", function()
+    -- D-Bus environment (must be first for portals/keyring)
+    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+
     -- Noctalia shell (must start first per Noctalia v5 docs)
     hl.exec_cmd("noctalia")
 

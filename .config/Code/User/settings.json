@@ -3,5 +3,6 @@
     "terminal.integrated.unicodeVersion": "11",
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontFamily": "JetBrainsMono Nerd Font",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "files.autoSave": "afterDelay"
 }

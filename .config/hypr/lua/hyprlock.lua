@@ -26,11 +26,12 @@ hyprlock.options = {
     general = {
         disable_loading_bar = true,
         hide_cursor         = true,
-        grace               = 0,
+        grace               = 5,
         no_fade_in          = false,
         immediate_render    = true,
         ignore_empty_input  = true,
         text_trim           = true,
+        fractional_scaling  = 2,
     },
     background = {
         path              = "screenshot",
@@ -126,11 +127,12 @@ function hyprlock.generate_config()
 general {
     disable_loading_bar = true
     hide_cursor = true
-    grace = 0
+    grace = 5
     no_fade_in = false
     immediate_render = true
     ignore_empty_input = true
     text_trim = true
+    fractional_scaling = 2
 }
 
 background {

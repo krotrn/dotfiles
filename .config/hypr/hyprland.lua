@@ -30,10 +30,14 @@ end
 -- ── Layouts ──────────────────────────────────────────────────────
 hl.config({
     dwindle = {
-        preserve_split = true,
+        preserve_split    = true,
+        smart_resizing    = true,
+        force_split       = 0,
     },
     master = {
         new_status = "master",
+        mfact        = 0.55,
+        orientation  = "left",
     },
 })
 
@@ -53,6 +57,15 @@ hl.config({
 hl.config({
     xwayland = {
         force_zero_scaling = true,
+    },
+})
+
+-- ── Cursor ───────────────────────────────────────────────────────
+hl.config({
+    cursor = {
+        inactive_timeout  = 5,
+        no_warps          = false,
+        enable_hyprcursor = true,
     },
 })
 

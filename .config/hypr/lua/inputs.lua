@@ -13,6 +13,7 @@ hl.config({
         repeat_delay        = 250,
         repeat_rate         = 35,
         accel_profile       = "flat",
+        sensitivity         = 0,           -- -1.0 to 1.0, 0 = no modification
 
         -- Touchpad
         touchpad            = {
@@ -20,12 +21,16 @@ hl.config({
             disable_while_typing = true,
             clickfinger_behavior = true,
             scroll_factor        = 0.5,
+            tap_button_map       = "lrm",  -- 1-finger=left, 2-finger=right, 3-finger=middle
+            drag_lock            = true,    -- easier drag without holding finger down
         },
 
         special_fallthrough = true,
         follow_mouse        = 1,
     },
 })
+
+
 
 hl.gesture({
     fingers = 3,

@@ -61,3 +61,8 @@ hl.config({
 -- Disable Hyprland's layer animations for Noctalia surfaces
 -- so they don't interfere with Noctalia's own animations
 hl.animation({ leaf = "layers", enabled = false })
+
+-- ── Noctalia Layer Rules ─────────────────────────────────────────
+-- Blur behind Noctalia panels/overlays for a polished glass effect
+hl.layer_rule({ match = { namespace = "^noctalia.*$" }, blur = true, ignore_alpha = 0.3 })
+hl.layer_rule({ match = { namespace = "^gtk-layer-shell$" }, blur = true, ignore_alpha = 0.3 })
