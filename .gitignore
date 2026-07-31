@@ -91,3 +91,4 @@ Thumbs.db
 .config/gpu-screen-recorder/restore_token
 .config/Antigravity IDE/Network Persistent State
 .config/Antigravity IDE/Cache/Cache_Data/index-dir/the-real-index
+.config/Code/agent-host/local-endpoint/metadata.json

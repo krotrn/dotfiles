@@ -43,6 +43,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
 
+    -- GTK double click titlebar behavior
+    hl.exec_cmd("gsettings set org.gnome.desktop.wm.preferences action-double-click-titlebar 'toggle-maximize'")
+
     -- Hyprland plugin manager & config reload
     hl.exec_cmd("hyprpm reload -n && hyprctl reload")
 end)

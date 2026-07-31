@@ -2,7 +2,6 @@
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
-fastfetch
 export ZSH="$HOME/.oh-my-zsh"
 
 HISTSIZE=10000
@@ -60,7 +59,7 @@ ZSH_THEME="robbyrussell"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -144,7 +143,7 @@ export FZF_DEFAULT_OPTS="
 --height=40%
 --layout=reverse
 --border
---preview 'batcat --style=numbers --color=always {} 2>/dev/null || file {}'
+--preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}'
 --preview-window=right:60%:wrap
 --bind 'ctrl-p:toggle-preview'
 "
@@ -152,7 +151,6 @@ export FZF_DEFAULT_OPTS="
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -la --icons --group-directories-first --git'
 alias lt='eza --tree --icons --level=2'
-alias bat='batcat'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -169,8 +167,10 @@ fcd() {
 }
 
 fo() {
-  local file
-  file=$(fzf) && $EDITOR "$file"
+    local file
+    file=$(fzf) || return
+    [[ -n "$file" ]] || return
+    command nvim -- "$file"
 }
 # quick HTTP server in current dir
 serve() { python3 -m http.server "${1:-8000}"; }
@@ -179,7 +179,7 @@ fsearch() {
   rg --color=always --line-number --no-heading "$1" . \
     | fzf --ansi \
           --delimiter=: \
-          --preview 'batcat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
+          --preview 'bat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
           --preview-window 'right:60%:wrap:+{2}+3/3' \
     | awk -F: '{print $1 ":" $2}'
 }
@@ -193,7 +193,7 @@ flive() {
       --bind "start:reload:$RG_PREFIX '' $dir" \
       --bind "change:reload:$RG_PREFIX {q} $dir || true" \
       --delimiter=: \
-      --preview 'batcat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
+      --preview 'bat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
       --preview-window 'right:60%:wrap:+{2}+3/3'
 }
 
@@ -208,7 +208,7 @@ flive-full() {
       --delimiter=: \
       --height=100% \
       --border=none \
-      --preview 'batcat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
+      --preview 'bat --style=numbers --color=always --highlight-line {2} {1} 2>/dev/null' \
       --preview-window 'right:65%:wrap:+{2}+3/3' \
       --bind 'ctrl-p:toggle-preview'
 }

@@ -10,13 +10,22 @@
 -- The old .conf files are preserved alongside for reference.
 
 -- ── Load Modules ─────────────────────────────────────────────────
-require("lua.monitors")       -- Monitor outputs
-require("lua.startup")        -- Env vars & autostart services
-require("lua.inputs")         -- Keyboard, mouse, touchpad
-require("lua.theme")          -- Gaps, borders, decoration, blur
-require("lua.animations")     -- Bezier curves & animation rules
-require("lua.keybinds")       -- All key/mouse bindings
-require("lua.windowrules")    -- Per-window behavior
+-- ── Load Modules ─────────────────────────────────────────────────
+local modules = {
+    "lua.monitors",
+    "lua.startup",
+    "lua.inputs",
+    "lua.theme",
+    "lua.animations",
+    "lua.hyprlock",
+    "lua.keybinds",
+    "lua.windowrules"
+}
+
+for _, mod in ipairs(modules) do
+    package.loaded[mod] = nil
+    require(mod)
+end
 
 -- ── Layouts ──────────────────────────────────────────────────────
 hl.config({
@@ -109,7 +118,9 @@ hl.config({
 })
 
 -- ── Noctalia v5 Integration (loaded last to override colors) ─────
+package.loaded["lua.noctalia"] = nil
 require("lua.noctalia")
 
 -- For Noctalia Color templates
+package.loaded["noctalia"] = nil
 require("noctalia").apply_theme()
