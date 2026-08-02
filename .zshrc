@@ -243,4 +243,4 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
-alias nd='killall -9 noctalia; sleep 2; noctalia & disown'
+alias nd='killall -q -9 noctalia; sleep 2; noctalia >/dev/null 2>&1 & disown'

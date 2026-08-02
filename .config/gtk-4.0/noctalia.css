@@ -14,34 +14,34 @@
 @define-color error_bg_color #f85149;
 @define-color error_fg_color #010409;
 
-@define-color window_bg_color #010409;
+@define-color window_bg_color #000000;
 @define-color window_fg_color #c9d1d9;
 
-@define-color view_bg_color #010409;
+@define-color view_bg_color #000000;
 @define-color view_fg_color #c9d1d9;
 
-@define-color headerbar_bg_color #010409;
+@define-color headerbar_bg_color #000000;
 @define-color headerbar_fg_color #c9d1d9;
 @define-color headerbar_backdrop_color @window_bg_color;
 
-@define-color popover_bg_color #161b22;
+@define-color popover_bg_color #141920;
 @define-color popover_fg_color #c9d1d9;
 
-@define-color card_bg_color #161b22;
+@define-color card_bg_color #141920;
 @define-color card_fg_color #c9d1d9;
 
-@define-color dialog_bg_color #010409;
+@define-color dialog_bg_color #000000;
 @define-color dialog_fg_color #c9d1d9;
 
-@define-color overview_bg_color #161b22;
+@define-color overview_bg_color #141920;
 @define-color overview_fg_color #c9d1d9;
 
-@define-color sidebar_bg_color #161b22;
+@define-color sidebar_bg_color #141920;
 @define-color sidebar_fg_color #c9d1d9;
 @define-color sidebar_backdrop_color @window_bg_color;
 @define-color sidebar_border_color @window_bg_color;
 
-@define-color secondary_sidebar_bg_color #010409;
+@define-color secondary_sidebar_bg_color #000000;
 @define-color secondary_sidebar_fg_color #c9d1d9;
 
 /* Backdrop/unfocused states */
@@ -64,29 +64,29 @@
     --error-fg-color: #010409;
     --error-color: #f85149;
 
-    --window-bg-color: #010409;
+    --window-bg-color: #000000;
     --window-fg-color: #c9d1d9;
 
-    --view-bg-color: #010409;
+    --view-bg-color: #000000;
     --view-fg-color: #c9d1d9;
 
-    --headerbar-bg-color: #010409;
+    --headerbar-bg-color: #000000;
     --headerbar-fg-color: #c9d1d9;
     --headerbar-backdrop-color: @window_bg_color;
 
-    --popover-bg-color: #161b22;
+    --popover-bg-color: #141920;
     --popover-fg-color: #c9d1d9;
 
-    --card-bg-color: #161b22;
+    --card-bg-color: #141920;
     --card-fg-color: #c9d1d9;
 
-    --dialog-bg-color: #010409;
+    --dialog-bg-color: #000000;
     --dialog-fg-color: #c9d1d9;
 
-    --overview-bg-color: #161b22;
+    --overview-bg-color: #141920;
     --overview-fg-color: #c9d1d9;
 
-    --sidebar-bg-color: #161b22;
+    --sidebar-bg-color: #141920;
     --sidebar-fg-color: #c9d1d9;
     --sidebar-backdrop-color: @window_bg_color;
     --sidebar-border-color: @window_bg_color;

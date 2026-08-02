@@ -44,6 +44,7 @@ Thumbs.db
 .config/Code/User/globalStorage/
 .config/Code/User/workspaceStorage/
 .config/Code/User/chatLanguageModels.json
+.config/Code/CachedExtensionVSIXs/
 
 # Antigravity IDE — only track User/settings.json
 .config/Antigravity IDE/Cache/

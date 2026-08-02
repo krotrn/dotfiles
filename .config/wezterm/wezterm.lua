@@ -41,7 +41,7 @@ config.colors = {
 }
 
 -- Window
-config.window_decorations = "RESIZE"
+config.window_decorations = "NONE"
 config.enable_tab_bar = false
 config.window_close_confirmation = "NeverPrompt"
 config.window_padding = {

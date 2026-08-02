@@ -25,9 +25,9 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
 -- ── Nvidia (uncomment if using Nvidia GPU) ───────────────────────
 hl.env("LIBVA_DRIVER_NAME", "nvidia")
-hl.env("GBM_BACKEND", "nvidia-drm")
+-- hl.env("GBM_BACKEND", "nvidia-drm") -- Disabled: explicit sync in Hyprland v0.52+ handles buffer allocation
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
-hl.env("NVD_BACKEND", "direct")
+-- hl.env("NVD_BACKEND", "direct") -- Disabled: causes buffer sync stalls with Wayland layer shells
 hl.env("__GL_GSYNC_ALLOWED", "1")
 hl.env("__GL_VRR_ALLOWED", "1")
 
@@ -57,6 +57,6 @@ hl.on("hyprland.start", function()
     -- GTK double click titlebar behavior
     hl.exec_cmd("gsettings set org.gnome.desktop.wm.preferences action-double-click-titlebar 'toggle-maximize'")
 
-    -- Hyprland plugin manager & config reload
-    hl.exec_cmd("hyprpm reload -n && hyprctl reload")
+    -- Hyprland plugin manager
+    hl.exec_cmd("hyprpm reload -n &")
 end)

@@ -35,7 +35,11 @@ hl.bind("SUPER + K", hl.dsp.exec_cmd("noctalia msg plugin official/hyprland-keyb
 -- ═══════════════════════════════════════════════════════════════════
 
 hl.bind("SUPER + Q", hl.dsp.window.close())                           -- Close Window
-hl.bind("SUPER + W", hl.dsp.window.float({ action = "toggle" }))      -- Toggle Floating
+hl.bind("SUPER + W", function()                                        -- Toggle Floating (with small centered size)
+    hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
+    hl.dispatch(hl.dsp.window.resize({ x = 900, y = 650 }))
+    hl.dispatch(hl.dsp.window.center())
+end)
 hl.bind("SUPER + F", hl.dsp.window.fullscreen())                      -- Toggle Fullscreen
 hl.bind("SUPER + grave", hl.dsp.focus({ workspace = "m+1" }))         -- Workspace Up
 hl.bind("SUPER + SHIFT + grave", hl.dsp.focus({ workspace = "m-1" })) -- Workspace Down
@@ -158,57 +162,36 @@ hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))  -
 -- ═══════════════════════════════════════════════════════════════════
 -- https://github.com/gfhdhytghd/hymission
 
-if hl.plugin and hl.plugin.hymission then
-    hl.bind("SUPER + Tab", hl.plugin.hymission.toggle) -- Toggle Overview
-    hl.bind("SUPER + SHIFT + Tab", function()          -- Toggle Reverse
-        hl.plugin.hymission.toggle("reverse")
-    end)
-    hl.bind("SUPER + CTRL + Tab", hl.plugin.hymission.close) -- Close Overview
-    hl.bind("SUPER + CTRL + A", function()                   -- Overview (forceall)
-        hl.plugin.hymission.toggle("forceall")
-    end)
-    hl.bind("SUPER + CTRL + C", function() -- Overview (current workspace)
-        hl.plugin.hymission.toggle("onlycurrentworkspace")
-    end)
-    hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout) -- Debug Layout
+hl.bind("SUPER + TAB", hl.plugin.hymission.toggle)
+hl.bind("SUPER + SHIFT + TAB", function()
+    hl.plugin.hymission.toggle("reverse")
+end)
+hl.bind("SUPER + CTRL + TAB", hl.plugin.hymission.close)
+hl.bind("SUPER + CTRL + A", function()
+    hl.plugin.hymission.toggle("forceall")
+end)
+hl.bind("SUPER + CTRL + C", function()
+    hl.plugin.hymission.toggle("onlycurrentworkspace")
+end)
+hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout)
 
-    -- Hymission gestures
-    hl.plugin.hymission.gesture({
-        fingers   = 4,
-        direction = "vertical",
-        action    = "toggle",
-        recommand = true,
-    })
+-- Hymission Gestures
+hl.plugin.hymission.gesture({
+    fingers   = 4,
+    direction = "vertical",
+    action    = "toggle",
+    recommand = true,
+})
 
-    hl.plugin.hymission.gesture({
-        fingers   = 3,
-        direction = "horizontal",
-        action    = "scroll",
-        mode      = "layout",
-    })
+hl.plugin.hymission.gesture({
+    fingers   = 3,
+    direction = "horizontal",
+    action    = "scroll",
+    mode      = "layout",
+})
 
-    hl.plugin.hymission.gesture({
-        fingers   = 3,
-        direction = "horizontal",
-        action    = "workspace",
-    })
-else
-    hl.bind("SUPER + Tab", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle() end
-    end)
-    hl.bind("SUPER + SHIFT + Tab", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("reverse") end
-    end)
-    hl.bind("SUPER + CTRL + Tab", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.close() end
-    end)
-    hl.bind("SUPER + CTRL + A", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("forceall") end
-    end)
-    hl.bind("SUPER + CTRL + C", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.toggle("onlycurrentworkspace") end
-    end)
-    hl.bind("SUPER + M", function()
-        if hl.plugin and hl.plugin.hymission then hl.plugin.hymission.debug_current_layout() end
-    end)
-end
+hl.plugin.hymission.gesture({
+    fingers   = 3,
+    direction = "horizontal",
+    action    = "workspace",
+})

@@ -80,9 +80,9 @@ hl.config({
         border_size = 0,
     },
 })
+
 -- ── Permissions ──────────────────────────────────────────────────
--- Uncomment if you enable enforce_permissions in ecosystem config:
--- hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
+hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
 
 -- ── Hymission Plugin (Mission Control Overview) ─────────────────
 -- https://github.com/gfhdhytghd/hymission

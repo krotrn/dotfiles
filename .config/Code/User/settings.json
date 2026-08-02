@@ -4,5 +4,7 @@
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontLigatures": true,
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "workbench.sideBar.location": "right",
+    "explorer.confirmDelete": false
 }
