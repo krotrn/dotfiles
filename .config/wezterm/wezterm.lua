@@ -3,7 +3,9 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
 -- Font
-config.font = wezterm.font("JetBrainsMono Nerd Font")
+config.font = wezterm.font_with_fallback({"JetBrainsMono Nerd Font", "Noto Color Emoji",})
+config.hide_mouse_cursor_when_typing = true
+config.hyperlink_rules = wezterm.default_hyperlink_rules()
 config.font_size = 12.5
 config.line_height = 1.1
 config.default_prog = { "/usr/bin/zsh", "-l" }
@@ -68,10 +70,7 @@ config.animation_fps = 144
 config.front_end = "WebGpu"
 
 -- Scrollback
-config.scrollback_lines = 10000
-
--- Clipboard
-config.enable_wayland = true
+config.scrollback_lines = 100000
 
 -- Disable audible bell
 config.audible_bell = "Disabled"

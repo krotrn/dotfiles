@@ -235,7 +235,7 @@ export PATH="/home/krotrn/.local/bin:$PATH"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd)"
-
+eval "$(direnv hook zsh)"
 # pnpm
 export PNPM_HOME="/home/krotrn/.local/share/pnpm"
 case ":$PATH:" in

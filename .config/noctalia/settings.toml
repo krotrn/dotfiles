@@ -1,0 +1,7 @@
+config_version = 8
+
+[dock]
+enabled = false
+
+[theme]
+mode = "dark"

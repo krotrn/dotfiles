@@ -59,4 +59,12 @@ echo "Installing dotfiles helper..."
 mkdir -p "$HOME/.local/bin"
 safe_link "$ROOT/bin/dotfiles" "$HOME/.local/bin/dotfiles"
 
+# ── Symlink Noctalia state settings for live GUI auto-sync ──
+if [ -d "$ROOT/.config/noctalia" ]; then
+    echo "Linking Noctalia state settings..."
+    mkdir -p "$HOME/.local/state/noctalia"
+    touch "$ROOT/.config/noctalia/settings.toml"
+    safe_link "$ROOT/.config/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
+fi
+
 echo "All configs symlinked."
