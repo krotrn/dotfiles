@@ -33,8 +33,8 @@ sep_right = { open = "", close = "" }
 
 # Progress
 progress_label = { bold = true }
-progress_normal = { fg = "#58a6ff", bg = "#010409" }
-progress_error = { fg = "#f85149", bg = "#010409" }
+progress_normal = { fg = "#58a6ff", bg = "#000000" }
+progress_error = { fg = "#f85149", bg = "#000000" }
 
 # Permissions
 perm_type = { fg = "#bc8cff" }
@@ -51,13 +51,13 @@ perm_sep = { fg = "#004da5" }
 [mode]
 
 normal_main = { bg = "#58a6ff", fg = "#010409", bold = true }
-normal_alt  = { bg = "#161b22", fg = "#8b949e" }
+normal_alt  = { bg = "#141920", fg = "#8b949e" }
 
 select_main = { bg = "#bc8cff", fg = "#010409", bold = true }
-select_alt  = { bg = "#161b22", fg = "#8b949e" }
+select_alt  = { bg = "#141920", fg = "#8b949e" }
 
 unset_main = { bg = "#bc8cff", fg = "#010409", bold = true }
-unset_alt  = { bg = "#161b22", fg = "#8b949e" }
+unset_alt  = { bg = "#141920", fg = "#8b949e" }
 
 # : ]]]
 
@@ -76,8 +76,8 @@ selected = { reversed = true }
 # : Tabs [[[
 
 [tabs]
-active = { fg = "#010409", bold = true, bg = "#58a6ff" }
-inactive = { fg = "#bc8cff", bg = "#010409" }
+active = { fg = "#000000", bold = true, bg = "#58a6ff" }
+inactive = { fg = "#bc8cff", bg = "#000000" }
 sep_inner = { open = "", close = "" }
 
 # : ]]]
@@ -105,7 +105,7 @@ hovered = { fg = "#5a00d9", underline = true }
 
 [which]
 cols = 3
-mask = { bg = "#010409" }
+mask = { bg = "#000000" }
 cand = { fg = "#58a6ff" }
 rest = { fg = "#010409" }
 desc = { fg = "#c9d1d9" }
@@ -120,7 +120,7 @@ separator_style = { fg = "#c9d1d9" }
 border   = { fg = "#58a6ff" }
 title    = { fg = "#58a6ff" }
 tbl_col  = { fg = "#c9d1d9" }
-tbl_cell = { fg = "#c9d1d9", bg = "#010409" }
+tbl_cell = { fg = "#c9d1d9", bg = "#000000" }
 
 # : ]]]
 
@@ -164,7 +164,7 @@ rules = [
     { mime = "application/{pdf,doc,rtf}", fg = "#a6e3a1" },
 
     # Special files
-    { mime = "*", is = "orphan", fg = "#fdd0ce", bg = "#8e0700" },
+    { mime = "*", is = "orphan", fg = "#fdd0ce", bg = "#8f0700" },
     { mime = "application/*exec*", fg = "#f85149" },
 
     # Fallback

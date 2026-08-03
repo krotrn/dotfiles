@@ -5,3 +5,15 @@ enabled = false
 
 [theme]
 mode = "dark"
+
+    [theme.templates]
+    community_ids = [ "antigravity", "neovim", "vscode", "hyprtoolkit", "bat", "lazygit", "yazi" ]
+
+[wallpaper.default]
+path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+
+[wallpaper.last]
+path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+
+[wallpaper.monitors.eDP-1]
+path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
