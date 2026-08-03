@@ -20,6 +20,10 @@ return {
       { "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
       { "<leader>fc", "<cmd>Telescope commands<CR>", desc = "Commands" },
       { "<leader>ft", "<cmd>TodoTelescope<CR>", desc = "Todo Comments" },
+      { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git Files" },
+      { "<leader>gs", "<cmd>Telescope git_status<CR>", desc = "Git Status" },
+      { "<leader>gc", "<cmd>Telescope git_commits<CR>", desc = "Git Commits" },
+      { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git Branches" },
     },
 
     opts = {

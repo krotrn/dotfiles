@@ -9,7 +9,12 @@ return {
       {
         "<leader>e",
         "<cmd>Yazi<CR>",
-        desc = "Open Yazi",
+        desc = "Open Yazi (Current File)",
+      },
+      {
+        "<leader>cw",
+        "<cmd>Yazi cwd<CR>",
+        desc = "Open Yazi (Working Directory)",
       },
     },
     opts = {},
