@@ -131,11 +131,6 @@ alias nitap-db='ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 5434:l
 alias nitap-db-stop='ssh REDACTED_HOST "docker stop pg_proxy"'
 export PATH="$HOME/.local/bin:$PATH"
 
-# fzf keybindings
-[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
-
-# fzf completion
-[ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git" --glob "!*.png" --glob "!*.jpg" --glob "!*.jpeg" --glob "!*.ico"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -236,6 +231,15 @@ eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd)"
 eval "$(direnv hook zsh)"
+# fzf keybindings & completion (enables Ctrl+R history search)
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --zsh 2>/dev/null)" || {
+    [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+    [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+  }
+  bindkey '^R' fzf-history-widget
+fi
+
 # pnpm
 export PNPM_HOME="/home/krotrn/.local/share/pnpm"
 case ":$PATH:" in
