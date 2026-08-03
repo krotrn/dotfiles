@@ -1,38 +1,35 @@
 return {
   {
-    "stevearc/conform.nvim",
-    event = { "BufWritePre" },
+    "RRethy/base16-nvim",
+    lazy = false,
+    priority = 1000,
+  },
 
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
-      formatters_by_ft = {
-        lua = { "stylua" },
-
-        javascript = { "prettier" },
-        javascriptreact = { "prettier" },
-
-        typescript = { "prettier" },
-        typescriptreact = { "prettier" },
-
-        json = { "prettier" },
-        yaml = { "prettier" },
-        html = { "prettier" },
-        css = { "prettier" },
-        markdown = { "prettier" },
-
-        cpp = { "clang_format" },
-        c = { "clang_format" },
-
-        java = { "google_java_format" },
-
-        python = { "ruff_format" },
-
-        sh = { "shfmt" },
+      options = {
+        theme = "auto",
+        globalstatus = true,
+        component_separators = { left = "", right = "" },
+        section_separators = { left = "", right = "" },
+        disabled_filetypes = {
+          statusline = { "snacks_dashboard" },
+        },
       },
-
-      format_on_save = {
-        timeout_ms = 1000,
-        lsp_format = "fallback",
+      sections = {
+        lualine_a = { "mode" },
+        lualine_b = { "branch", "diff", "diagnostics" },
+        lualine_c = {
+          { "filename", path = 1, symbols = { modified = " ● ", readonly = " 🔒 " } },
+        },
+        lualine_x = { "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = { "location" },
       },
+      extensions = { "lazy", "trouble" },
     },
   },
 }

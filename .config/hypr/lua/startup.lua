@@ -4,7 +4,6 @@
 -- Environment variables and exec-once services
 -- See: https://wiki.hypr.land/Configuring/Basics/Autostart/
 -- See: https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
-
 -- ── Desktop Session ──────────────────────────────────────────────
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
@@ -42,21 +41,19 @@ hl.on("hyprland.start", function()
 
     -- Polkit authentication agent (required)
     hl.exec_cmd(
-    "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || /usr/libexec/polkit-gnome-authentication-agent-1")
+        "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
 
     -- GNOME Keyring (optional - browser passwords)
-    hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
+    hl.exec_cmd("gnome-keyring-daemon --start --components=secrets --foreground")
 
     -- Idle daemon
-    hl.exec_cmd("hypridle &")
+    hl.exec_cmd("hypridle")
 
     -- Clipboard history
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
 
-    -- GTK double click titlebar behavior
-    hl.exec_cmd("gsettings set org.gnome.desktop.wm.preferences action-double-click-titlebar 'toggle-maximize'")
-
-    -- Hyprland plugin manager
-    hl.exec_cmd("hyprpm reload -n &")
+    -- Load Hyprland plugins (hyprpm), then re-parse config so guarded
+    -- plugin settings (hymission, hyprgrass) are applied without errors
+    hl.exec_cmd("hyprpm reload -n && hyprctl reload")
 end)

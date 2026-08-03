@@ -162,36 +162,38 @@ hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))  -
 -- ═══════════════════════════════════════════════════════════════════
 -- https://github.com/gfhdhytghd/hymission
 
-hl.bind("SUPER + TAB", hl.plugin.hymission.toggle)
-hl.bind("SUPER + SHIFT + TAB", function()
-    hl.plugin.hymission.toggle("reverse")
-end)
-hl.bind("SUPER + CTRL + TAB", hl.plugin.hymission.close)
-hl.bind("SUPER + CTRL + A", function()
-    hl.plugin.hymission.toggle("forceall")
-end)
-hl.bind("SUPER + CTRL + C", function()
-    hl.plugin.hymission.toggle("onlycurrentworkspace")
-end)
-hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout)
+if hl.plugin and hl.plugin.hymission then
+    hl.bind("SUPER + TAB", hl.plugin.hymission.toggle)
+    hl.bind("SUPER + SHIFT + TAB", function()
+        hl.plugin.hymission.toggle("reverse")
+    end)
+    hl.bind("SUPER + CTRL + TAB", hl.plugin.hymission.close)
+    hl.bind("SUPER + CTRL + A", function()
+        hl.plugin.hymission.toggle("forceall")
+    end)
+    hl.bind("SUPER + CTRL + C", function()
+        hl.plugin.hymission.toggle("onlycurrentworkspace")
+    end)
+    hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout)
 
--- Hymission Gestures
-hl.plugin.hymission.gesture({
-    fingers   = 4,
-    direction = "vertical",
-    action    = "toggle",
-    recommand = true,
-})
+    -- Hymission Gestures
+    hl.plugin.hymission.gesture({
+        fingers   = 4,
+        direction = "vertical",
+        action    = "toggle",
+        recommand = true,
+    })
 
-hl.plugin.hymission.gesture({
-    fingers   = 3,
-    direction = "horizontal",
-    action    = "scroll",
-    mode      = "layout",
-})
+    hl.plugin.hymission.gesture({
+        fingers   = 3,
+        direction = "horizontal",
+        action    = "scroll",
+        mode      = "layout",
+    })
 
-hl.plugin.hymission.gesture({
-    fingers   = 3,
-    direction = "horizontal",
-    action    = "workspace",
-})
+    hl.plugin.hymission.gesture({
+        fingers   = 3,
+        direction = "horizontal",
+        action    = "workspace",
+    })
+end

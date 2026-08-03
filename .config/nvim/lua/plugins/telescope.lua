@@ -14,6 +14,12 @@ return {
       { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Live Grep" },
       { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "Help" },
+      { "<leader>fr", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>fs", "<cmd>Telescope grep_string<CR>", desc = "Grep Word Under Cursor" },
+      { "<leader>fd", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
+      { "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
+      { "<leader>fc", "<cmd>Telescope commands<CR>", desc = "Commands" },
+      { "<leader>ft", "<cmd>TodoTelescope<CR>", desc = "Todo Comments" },
     },
 
     opts = {
