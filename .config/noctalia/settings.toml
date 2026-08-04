@@ -1,25 +1,52 @@
 config_version = 8
 
+[bar.default]
+smart_auto_hide = false
+
+[battery]
+warning_threshold = 25
+
 [dock]
 enabled = false
 
+[lockscreen]
+blurred_desktop = true
+
+[plugins]
+enabled = [ "frai3mega/battery-graph", "noctalia/wallhaven", "nzlov/daily-wallpaper" ]
+
 [shell]
 avatar_path = "/home/krotrn/Documents/WhatsApp Image 2026-08-03 at 11.00.58 PM.jpeg"
+offline_mode = false
+polkit_agent = true
 
     [shell.panel]
     wallpaper_placement = "floating"
+
+    [shell.screenshot]
+    remember_last_region = true
 
 [theme]
 mode = "dark"
 
     [theme.templates]
-    community_ids = [ "antigravity", "neovim", "vscode", "hyprtoolkit", "bat", "lazygit", "yazi" ]
+    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kitty", "qt", "starship", "sway", "wezterm" ]
+    community_ids = [ "antigravity", "neovim", "vscode", "rofi", "hyprtoolkit", "bat", "lazygit", "yazi" ]
 
-[wallpaper.default]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+[wallpaper]
+transition_on_startup = true
 
-[wallpaper.last]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+    [wallpaper.automation]
+    enabled = true
 
-[wallpaper.monitors.eDP-1]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+    [wallpaper.default]
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+
+    [wallpaper.last]
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+
+    [wallpaper.monitors.eDP-1]
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+
+[widget.audio_visualizer]
+color_2 = "secondary"

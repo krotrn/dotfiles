@@ -7,7 +7,7 @@
 -- ── Desktop Session ──────────────────────────────────────────────
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
-
+hl.env("TERMINAL", "wezterm")
 -- ── Qt Theming ───────────────────────────────────────────────────
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
@@ -32,28 +32,27 @@ hl.env("__GL_VRR_ALLOWED", "1")
 
 -- ── Autostart (exec-once) ────────────────────────────────────────
 hl.on("hyprland.start", function()
-    -- D-Bus environment (must be first for portals/keyring)
-    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	-- D-Bus environment (must be first for portals/keyring)
+	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-    -- Noctalia shell (must start first per Noctalia v5 docs)
-    hl.exec_cmd("noctalia")
+	-- Noctalia shell (must start first per Noctalia v5 docs)
+	hl.exec_cmd("noctalia")
 
-    -- Polkit authentication agent (required)
-    hl.exec_cmd(
-        "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+	-- Polkit authentication agent (required)
+	hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
 
-    -- GNOME Keyring (optional - browser passwords)
-    hl.exec_cmd("gnome-keyring-daemon --start --components=secrets --foreground")
+	-- GNOME Keyring (optional - browser passwords)
+	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets --foreground")
 
-    -- Idle daemon
-    hl.exec_cmd("hypridle")
+	-- Idle daemon
+	hl.exec_cmd("hypridle")
 
-    -- Clipboard history
-    hl.exec_cmd("wl-paste --type text --watch cliphist store")
-    hl.exec_cmd("wl-paste --type image --watch cliphist store")
+	-- Clipboard history
+	hl.exec_cmd("wl-paste --type text --watch cliphist store")
+	hl.exec_cmd("wl-paste --type image --watch cliphist store")
 
-    -- Load Hyprland plugins (hyprpm), then re-parse config so guarded
-    -- plugin settings (hymission, hyprgrass) are applied without errors
-    hl.exec_cmd("hyprpm reload -n && hyprctl reload")
+	-- Load Hyprland plugins (hyprpm), then re-parse config so guarded
+	-- plugin settings (hymission, hyprgrass) are applied without errors
+	hl.exec_cmd("hyprpm reload -n && hyprctl reload")
 end)
