@@ -123,12 +123,6 @@ source $ZSH/oh-my-zsh.sh
 
 
 alias battery-health="awk 'NR==FNR{a=\$1; next} {printf \"%.1f%%\n\", a*100/\$1}' /sys/class/power_supply/BAT1/charge_full /sys/class/power_supply/BAT1/charge_full_design"
-alias connect-db='ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 5433:localhost:5433 REDACTED_HOST "docker run --rm -d --network campus-connect_campus_connect_net --name pg_proxy -p 127.0.0.1:5433:5432 alpine/socat TCP-LISTEN:5432,fork,reuseaddr TCP:campus_connect_db:5432 2>/dev/null || true"'
-alias connect-db-stop='ssh REDACTED_HOST "docker stop pg_proxy"'
-
-alias nitap-db='ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 5434:localhost:5434 REDACTED_HOST "docker stop pg_proxy 2>/dev/null; docker run --rm -d --network nitapacin_nitap_net --name pg_proxy -p 127.0.0.1:5434:5432 alpine/socat TCP-LISTEN:5432,fork,reuseaddr TCP:nitap_postgres:5432 2>/dev/null || true"'
-
-alias nitap-db-stop='ssh REDACTED_HOST "docker stop pg_proxy"'
 export PATH="$HOME/.local/bin:$PATH"
 
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git" --glob "!*.png" --glob "!*.jpg" --glob "!*.jpeg" --glob "!*.ico"'
@@ -218,7 +212,7 @@ export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
 # bun completions
-[ -s "/home/krotrn/.bun/_bun" ] && source "/home/krotrn/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -226,7 +220,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 
 # Added by Antigravity CLI installer
-export PATH="/home/krotrn/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd)"
@@ -241,10 +235,14 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # pnpm
-export PNPM_HOME="/home/krotrn/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME/bin:"*) ;;
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
 alias nd='killall -q -9 noctalia; sleep 2; noctalia >/dev/null 2>&1 & disown'
+
+# Local unversioned configuration / secrets
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+

@@ -15,4 +15,4 @@ export NVM_DIR="$HOME/.nvm"
 
 
 # Added by Antigravity CLI installer
-export PATH="/home/krotrn/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"

@@ -36,7 +36,21 @@ mkdir -p "$HOME/.config"
 for item in "$ROOT/.config"/*/; do
     [ -d "$item" ] || continue
     dirname=$(basename "$item")
-    safe_link "$item" "$HOME/.config/$dirname"
+    if [ "$dirname" = "gtk-3.0" ]; then
+        mkdir -p "$HOME/.config/gtk-3.0"
+        for subitem in "$item"*; do
+            [ -e "$subitem" ] || continue
+            subname=$(basename "$subitem")
+            if [ "$subname" = "bookmarks" ]; then
+                sed "s|\$HOME|$HOME|g" "$subitem" > "$HOME/.config/gtk-3.0/bookmarks"
+                echo "  ✔ gtk-3.0/bookmarks (templated)"
+            else
+                safe_link "$subitem" "$HOME/.config/gtk-3.0/$subname"
+            fi
+        done
+    else
+        safe_link "$item" "$HOME/.config/$dirname"
+    fi
 done
 
 # ── Symlink .config files (starship.toml, mimeapps.list, etc.) ──

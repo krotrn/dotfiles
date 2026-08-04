@@ -57,10 +57,6 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
         show_unlock_hint = true
         show_weather = true
 
-[plugin_settings."cleboost/hotspot"]
-password = "REDACTED"
-ssid = "PC Hotspot"
-
 [plugins]
 enabled = [ "frai3mega/battery-graph", "nzlov/daily-wallpaper", "noctalia/wallhaven", "cleboost/hotspot" ]
 
@@ -93,16 +89,16 @@ wallpaper_scheme = "m3-content"
     builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "qt", "starship", "sway", "wezterm" ]
 
 [wallpaper.default]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
+path = "~/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
 
 [wallpaper.last]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
+path = "~/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
 
 [wallpaper.monitors.eDP-1]
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
+path = "~/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-03.jpg"
 
 [[wallpaper.favorite]]
 community_palette = "GitHub Dark"
 palette_source = "community"
-path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-07-28.jpg"
+path = "~/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-07-28.jpg"
 theme_mode = "dark"

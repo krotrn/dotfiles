@@ -1,3 +1,7 @@
+# Local / secret shell configs
+.zshrc.local
+*.local
+
 # Editor
 *.swp
 *.swo

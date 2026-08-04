@@ -29,7 +29,7 @@ alias c="clear"
 
 
 # Added by Antigravity CLI installer
-set -gx PATH "/home/krotrn/.local/bin" $PATH
+set -gx PATH "$HOME/.local/bin" $PATH
 
 # Locale
 set -gx LANG en_IN.UTF-8

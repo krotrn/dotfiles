@@ -16,7 +16,7 @@ blurred_desktop = true
 enabled = [ "frai3mega/battery-graph", "noctalia/wallhaven", "nzlov/daily-wallpaper" ]
 
 [shell]
-avatar_path = "/home/krotrn/Documents/WhatsApp Image 2026-08-03 at 11.00.58 PM.jpeg"
+avatar_path = "~/.face.icon"
 offline_mode = false
 polkit_agent = true
 
@@ -40,13 +40,13 @@ transition_on_startup = true
     enabled = true
 
     [wallpaper.default]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
 
     [wallpaper.last]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
 
 [widget.audio_visualizer]
 color_2 = "secondary"
