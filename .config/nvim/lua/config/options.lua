@@ -2,7 +2,10 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.opt.number = true
 vim.opt.relativenumber = true
-
+vim.opt.confirm = true
+vim.opt.virtualedit = "block"
+vim.opt.pumheight = 10
+vim.opt.laststatus = 3
 vim.opt.mouse = "a"
 
 vim.opt.expandtab = true

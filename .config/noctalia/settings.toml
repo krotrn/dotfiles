@@ -1,10 +1,28 @@
 config_version = 8
 
 [bar.default]
+center = [ "clock", "screenshot" ]
+end = [
+    "media",
+    "tray",
+    "notifications",
+    "clipboard",
+    "network",
+    "bluetooth",
+    "volume",
+    "brightness",
+    "battery",
+    "wallhaven",
+    "session"
+]
 smart_auto_hide = false
+start = [ "workspaces", "audio_visualizer", "gamermode" ]
 
 [battery]
 warning_threshold = 25
+
+[control_center.calendar]
+show_events_card = false
 
 [dock]
 enabled = false
@@ -12,8 +30,22 @@ enabled = false
 [lockscreen]
 blurred_desktop = true
 
+[plugin_settings."damian-ds7/battery-threshold"]
+battery_device = "/sys/class/power_supply/BAT1"
+
+[plugin_settings."nomadcxx/gamer-mode"]
+main_open_near_click = true
+main_placement = "floating"
+
 [plugins]
-enabled = [ "frai3mega/battery-graph", "noctalia/wallhaven", "nzlov/daily-wallpaper" ]
+enabled = [
+    "frai3mega/battery-graph",
+    "noctalia/wallhaven",
+    "nzlov/daily-wallpaper",
+    "damian-ds7/battery-threshold",
+    "nomadcxx/gamer-mode",
+    "yocraft/web-launcher"
+]
 
 [shell]
 avatar_path = "~/.face.icon"
@@ -40,13 +72,19 @@ transition_on_startup = true
     enabled = true
 
     [wallpaper.default]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
 
     [wallpaper.last]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-05.jpg"
+    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-04.jpg"
 
 [widget.audio_visualizer]
 color_2 = "secondary"
+
+[widget.gamermode]
+type = "nomadcxx/gamer-mode:gamermode"
+
+[widget.wallhaven]
+type = "noctalia/wallhaven:wallhaven"

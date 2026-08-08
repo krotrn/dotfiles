@@ -2,7 +2,7 @@ return {
 	{
 		"mason-org/mason.nvim",
 		cmd = "Mason",
-		opts = {},
+		opts = { ensure_installed = { "codelldb" } },
 	},
 
 	{
@@ -73,6 +73,13 @@ return {
 				},
 			})
 
+			vim.lsp.config("clangd", {
+				cmd = {
+					"clangd",
+					"--header-insertion=never",
+					"--completion-style=detailed",
+				},
+			})
 			-- Enable all LSP servers
 			vim.lsp.enable({
 				"lua_ls",
