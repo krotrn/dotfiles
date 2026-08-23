@@ -164,7 +164,7 @@ rules = [
     { mime = "application/{pdf,doc,rtf}", fg = "#bc8cff" },
 
     # Special files
-    { mime = "*", is = "orphan", fg = "#fdd0ce", bg = "#8f0700" },
+    { mime = "*", is = "orphan", fg = "#fdd0ce", bg = "#8a0b04" },
     { mime = "application/*exec*", fg = "#f85149" },
 
     # Fallback

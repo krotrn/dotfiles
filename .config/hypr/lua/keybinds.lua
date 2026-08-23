@@ -141,10 +141,6 @@ hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"),
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),
     { locked = true, repeating = true })
 
--- Clipboard history (cliphist)
-hl.bind("SUPER + V", hl.dsp.exec_cmd(
-    "cliphist list | wofi --dmenu | cliphist decode | wl-copy"))        -- Clipboard History
-
 -- Group (tabbed windows)
 hl.bind("SUPER + G", hl.dsp.group.toggle())                            -- Toggle Group
 hl.bind("SUPER + SHIFT + G", hl.dsp.exec_cmd("hyprctl dispatch lockgroups toggle")) -- Lock Group

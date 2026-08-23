@@ -144,6 +144,7 @@ alias lt='eza --tree --icons --level=2'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias mkdir='mkdir -pv'
+alias cat='bat'
 
 alias ports='ss -tulnp'
 alias myip='curl -s ifconfig.me'
