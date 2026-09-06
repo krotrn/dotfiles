@@ -80,7 +80,8 @@ hl.bind("ALT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hypr
 hl.bind("SUPER + SHIFT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m region")) -- Screenshot Region
 hl.bind("SUPER + A",
     hl.dsp.exec_cmd(
-        'grim -g "$(slurp)" - | satty --filename - --output-filename ~/Pictures/Screenshots/Screenshot-$(date \'+%Y%m%d-%H:%M:%S\').png')) -- Screenshot w/ Editor
+        'noctalia msg screenshot-region')) -- Screenshot w/ Editor
+hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region")) -- Screenshot Region (Noctalia)
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 5. WORKSPACES
@@ -140,6 +141,8 @@ hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"),
     { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),
     { locked = true, repeating = true })
+
+hl.bind("SUPER + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard")) -- Clipboard Manager
 
 -- Group (tabbed windows)
 hl.bind("SUPER + G", hl.dsp.group.toggle())                            -- Toggle Group

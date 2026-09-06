@@ -1,4 +1,4 @@
-config_version = 13
+config_version = 14
 
 [bar.default]
 center = [ "clock", "screenshot" ]
@@ -16,10 +16,12 @@ end = [
     "session"
 ]
 smart_auto_hide = false
-start = [ "workspaces", "audio_visualizer", "gamermode" ]
+start = [ "workspaces", "audio_visualizer", "asus_fan" ]
 
 [battery]
 warning_threshold = 25
+
+[calendar]
 
 [control_center.calendar]
 show_events_card = false
@@ -70,6 +72,13 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
 [plugin_settings."damian-ds7/battery-threshold"]
 battery_device = "/sys/class/power_supply/BAT1"
 
+[plugin_settings."kv7499/asus-fan"]
+panel_open_near_click = true
+panel_placement = "floating"
+
+[plugin_settings."noctalia/wallhaven"]
+download_dir = "/home/krotrn/Pictures"
+
 [plugin_settings."nomadcxx/gamer-mode"]
 main_open_near_click = true
 main_placement = "floating"
@@ -78,10 +87,10 @@ main_placement = "floating"
 enabled = [
     "frai3mega/battery-graph",
     "noctalia/wallhaven",
-    "nzlov/daily-wallpaper",
     "damian-ds7/battery-threshold",
     "nomadcxx/gamer-mode",
-    "yocraft/web-launcher"
+    "yocraft/web-launcher",
+    "kv7499/asus-fan"
 ]
 
 [shell]
@@ -93,35 +102,41 @@ polkit_agent = true
     wallpaper_placement = "floating"
 
     [shell.screenshot]
-    remember_last_region = true
+    confirm_region = true
+    directory = "/home/krotrn/Pictures/Screenshot"
+    remember_last_region = false
 
 [theme]
 mode = "dark"
+source = "community"
+wallpaper_scheme = "m3-content"
 
     [theme.templates]
     builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kitty", "qt", "starship", "sway", "wezterm" ]
     community_ids = [ "antigravity", "neovim", "vscode", "rofi", "hyprtoolkit", "bat", "lazygit", "yazi" ]
 
 [wallpaper]
+directory = "/home/krotrn/Pictures"
 transition_on_startup = true
 
     [wallpaper.automation]
     enabled = true
+    recursive = false
 
     [wallpaper.default]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-22.jpg"
+    path = "/home/krotrn/Pictures/wallpaper.png"
 
     [wallpaper.last]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-22.jpg"
+    path = "/home/krotrn/Pictures/wallpaper.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/krotrn/Pictures/Wallpapers/daily-wallpaper/bing-en-us-2026-08-22.jpg"
+    path = "/home/krotrn/Pictures/wallpaper.png"
+
+[widget.asus_fan]
+type = "kv7499/asus-fan:asus_fan"
 
 [widget.audio_visualizer]
 color_2 = "secondary"
-
-[widget.gamermode]
-type = "nomadcxx/gamer-mode:gamermode"
 
 [widget.wallhaven]
 type = "noctalia/wallhaven:wallhaven"

@@ -104,7 +104,7 @@ if hl.plugin.hymission ~= nil then
                 max_preview_scale    = 0.95,
 
                 -- Behavior
-                expand_selected_window         = 1,
+                selected_expand_scale          = 1.18,
                 hover_expand_scale             = 1.18,
                 overview_focus_follows_mouse   = 1,
                 multi_workspace_sort_recent_first = 1,

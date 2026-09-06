@@ -15,4 +15,15 @@
   "git.suggestSmartCommit": false,
   "editor.wordWrap": "on",
   "editor.wrapOnEscapedLineFeeds": true,
+  "editor.hover.showLongLineWarning": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "material-code.primaryColor": ""
 }

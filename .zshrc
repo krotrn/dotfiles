@@ -208,7 +208,7 @@ alias reload='source ~/.zshrc'        # reload without restarting terminal
 alias df='df -h'                      # human readable disk usage
 alias du='du -sh'                     # human readable dir size
 alias free='free -h'                  # human readable memory
-
+alias dcf='docker rm -f $(docker ps -aq) && docker network prune -f && docker volume prune -f'
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
@@ -224,7 +224,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
-eval "$(fnm env --use-on-cd)"
+eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(direnv hook zsh)"
 # fzf keybindings & completion (enables Ctrl+R history search)
 if command -v fzf >/dev/null 2>&1; then
