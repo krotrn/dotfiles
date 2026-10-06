@@ -13,15 +13,17 @@ hl.env("QT_CURSOR_THEME",  "Bibata-Modern-Classic")
 hl.env("QT_CURSOR_SIZE",   "24")
 
 -- ── General ──────────────────────────────────────────────────────
+-- Edge-to-edge layout: no borders, hairline gaps. Focus is shown by
+-- dimming inactive windows (see decoration). Border/group colors come
+-- from Noctalia (noctalia.lua), so none are set here.
 hl.config({
     general = {
-        gaps_in    = 2,
-        gaps_out   = 2,
-        border_size = 2,
+        gaps_in     = 1,
+        gaps_out    = 1,
+        border_size = 0,
 
-        col = {
-            active_border   = { colors = {"rgba(21215fff)", "rgba(21215fff)"}, angle = 45 },
-            inactive_border = { colors = {"rgba(070722cc)", "rgba(070722cc)"}, angle = 45 },
+        snap = {
+            enabled = true,   -- floating window snapping
         },
 
         resize_on_border = true,
@@ -34,12 +36,17 @@ hl.config({
 hl.config({
     decoration = {
         rounding           = 0,
+        -- Keep every window fully opaque so code/docs in an unfocused
+        -- window stay readable. Terminal translucency is handled by the
+        -- terminal itself (background only, text stays crisp).
         active_opacity     = 1.0,
-        inactive_opacity   = 0.85,
+        inactive_opacity   = 1.0,
         fullscreen_opacity = 1.0,
 
+        -- Without borders, dimming is the focus indicator.
         dim_inactive       = true,
-        dim_strength       = 0.15,
+        dim_strength       = 0.2,
+        dim_special        = 0.4,   -- backdrop behind the scratchpad
 
         shadow = {
             enabled      = true,
@@ -60,18 +67,6 @@ hl.config({
             special          = true,
             popups           = true,
             popups_ignorealpha = 0.2,
-        },
-    },
-})
-
--- ── Group ────────────────────────────────────────────────────────
-hl.config({
-    group = {
-        col = {
-            border_active        = { colors = {"rgba(21215fff)", "rgba(21215fff)"}, angle = 45 },
-            border_inactive      = { colors = {"rgba(070722cc)", "rgba(070722cc)"}, angle = 45 },
-            border_locked_active = { colors = {"rgba(21215fff)", "rgba(21215fff)"}, angle = 45 },
-            border_locked_inactive = { colors = {"rgba(070722cc)", "rgba(070722cc)"}, angle = 45 },
         },
     },
 })

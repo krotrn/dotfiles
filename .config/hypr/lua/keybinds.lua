@@ -94,6 +94,10 @@ for i = 1, 10 do
     hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i })) -- Move to Workspace N
 end
 
+-- Scratchpad: a dimmed overlay workspace for a terminal, notes, docs, etc.
+hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("scratch"))                    -- Toggle Scratchpad
+hl.bind("SUPER + ALT + S", hl.dsp.window.move({ workspace = "special:scratch" }))   -- Send to Scratchpad
+
 -- Workspace navigation
 hl.bind("SUPER + CTRL + Down", hl.dsp.focus({ workspace = "empty" }))            -- Nearest Empty Workspace
 hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "e+1" }))               -- Scroll Workspace Forward
@@ -147,8 +151,10 @@ hl.bind("SUPER + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard")) -- 
 -- Group (tabbed windows)
 hl.bind("SUPER + G", hl.dsp.group.toggle())                            -- Toggle Group
 hl.bind("SUPER + SHIFT + G", hl.dsp.exec_cmd("hyprctl dispatch lockgroups toggle")) -- Lock Group
-hl.bind("ALT + Left", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"))   -- Prev Tab
-hl.bind("ALT + Right", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"))  -- Next Tab
+-- On SUPER so plain ALT+Left/Right stays free for word-jump in shells/editors
+-- and back/forward in browsers.
+hl.bind("SUPER + ALT + Left", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"))   -- Prev Tab
+hl.bind("SUPER + ALT + Right", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"))  -- Next Tab
 
 -- Urgent window focus
 hl.bind("SUPER + U", hl.dsp.focus({ window = "urgent" }))              -- Focus Urgent

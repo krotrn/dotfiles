@@ -9,42 +9,21 @@ config.hyperlink_rules = wezterm.default_hyperlink_rules()
 config.font_size = 12.5
 config.line_height = 1.1
 config.default_prog = { "/usr/bin/zsh", "-l" }
--- Color Scheme
-config.colors = {
-  foreground = "#E6E6E6",
-  background = "#000000",
-  cursor_bg = "#FFFFFF",
-  cursor_fg = "#000000",
-  cursor_border = "#FFFFFF",
-  selection_bg = "#2D2D2D",
-  selection_fg = "#FFFFFF",
-
-  ansi = {
-    "#000000",
-    "#FF5F56",
-    "#27C93F",
-    "#F8D866",
-    "#4DA3FF",
-    "#C678DD",
-    "#56B6C2",
-    "#D9D9D9",
-  },
-
-  brights = {
-    "#666666",
-    "#FF6E67",
-    "#5AF78E",
-    "#F4F99D",
-    "#57C7FF",
-    "#FF6AC1",
-    "#9AEDFE",
-    "#FFFFFF",
-  },
-}
+-- Colors come from the Noctalia-generated scheme in colors/Noctalia.toml
+-- (set via config.color_scheme below) so the terminal follows theme changes.
 
 -- Window
 config.window_decorations = "NONE"
-config.enable_tab_bar = false
+-- Tab bar only appears once a second tab is opened (Ctrl+Shift+T)
+config.enable_tab_bar = true
+config.hide_tab_bar_if_only_one_tab = true
+config.use_fancy_tab_bar = false
+config.tab_bar_at_bottom = true
+config.tab_max_width = 32
+-- Tiling WM: changing font size must not try to resize the window
+config.adjust_window_size_when_changing_font_size = false
+-- Dim unfocused panes so the active split is obvious
+config.inactive_pane_hsb = { saturation = 0.9, brightness = 0.6 }
 config.window_close_confirmation = "NeverPrompt"
 config.window_padding = {
 	left = 8,
@@ -100,7 +79,19 @@ config.keys = {
 	{
 		key = "w",
 		mods = "CTRL|SHIFT",
-		action = wezterm.action.CloseCurrentTab({ confirm = false }),
+		action = wezterm.action.CloseCurrentPane({ confirm = false }), -- closes the tab when it is the last pane
+	},
+	-- Panes: split right / split down. Defaults still apply: Ctrl+Shift+Arrows
+	-- to move between panes, Ctrl+Shift+Z to zoom, Ctrl+Shift+X copy mode.
+	{
+		key = "d",
+		mods = "CTRL|SHIFT",
+		action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	},
+	{
+		key = "e",
+		mods = "CTRL|SHIFT",
+		action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
 	},
 }
 

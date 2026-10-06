@@ -1,7 +1,7 @@
 -- ╔══════════════════════════════════════════════════════════════════╗
 -- ║                      WINDOW RULES                              ║
 -- ╚══════════════════════════════════════════════════════════════════╝
--- Window-specific behavior: floating, opacity, idle inhibit, PiP
+-- Window-specific behavior: floating, idle inhibit, PiP
 -- See: https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 
 -- ═══════════════════════════════════════════════════════════════════
@@ -50,76 +50,6 @@ hl.window_rule({
 	move = { "73%", "72%" },
 	size = "25% 25%",
 })
-
--- ═══════════════════════════════════════════════════════════════════
--- OPACITY RULES
--- ═══════════════════════════════════════════════════════════════════
-
-local opacity_classes = {
-	-- Browsers
-	"^firefox$",
-	"^brave-browser$",
-	-- Editors
-	"^code-oss$",
-	"^[Cc]ode$",
-	"^code-url-handler$",
-	"^code-insiders-url-handler$",
-	-- Terminals
-	"^wezterm$",
-	"^foot$",
-	-- File managers & tools
-	"^org\\.kde\\.dolphin$",
-	"^org\\.kde\\.ark$",
-	"^nwg-look$",
-	"^qt5ct$",
-	"^qt6ct$",
-	"^extsource$",
-	"^kvantummanager$",
-	-- System
-	"^org\\.pulseaudio\\.pavucontrol$",
-	"^blueman-manager$",
-	"^nm-applet$",
-	"^nm-connection-editor$",
-	-- Auth agents
-	"^org\\.kde\\.polkit-kde-authentication-agent-1$",
-	"^polkit-gnome-authentication-agent-1$",
-	-- Portals
-	"^org\\.freedesktop\\.impl\\.portal\\.desktop\\.gtk$",
-	"^org\\.freedesktop\\.impl\\.portal\\.desktop\\.hyprland$",
-	-- Gaming
-	"^[Ss]team$",
-	"^steamwebhelper$",
-	-- Media
-	"^[Ss]potify$",
-	-- Apps
-	"^com\\.github\\.rafostar\\.Clapper$",
-	"^com\\.github\\.tchx84\\.Flatseal$",
-	"^hu\\.kramo\\.Cartridges$",
-	"^com\\.obsproject\\.Studio$",
-	"^gnome-boxes$",
-	"^vesktop$",
-	"^discord$",
-	"^WebCord$",
-	"^ArmCord$",
-	"^app\\.drey\\.Warp$",
-	"^net\\.davidotek\\.pupgui2$",
-	"^yad$",
-	"^Signal$",
-	"^io\\.github\\.alainm23\\.planify$",
-	"^io\\.gitlab\\.theevilskeleton\\.Upscaler$",
-	"^com\\.github\\.unrud\\.VideoDownloader$",
-	"^io\\.gitlab\\.adhami3310\\.Impression$",
-	"^io\\.missioncenter\\.MissionCenter$",
-	"^io\\.github\\.flattool\\.Warehouse$",
-}
-
-for _, cls in ipairs(opacity_classes) do
-	hl.window_rule({ match = { class = cls }, opacity = "1.00" })
-end
-
--- Spotify by title
-hl.window_rule({ match = { initial_title = "^Spotify Free$" }, opacity = "1.00" })
-hl.window_rule({ match = { initial_title = "^Spotify Premium$" }, opacity = "1.00" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- FLOATING UTILITIES
@@ -173,17 +103,17 @@ hl.window_rule({
 -- ═══════════════════════════════════════════════════════════════════
 -- FILE DIALOGS — float and center
 -- ═══════════════════════════════════════════════════════════════════
+-- Match whole dialog titles only: a bare "^Open.*" also caught browser and
+-- editor windows whose title happened to start with "Open"/"Select"/etc.
 hl.window_rule({
-	match = { title = "^(Open|Save|Save As|Select|Choose|Pick).*$" },
+	match = { title = "^(Open|Open Files?|Open Folder|Save|Save As|Save File|Select (a )?Files?|Select Folder|Choose Files?|File Upload)$" },
 	float = true,
 	center = true,
 	size = { 900, 600 },
 })
-
--- ═══════════════════════════════════════════════════════════════════
--- WEZTERM — terminal opacity
--- ═══════════════════════════════════════════════════════════════════
 hl.window_rule({
-	match = { class = "^org\\.wezfurlong\\.wezterm$" },
-	opacity = "0.95 0.90",
+	match = { class = "^(xdg-desktop-portal-gtk|org\\.freedesktop\\.impl\\.portal\\.desktop\\..*)$" },
+	float = true,
+	center = true,
+	size = { 900, 600 },
 })

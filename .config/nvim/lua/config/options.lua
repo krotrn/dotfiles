@@ -36,3 +36,8 @@ vim.opt.inccommand = "split"
 vim.opt.sidescrolloff = 8
 vim.opt.timeoutlen = 300
 vim.opt.fillchars = { eob = " " }
+-- Borders on floating windows (LSP hover, signature help, diagnostics) so
+-- they don't blend into the buffer on a black background.
+vim.o.winborder = "rounded"
+-- Scroll wrapped lines by screen line instead of jumping whole lines.
+vim.opt.smoothscroll = true

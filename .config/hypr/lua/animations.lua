@@ -15,6 +15,8 @@ hl.curve("wind", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
 hl.curve("smoothOut", { type = "bezier", points = { { 0.36, 0 }, { 0.66, -0.56 } } })
 hl.curve("smoothIn", { type = "bezier", points = { { 0.25, 1 }, { 0.5, 1 } } })
 hl.curve("liner", { type = "bezier", points = { { 1, 1 }, { 1, 1 } } })
+-- easeOutQuint: fast start, long soft landing, no overshoot
+hl.curve("glide", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
 
 -- Modern Spring physics
 hl.curve("bouncy", { type = "spring", mass = 1, stiffness = 85, dampening = 14 })
@@ -29,7 +31,9 @@ hl.animation({ leaf = "border", enabled = true, speed = 2, bezier = "liner" })
 hl.animation({ leaf = "borderangle", enabled = true, speed = 40, bezier = "liner", style = "loop" })
 hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "smoothIn" })
 
-hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind", style = "slidefade 20%" })
+-- Plain "slide" so a 3-finger swipe continues 1:1 from where the fingers let
+-- go (slidefade switched to a short fade on release, which looked like a jump).
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "glide", style = "slide" })
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 5, bezier = "wind", style = "slidevert" })
 
 -- ── Layer Animations ─────────────────────────────────────────────

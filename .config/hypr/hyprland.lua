@@ -10,7 +10,6 @@
 -- The old .conf files are preserved alongside for reference.
 
 -- ── Load Modules ─────────────────────────────────────────────────
--- ── Load Modules ─────────────────────────────────────────────────
 local modules = {
     "lua.monitors",
     "lua.startup",
@@ -69,17 +68,6 @@ hl.config({
     },
 })
 
--- ── Snap (floating window snapping) ──────────────────────────────
-hl.config({
-    general = {
-        snap = {
-            enabled = true,
-        },
-        gaps_in = 1,
-        gaps_out = 1,
-        border_size = 0,
-    },
-})
 
 -- ── Permissions ──────────────────────────────────────────────────
 hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")

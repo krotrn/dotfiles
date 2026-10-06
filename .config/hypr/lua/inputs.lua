@@ -32,6 +32,16 @@ hl.config({
 
 
 
+-- 3-finger swipe left/right switches workspace. Swiping past the last
+-- workspace creates a new empty one (workspace_swipe_create_new).
+hl.config({
+    gestures = {
+        workspace_swipe_create_new = true,
+        workspace_swipe_distance   = 300,   -- px of swipe for a full switch
+        workspace_swipe_cancel_ratio = 0.3, -- release before 30% to snap back
+    },
+})
+
 hl.gesture({
     fingers = 3,
     direction = "horizontal",

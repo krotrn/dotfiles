@@ -4,18 +4,20 @@
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 HISTFILE=~/.zsh_history
-setopt HIST_IGNORE_DUPS
+setopt EXTENDED_HISTORY         # store timestamps + durations
+setopt HIST_IGNORE_ALL_DUPS     # keep only the newest copy of a command
 setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
 setopt SHARE_HISTORY
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""   # prompt is drawn by starship (see bottom of file)
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -82,11 +84,11 @@ plugins=(
   sudo
   npm
   zsh-autosuggestions
-  zsh-syntax-highlighting
   docker
   docker-compose
   extract
   colored-man-pages
+  zsh-syntax-highlighting   # must stay last
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -127,15 +129,27 @@ export PATH="$HOME/.local/bin:$PATH"
 
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git" --glob "!*.png" --glob "!*.jpg" --glob "!*.jpeg" --glob "!*.ico"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 
+# Colors use ANSI names so fzf follows the terminal (Noctalia) palette.
 export FZF_DEFAULT_OPTS="
 --height=40%
 --layout=reverse
---border
---preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}'
---preview-window=right:60%:wrap
+--border=rounded
+--info=inline-right
+--prompt='❯ '
+--pointer='▌'
+--marker='┃'
+--color=fg:-1,bg:-1,hl:blue:bold,fg+:bright-white,bg+:black,hl+:bright-blue:bold
+--color=info:bright-black,prompt:magenta,pointer:blue,marker:green,spinner:magenta,header:cyan
+--color=border:bright-black,separator:bright-black,scrollbar:bright-black,gutter:-1
 --bind 'ctrl-p:toggle-preview'
 "
+# Previews per widget: files get bat, dirs get a tree, history gets the full
+# command (long one-liners are readable without the 60% preview pane eating space).
+export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range=:300 {} 2>/dev/null || file {}' --preview-window=right:60%:wrap"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --icons --color=always --level=2 {} | head -200'"
+export FZF_CTRL_R_OPTS="--preview 'echo {2..}' --preview-window=down:3:hidden:wrap --bind '?:toggle-preview'"
 
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -la --icons --group-directories-first --git'
@@ -219,9 +233,6 @@ export VISUAL="$EDITOR"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-
-# Added by Antigravity CLI installer
-export PATH="$HOME/.local/bin:$PATH"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
@@ -247,6 +258,20 @@ alias nd='killall -q -9 noctalia; sleep 2; noctalia >/dev/null 2>&1 & disown'
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
 
+# nvm: lazy-loaded (sourcing nvm.sh costs ~130ms per shell). The default
+# node is put on PATH directly; the full nvm loads on first `nvm` call.
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  _nvm_default="$(<"$NVM_DIR/alias/default" 2>/dev/null)"
+  _nvm_bin=("$NVM_DIR"/versions/node/v${_nvm_default#v}*/bin(N[-1]))
+  # alias like "lts/*" or "node": fall back to the newest installed version
+  [[ -z "$_nvm_bin" ]] && _nvm_bin=("$NVM_DIR"/versions/node/*/bin(Nn[-1]))
+  [[ -n "$_nvm_bin" ]] && export PATH="$_nvm_bin:$PATH"
+  unset _nvm_default _nvm_bin
+  nvm() {
+    unfunction nvm
+    \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    nvm "$@"
+  }
+fi
