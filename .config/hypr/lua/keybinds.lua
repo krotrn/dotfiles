@@ -92,6 +92,8 @@ for i = 1, 10 do
     local key = i % 10                                                        -- 10 maps to key 0
     hl.bind("SUPER + " .. key, hl.dsp.focus({ workspace = i }))               -- Workspace N
     hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i })) -- Move to Workspace N
+    hl.bind("SUPER + CTRL + SHIFT + " .. key,
+        hl.dsp.window.move({ workspace = i, follow = false }))                -- Send to Workspace N (stay here)
 end
 
 -- Scratchpad: a dimmed overlay workspace for a terminal, notes, docs, etc.
