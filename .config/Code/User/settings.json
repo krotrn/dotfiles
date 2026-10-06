@@ -25,5 +25,19 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
-  "material-code.primaryColor": ""
+  "material-code.primaryColor": "",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.minimap.renderCharacters": false,
+  "network.meteredConnection": "off",
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  "chat.disableAIFeatures": true,
+  "git.replaceTagsWhenPull": true,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }

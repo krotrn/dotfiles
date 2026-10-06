@@ -24,6 +24,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, group, opts)
   end
 
+  -- telescope.nvim
   hi('TelescopeNormal',         { fg = '#c9d1d9',          bg = '#000000' })
   hi('TelescopeBorder',         { fg = '#555c63',             bg = '#000000' })
   hi('TelescopePromptNormal',   { fg = '#c9d1d9',          bg = '#000000' })
@@ -36,6 +37,16 @@ function M.setup()
   hi('TelescopeSelection',      { fg = '#c9d1d9',          bg = '#1c232c' })
   hi('TelescopeSelectionCaret', { fg = '#58a6ff',             bg = '#1c232c' })
   hi('TelescopeMatching',       { fg = '#58a6ff',             bold = true })
+
+  -- mini.pick
+  hi('MiniPickNormal',         { fg = '#c9d1d9',          bg = '#000000' })
+  hi('MiniPickBorder',         { fg = '#555c63',             bg = '#000000' })
+  hi('MiniPickPrompt',   { fg = '#c9d1d9',          bg = '#000000' })
+  hi('MiniPickPromptPrefix',   { fg = '#58a6ff',             bg = '#000000' })
+  hi('MiniPickBorderText',    { fg = '#000000',             bg = '#58a6ff' })
+  hi('MiniPickMatchCurrent',      { fg = '#c9d1d9',          bg = '#1c232c' })
+  hi('MiniPickPromptCaret', { fg = '#58a6ff',             bg = '#1c232c' })
+  hi('MiniPickMatchRanges',       { fg = '#58a6ff',             bold = true })
 end
 
 -- Register a signal handler for SIGUSR1 (matugen updates).

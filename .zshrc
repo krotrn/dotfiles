@@ -224,7 +224,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
-eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(direnv hook zsh)"
 # fzf keybindings & completion (enables Ctrl+R history search)
 if command -v fzf >/dev/null 2>&1; then
@@ -247,3 +246,7 @@ alias nd='killall -q -9 noctalia; sleep 2; noctalia >/dev/null 2>&1 & disown'
 # Local unversioned configuration / secrets
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

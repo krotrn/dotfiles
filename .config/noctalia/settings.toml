@@ -70,7 +70,7 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
         show_weather = true
 
 [plugin_settings."damian-ds7/battery-threshold"]
-battery_device = "/sys/class/power_supply/BAT1"
+battery_device = ["/sys/class/power_supply/BAT1"]
 
 [plugin_settings."kv7499/asus-fan"]
 panel_open_near_click = true
