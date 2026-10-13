@@ -1,0 +1,25 @@
+# Python projects: put `layout uv` in .envrc, then `direnv allow`.
+# Creates .venv with uv on first entry (synced from pyproject/uv.lock when
+# present) and activates it on cd, so python/pytest/ruff and Neovim's
+# pyright + debugpy all use the project's venv automatically.
+layout_uv() {
+  if [[ ! -d .venv ]]; then
+    log_status "creating .venv with uv"
+    if [[ -f pyproject.toml ]]; then uv sync --quiet; else uv venv --quiet; fi
+  fi
+  VIRTUAL_ENV="$(pwd)/.venv"
+  PATH_add "$VIRTUAL_ENV/bin"
+  export VIRTUAL_ENV UV_PROJECT_ENVIRONMENT="$VIRTUAL_ENV"
+}
+
+# Node projects: `use node` picks the version from .nvmrc / .node-version
+# out of ~/.nvm, without loading nvm itself.
+use_node() {
+  local want
+  want=$(cat .nvmrc .node-version 2>/dev/null | head -1 | tr -d 'v[:space:]')
+  [[ -n "$want" ]] || { log_error "no .nvmrc or .node-version"; return 1; }
+  local dir
+  dir=$(ls -d "$HOME/.nvm/versions/node/v$want"* 2>/dev/null | sort -V | tail -1)
+  [[ -n "$dir" ]] || { log_error "node $want not installed (nvm install $want)"; return 1; }
+  PATH_add "$dir/bin"
+}

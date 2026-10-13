@@ -91,7 +91,8 @@ enabled = [
     "nomadcxx/gamer-mode",
     "yocraft/web-launcher",
     "kv7499/asus-fan",
-    "kenn/keybind-cheatsheet"
+    "kenn/keybind-cheatsheet",
+    "noctalia/screen_recorder"
 ]
 
 [shell]

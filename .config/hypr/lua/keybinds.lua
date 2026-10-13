@@ -104,6 +104,12 @@ hl.bind("SUPER + SHIFT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screen
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region"), { description = "Screenshot region" })
 hl.bind("SUPER + A", hl.dsp.exec_cmd("noctalia msg screenshot-annotate"), { description = "Screenshot and annotate" })
 
+-- Screen recording (noctalia/screen_recorder → ~/Videos/Recordings). Press again to stop.
+hl.bind("SUPER + R", hl.dsp.exec_cmd("noctalia msg plugin noctalia/screen_recorder:service all toggle focused"),
+    { description = "Record screen (start/stop)" })
+hl.bind("SUPER + SHIFT + R", hl.dsp.exec_cmd("noctalia msg plugin noctalia/screen_recorder:service all toggle region"),
+    { description = "Record region (start/stop)" })
+
 -- ═══════════════════════════════════════════════════════════════════
 -- 5. WORKSPACES
 -- ═══════════════════════════════════════════════════════════════════
