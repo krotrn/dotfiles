@@ -14,7 +14,7 @@ local moveactivewindow = 'grep -q "true" <<< $(hyprctl activewindow -j | jq -r .
 -- ═══════════════════════════════════════════════════════════════════
 
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("wezterm"))                                                     -- Terminal
-hl.bind("SUPER + E", hl.dsp.exec_cmd("thunar"))                                                         -- File Manager
+hl.bind("SUPER + E", hl.dsp.exec_cmd("nautilus --new-window"))                                                         -- File Manager
 hl.bind("SUPER + C", hl.dsp.exec_cmd("code"))                                                           -- VS Code
 hl.bind("SUPER + B", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/Scripts/browser-launcher.sh")) -- Browser
 hl.bind("SUPER + ALT + A", hl.dsp.exec_cmd("agy-ide"))                                                  -- Antigravity IDE
@@ -71,6 +71,9 @@ hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true }) -- Resize
 hl.bind("SUPER + Z", hl.dsp.window.drag())                     -- Move Window (Key)
 hl.bind("SUPER + X", hl.dsp.window.resize(), { mouse = true }) -- Resize Window (Key)
 
+-- Touchpad
+hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("sudo -n /usr/local/bin/touchpad-reset")) -- Reset stuck touchpad
+
 -- ═══════════════════════════════════════════════════════════════════
 -- 4. SCREEN CAPTURE
 -- ═══════════════════════════════════════════════════════════════════
@@ -78,9 +81,7 @@ hl.bind("SUPER + X", hl.dsp.window.resize(), { mouse = true }) -- Resize Window 
 hl.bind("SUPER + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m window"))         -- Screenshot Window
 hl.bind("ALT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m output"))           -- Screenshot Screen
 hl.bind("SUPER + SHIFT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m region")) -- Screenshot Region
-hl.bind("SUPER + A",
-    hl.dsp.exec_cmd(
-        'noctalia msg screenshot-region')) -- Screenshot w/ Editor
+hl.bind("SUPER + A", hl.dsp.exec_cmd("noctalia msg screenshot-annotate"))      -- Screenshot w/ Editor
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region")) -- Screenshot Region (Noctalia)
 
 -- ═══════════════════════════════════════════════════════════════════
@@ -97,7 +98,15 @@ for i = 1, 10 do
 end
 
 -- Scratchpad: a dimmed overlay workspace for a terminal, notes, docs, etc.
-hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("scratch"))                    -- Toggle Scratchpad
+-- Super+S also spawns a dropdown terminal there the first time (see the
+-- scratchterm rule in windowrules.lua); after that it just toggles.
+hl.bind("SUPER + S", function()                                                     -- Toggle Scratchpad
+    if #hl.get_windows({ class = "scratchterm" }) == 0 then
+        hl.exec_cmd("wezterm start --class scratchterm")
+    else
+        hl.dispatch(hl.dsp.workspace.toggle_special("scratch"))
+    end
+end)
 hl.bind("SUPER + ALT + S", hl.dsp.window.move({ workspace = "special:scratch" }))   -- Send to Scratchpad
 
 -- Workspace navigation

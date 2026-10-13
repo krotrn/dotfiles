@@ -82,11 +82,13 @@ return {
 		config = function()
 			local dap, dapui = require("dap"), require("dapui")
 
-			-- ensure codelldb is installed via mason
+			-- ensure debug adapters are installed via mason
 			local mason_registry = require("mason-registry")
-			if not mason_registry.is_installed("codelldb") then
-				vim.notify("Installing codelldb via Mason...", vim.log.levels.INFO)
-				mason_registry.get_package("codelldb"):install()
+			for _, pkg in ipairs({ "codelldb", "debugpy" }) do
+				if not mason_registry.is_installed(pkg) then
+					vim.notify("Installing " .. pkg .. " via Mason...", vim.log.levels.INFO)
+					mason_registry.get_package(pkg):install()
+				end
 			end
 
 			dapui.setup()
@@ -127,6 +129,49 @@ return {
 				},
 			}
 			dap.configurations.c = dap.configurations.cpp
+
+			-- debugpy adapter (Python). Runs your code with the project's venv
+			-- when there is one (.venv / venv, or $VIRTUAL_ENV via direnv/uv).
+			dap.adapters.python = {
+				type = "executable",
+				command = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python",
+				args = { "-m", "debugpy.adapter" },
+			}
+
+			local function python_path()
+				local venv = os.getenv("VIRTUAL_ENV")
+				if venv then
+					return venv .. "/bin/python"
+				end
+				for _, dir in ipairs({ ".venv", "venv" }) do
+					local py = vim.fn.getcwd() .. "/" .. dir .. "/bin/python"
+					if vim.fn.executable(py) == 1 then
+						return py
+					end
+				end
+				return "python3"
+			end
+
+			dap.configurations.python = {
+				{
+					name = "Launch file",
+					type = "python",
+					request = "launch",
+					program = "${file}",
+					cwd = "${workspaceFolder}",
+					pythonPath = python_path,
+				},
+				{
+					name = "Launch module",
+					type = "python",
+					request = "launch",
+					module = function()
+						return vim.fn.input("Module (e.g. app.main): ")
+					end,
+					cwd = "${workspaceFolder}",
+					pythonPath = python_path,
+				},
+			}
 
 			-- sign icons
 			vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError" })

@@ -22,10 +22,17 @@ hl.env("SDL_VIDEODRIVER", "wayland")
 hl.env("CLUTTER_BACKEND", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
--- ── Nvidia (uncomment if using Nvidia GPU) ───────────────────────
-hl.env("LIBVA_DRIVER_NAME", "nvidia")
+-- ── Hybrid GPU (Intel iGPU + RTX 3050) ───────────────────────────
+-- Render on the Intel iGPU (it drives the laptop panel) so the RTX 3050 can
+-- power down; listing it second keeps outputs wired to it working. Run games
+-- on it with `prime-run <cmd>` (Steam: `prime-run %command%`).
+-- The paths are stable udev symlinks (/etc/udev/rules.d/99-gpu-symlinks.rules);
+-- cardN numbers can swap between boots.
+hl.env("AQ_DRM_DEVICES", "/dev/dri/intel-igpu:/dev/dri/nvidia-dgpu")
+-- Previously forced everything onto the NVIDIA GPU, keeping it awake:
+-- hl.env("LIBVA_DRIVER_NAME", "nvidia")
+-- hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 -- hl.env("GBM_BACKEND", "nvidia-drm") -- Disabled: explicit sync in Hyprland v0.52+ handles buffer allocation
-hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 -- hl.env("NVD_BACKEND", "direct") -- Disabled: causes buffer sync stalls with Wayland layer shells
 hl.env("__GL_GSYNC_ALLOWED", "1")
 hl.env("__GL_VRR_ALLOWED", "1")

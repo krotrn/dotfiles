@@ -144,6 +144,19 @@ fcd() {
   dir=$(fd --type d --hidden --exclude .git | fzf --preview "$_fzf_dir_preview") && cd "$dir"
 }
 
+# Project jumper: p [query] cds into a project under ~/coding (preview shows
+# branch, dirty files and recent commits); pe does the same and opens nvim.
+# Set PROJECT_DIRS in ~/.zshrc.local to search other roots too.
+p() {
+  local roots=(${PROJECT_DIRS:-$HOME/coding}) dir
+  dir=$(fd --type d --max-depth 1 --min-depth 1 . "${roots[@]}" 2>/dev/null \
+    | sed "s|^$HOME|~|; s|/$||" \
+    | fzf --query "${1:-}" --select-1 --exit-0 \
+          --preview 'd={}; d="${d/#\~/$HOME}"; if [ -d "$d/.git" ]; then git -C "$d" -c color.status=always status -sb | head -15; echo; git -C "$d" log --oneline --color=always -n 10; else eza --tree --icons --color=always --level=2 "$d" | head -100; fi') || return
+  cd "${dir/#\~/$HOME}"
+}
+pe() { p "$@" && command "$EDITOR" .; }
+
 # Fuzzy-open a file in the editor
 fo() {
   local file

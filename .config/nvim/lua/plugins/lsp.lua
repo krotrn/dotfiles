@@ -28,6 +28,8 @@ return {
 				"cssls",
 				"tailwindcss",
 				"emmet_ls",
+				"eslint",
+				"prismals",
 			},
 		},
 	},
@@ -97,6 +99,8 @@ return {
 				"cssls",
 				"tailwindcss",
 				"emmet_ls",
+				"eslint", -- uses the project's own eslint + config
+				"prismals",
 			})
 
 			-- LSP keymaps (buffer-local on attach)

@@ -83,6 +83,15 @@ hl.window_rule({
 	no_initial_focus = true,
 })
 
+-- Dropdown terminal for the scratchpad (Super+S)
+hl.window_rule({
+	match = { class = "^scratchterm$" },
+	workspace = "special:scratch",
+	float = true,
+	size = "70% 65%",
+	center = true,
+})
+
 -- YAD cheat sheet
 hl.window_rule({
 	match = { class = "^yad$" },

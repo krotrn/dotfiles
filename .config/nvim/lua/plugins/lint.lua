@@ -5,11 +5,9 @@ return {
     config = function()
       local lint = require("lint")
 
+      -- JS/TS linting comes from the eslint LSP (lsp.lua), which uses each
+      -- project's own eslint version and config.
       lint.linters_by_ft = {
-        javascript = { "eslint_d" },
-        javascriptreact = { "eslint_d" },
-        typescript = { "eslint_d" },
-        typescriptreact = { "eslint_d" },
         python = { "ruff" },
         sh = { "shellcheck" },
         bash = { "shellcheck" },
@@ -21,8 +19,15 @@ return {
       vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
         group = vim.api.nvim_create_augroup("UserLintConfig", { clear = true }),
         callback = function()
-          -- Only lint if the linter is available
-          lint.try_lint()
+          -- Only run linters that are installed, so a missing hadolint or
+          -- markdownlint doesn't error on every save
+          local names = vim.tbl_filter(function(name)
+            local linter = lint.linters[name]
+            local cmd = type(linter) == "table" and linter.cmd
+            if type(cmd) == "function" then cmd = cmd() end
+            return type(cmd) == "string" and vim.fn.executable(cmd) == 1
+          end, lint.linters_by_ft[vim.bo.filetype] or {})
+          if #names > 0 then lint.try_lint(names) end
         end,
       })
 

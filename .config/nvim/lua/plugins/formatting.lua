@@ -27,6 +27,9 @@ return {
         python = { "ruff_format" },
 
         sh = { "shfmt" },
+
+        go = { "gofmt" },
+        rust = { "rustfmt" },
       },
 
       format_on_save = {
