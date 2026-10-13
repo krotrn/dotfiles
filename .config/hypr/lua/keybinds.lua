@@ -33,6 +33,8 @@ hl.bind("SUPER + O", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center")
 hl.bind("SUPER + H", hl.dsp.exec_cmd("noctalia msg panel-toggle kenn/keybind-cheatsheet:cheatsheet"),
     { description = "Keybind cheatsheet" })
 hl.bind("SUPER + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"), { description = "Clipboard history" })
+hl.bind("SUPER + I", hl.dsp.exec_cmd("noctalia msg caffeine-toggle"), { description = "Caffeine (pause auto-lock)" })
+hl.bind("SUPER + K", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Pick color (copies hex)" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 3. WINDOW MANAGEMENT

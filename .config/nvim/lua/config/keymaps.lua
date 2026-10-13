@@ -18,7 +18,6 @@ map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window w
 -- Buffer navigation
 map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next buffer" })
-map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
 
 -- Move lines
 map("n", "<A-j>", "<cmd>m .+1<CR>==", { desc = "Move line down" })

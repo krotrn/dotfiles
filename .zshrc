@@ -218,6 +218,16 @@ fkill() {
   [[ -n "$pids" ]] && echo "$pids" | xargs kill -"${1:-TERM}"
 }
 
+# Kill whatever is listening on a port: killport 3000 [signal]
+# (the "port already in use" fix for a dev server that didn't exit)
+killport() {
+  [[ -n "$1" ]] || { echo "usage: killport <port> [signal]"; return 1; }
+  local pids=(${(f)"$(ss -Htlnp "sport = :$1" | grep -oP 'pid=\K[0-9]+' | sort -u)"})
+  (( ${#pids} )) || { echo "nothing listening on :$1"; return 1; }
+  ps -o pid=,comm= -p "${pids[@]}"
+  kill -"${2:-TERM}" "${pids[@]}"
+}
+
 # Remove ALL docker containers, unused networks and volumes (asks first)
 unalias dcf 2>/dev/null           # older versions of this file had it as an alias
 dcf() {

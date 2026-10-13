@@ -9,3 +9,29 @@
 	diffFilter = delta --color-only
 [delta]
 	navigate = true
+	line-numbers = true
+	side-by-side = false
+	hyperlinks = true           # Ctrl+click file:line in WezTerm
+
+[merge]
+	conflictstyle = zdiff3      # show the common ancestor in conflicts
+[diff]
+	algorithm = histogram       # cleaner diffs for moved/reordered code
+	colorMoved = default
+[push]
+	autoSetupRemote = true      # first `git push` on a new branch just works
+[pull]
+	rebase = true               # no "Merge branch 'main' of ..." commits
+[rebase]
+	autoStash = true            # rebase/pull with a dirty tree
+	updateRefs = true
+[fetch]
+	prune = true                # drop deleted remote branches
+[rerere]
+	enabled = true              # remember how you resolved a conflict
+[branch]
+	sort = -committerdate       # `git branch` shows recent first
+[column]
+	ui = auto
+[help]
+	autocorrect = prompt

@@ -26,3 +26,6 @@ gui:
       - "#f85149"
     defaultFgColor:
       - "#c9d1d9"
+git:
+  pagers:
+    - pager: delta --dark --paging=never --line-numbers --hyperlinks

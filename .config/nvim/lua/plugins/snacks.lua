@@ -3,8 +3,16 @@ return {
 		"folke/snacks.nvim",
 		priority = 1000,
 		lazy = false,
+		keys = {
+			{ "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+			{ "<leader>gl", function() Snacks.lazygit.log_file() end, desc = "Lazygit: file history" },
+			{ "<leader>go", function() Snacks.gitbrowse() end, desc = "Open on GitHub", mode = { "n", "v" } },
+			{ "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete buffer (keep layout)" },
+		},
 		opts = {
 			bigfile = { enabled = true },
+			lazygit = { enabled = true },
+			gitbrowse = { enabled = true },
 			quickfile = { enabled = true },
 			input = { enabled = true },
 			terminal = {
