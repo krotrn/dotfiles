@@ -44,3 +44,9 @@
 	recent = branch --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)'
 	gone = "!git fetch -p -q && git branch -vv | awk '/: gone]/{print $1}'"   # local branches whose remote was deleted
 	wip = "!git add -A && git commit -m 'wip' --no-verify"
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

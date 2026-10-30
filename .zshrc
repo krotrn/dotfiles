@@ -267,3 +267,6 @@ fi
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
 eval "$(zoxide init zsh)"       # `z foo` jumps, `zi` picks interactively
+
+# bun completions
+[ -s "/home/krotrn/.bun/_bun" ] && source "/home/krotrn/.bun/_bun"
