@@ -27,6 +27,7 @@ hl.config({
 
         special_fallthrough = true,
         follow_mouse        = 1,
+        swallow_focus_click = true,  -- a click that changes focus isn't passed to the window
     },
 })
 

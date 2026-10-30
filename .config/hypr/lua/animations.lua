@@ -19,7 +19,7 @@ hl.curve("liner", { type = "bezier", points = { { 1, 1 }, { 1, 1 } } })
 hl.curve("glide", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
 
 -- Modern Spring physics
-hl.curve("bouncy", { type = "spring", mass = 1, stiffness = 85, dampening = 14 })
+hl.curve("bouncy", { type = "spring", mass = 1, stiffness = 85, damping = 14 })
 
 -- ── Animation Rules ──────────────────────────────────────────────
 hl.animation({ leaf = "windows", enabled = true, speed = 5, spring = "bouncy", style = "popin 80%" })

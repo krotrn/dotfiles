@@ -47,6 +47,7 @@ hl.window_rule({
 	float = true,
 	keep_aspect_ratio = true,
 	pin = true,
+	no_wobble = true,
 	move = { "73%", "72%" },
 	size = "25% 25%",
 })
@@ -107,6 +108,7 @@ hl.window_rule({
 	immediate = true,
 	no_blur = true,
 	xray = false,
+	no_wobble = true,
 })
 
 -- ═══════════════════════════════════════════════════════════════════

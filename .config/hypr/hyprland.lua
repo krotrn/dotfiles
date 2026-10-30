@@ -1,13 +1,14 @@
 -- ╔══════════════════════════════════════════════════════════════════╗
--- ║              HYPRLAND v0.56+ LUA CONFIGURATION                 ║
--- ║          Compatible with Hyprland v0.56 & Noctalia v5          ║
+-- ║              HYPRLAND v0.57+ LUA CONFIGURATION                 ║
+-- ║          Compatible with Hyprland v0.57 & Noctalia v5          ║
 -- ╚══════════════════════════════════════════════════════════════════╝
 --
 -- Main entry point. Modules are loaded in dependency order.
 -- Each module is a self-contained Lua file under lua/.
 --
 -- To add/remove a module, simply comment/uncomment the require line.
--- The old .conf files are preserved alongside for reference.
+-- Hyprland no longer reads .conf; the remaining .conf files belong to
+-- hypridle and hyprlock.
 
 -- ── Load Modules ─────────────────────────────────────────────────
 local modules = {
@@ -49,6 +50,7 @@ hl.config({
         force_default_wallpaper  = 0,
         anr_missed_pings         = 5,
         allow_session_lock_restore = true,
+        bell_sound               = "none",  -- app/terminal bells stay silent
     },
 })
 

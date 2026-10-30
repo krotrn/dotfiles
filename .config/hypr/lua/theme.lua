@@ -67,6 +67,16 @@ hl.config({
             special          = true,
             popups           = true,
             popups_ignorealpha = 0.2,
+            -- Semi-transparent pixels (soft popup edges, shadows) get
+            -- partial blur instead of all-or-nothing.
+            proportional     = true,
+        },
+
+        -- Light jelly effect while dragging/resizing; matches the "bouncy"
+        -- spring in animations.lua. Games and PiP opt out (windowrules.lua).
+        wobble = {
+            enabled   = true,
+            intensity = 0.12,
         },
     },
 })

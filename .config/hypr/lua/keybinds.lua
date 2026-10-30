@@ -9,8 +9,18 @@
 
 local scrPath = os.getenv("HOME") .. "/.config/hypr/Scripts"
 
--- ── Helper: shell command for checking floating state ────────────
-local moveactivewindow = 'grep -q "true" <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive'
+-- ── Helper: float-aware move ─────────────────────────────────────
+-- Floating windows nudge by pixels; tiled windows swap in the layout.
+local function move_active(dx, dy, dir)
+    return function()
+        local win = hl.get_active_window()
+        if win and win.floating then
+            hl.dispatch(hl.dsp.window.move({ x = dx, y = dy, relative = true }))
+        else
+            hl.dispatch(hl.dsp.window.move({ direction = dir }))
+        end
+    end
+end
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 1. APPLICATIONS
@@ -26,7 +36,10 @@ hl.bind("SUPER + ALT + A", hl.dsp.exec_cmd("agy-ide"), { description = "Antigrav
 -- 2. NOCTALIA (v5 IPC)
 -- ═══════════════════════════════════════════════════════════════════
 
-hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"), { description = "App launcher" })
+-- Fires on release, so Super used as a modifier (Super+Q, Super+drag, ...)
+-- doesn't also open the launcher.
+hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"),
+    { release = true, description = "App launcher" })
 hl.bind("SUPER + L", hl.dsp.exec_cmd("noctalia msg session lock"), { description = "Lock screen" })
 hl.bind("SUPER + T", hl.dsp.exec_cmd("noctalia msg settings-toggle"), { description = "Noctalia settings" })
 hl.bind("SUPER + O", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"), { description = "Control center" })
@@ -63,14 +76,10 @@ hl.bind("SUPER + SHIFT + Up", hl.dsp.window.resize({ x = 0, y = -30 }), { repeat
 hl.bind("SUPER + SHIFT + Down", hl.dsp.window.resize({ x = 0, y = 30 }), { repeating = true, description = "Grow down" })
 
 -- Move active window (float-aware)
-hl.bind("SUPER + SHIFT + CTRL + Left", hl.dsp.exec_cmd(moveactivewindow .. " -30 0 || hyprctl dispatch movewindow l"),
-    { description = "Move window left" })
-hl.bind("SUPER + SHIFT + CTRL + Right", hl.dsp.exec_cmd(moveactivewindow .. " 30 0 || hyprctl dispatch movewindow r"),
-    { description = "Move window right" })
-hl.bind("SUPER + SHIFT + CTRL + Up", hl.dsp.exec_cmd(moveactivewindow .. " 0 -30 || hyprctl dispatch movewindow u"),
-    { description = "Move window up" })
-hl.bind("SUPER + SHIFT + CTRL + Down", hl.dsp.exec_cmd(moveactivewindow .. " 0 30 || hyprctl dispatch movewindow d"),
-    { description = "Move window down" })
+hl.bind("SUPER + SHIFT + CTRL + Left", move_active(-30, 0, "left"), { description = "Move window left" })
+hl.bind("SUPER + SHIFT + CTRL + Right", move_active(30, 0, "right"), { description = "Move window right" })
+hl.bind("SUPER + SHIFT + CTRL + Up", move_active(0, -30, "up"), { description = "Move window up" })
+hl.bind("SUPER + SHIFT + CTRL + Down", move_active(0, 30, "down"), { description = "Move window down" })
 
 -- Mouse / key-triggered move & resize
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
@@ -80,16 +89,16 @@ hl.bind("SUPER + X", hl.dsp.window.resize(), { mouse = true, description = "Resi
 
 -- Layout (dwindle)
 hl.bind("SUPER + P", hl.dsp.window.pseudo(), { description = "Toggle pseudo-tiling" })
-hl.bind("SUPER + J", hl.dsp.exec_cmd("hyprctl dispatch togglesplit"), { description = "Toggle split direction" })
+hl.bind("SUPER + J", hl.dsp.layout("togglesplit"), { description = "Toggle split direction" })
 hl.bind("SUPER + SHIFT + P", hl.dsp.window.pin(), { description = "Pin window to all workspaces" })
 hl.bind("SUPER + SHIFT + C", hl.dsp.window.center(), { description = "Center floating window" })
 
 -- Groups (tabbed windows). On SUPER so plain ALT+Left/Right stays free for
 -- word-jump in shells/editors and back/forward in browsers.
 hl.bind("SUPER + G", hl.dsp.group.toggle(), { description = "Toggle group (tabs)" })
-hl.bind("SUPER + SHIFT + G", hl.dsp.exec_cmd("hyprctl dispatch lockgroups toggle"), { description = "Lock groups" })
-hl.bind("SUPER + ALT + Left", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"), { description = "Previous tab" })
-hl.bind("SUPER + ALT + Right", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"), { description = "Next tab" })
+hl.bind("SUPER + SHIFT + G", hl.dsp.group.lock({ all = true }), { description = "Lock groups" })
+hl.bind("SUPER + ALT + Left", hl.dsp.group.prev(), { description = "Previous tab" })
+hl.bind("SUPER + ALT + Right", hl.dsp.group.next(), { description = "Next tab" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 4. SCREEN CAPTURE
@@ -179,7 +188,7 @@ hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("sudo -n /usr/local/bin/touchpad-re
 -- 7. SESSION
 -- ═══════════════════════════════════════════════════════════════════
 
-hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"), { description = "Exit Hyprland (emergency)" })
+hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exit(), { description = "Exit Hyprland (emergency)" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 8. HYMISSION (Mission Control Overview)
