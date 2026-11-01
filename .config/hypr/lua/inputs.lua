@@ -43,11 +43,15 @@ hl.config({
     },
 })
 
-hl.gesture({
-    fingers = 3,
-    direction = "horizontal",
-    action = "workspace"
-})
+-- hymission registers its own 3-finger workspace swipe (it also works inside
+-- the overview), so the native one is only a fallback without the plugin.
+if hl.plugin.hymission == nil then
+    hl.gesture({
+        fingers = 3,
+        direction = "horizontal",
+        action = "workspace"
+    })
+end
 hl.gesture({
     fingers = 4,
     direction = "horizontal",

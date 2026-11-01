@@ -82,6 +82,9 @@ hl.bind("SUPER + SHIFT + CTRL + Up", move_active(0, -30, "up"), { description = 
 hl.bind("SUPER + SHIFT + CTRL + Down", move_active(0, 30, "down"), { description = "Move window down" })
 
 -- Mouse / key-triggered move & resize
+-- Keep the grab point under the cursor when a tiled window is dragged
+-- out (default re-centers the window on the cursor).
+hl.config({ binds = { drag_center_window = false } })
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window" })
 hl.bind("SUPER + Z", hl.dsp.window.drag(), { description = "Drag window (key)" })
@@ -201,6 +204,9 @@ if hl.plugin and hl.plugin.hymission then
         hl.plugin.hymission.toggle("reverse")
     end, { description = "Overview (reverse)" })
     hl.bind("SUPER + CTRL + TAB", hl.plugin.hymission.close, { description = "Close overview" })
+    -- open() ignores switch mode, so this overview stays up after Super is
+    -- released; leave it with a click, Return or Escape.
+    hl.bind("SUPER + Escape", function() hl.plugin.hymission.open() end, { description = "Overview (stay open)" })
     hl.bind("SUPER + CTRL + A", function()
         hl.plugin.hymission.toggle("forceall")
     end, { description = "Overview: all workspaces" })
@@ -209,7 +215,36 @@ if hl.plugin and hl.plugin.hymission then
     end, { description = "Overview: current workspace" })
     hl.bind("SUPER + M", hl.plugin.hymission.debug_current_layout, { description = "Overview: debug layout" })
 
-    -- Hymission Gestures
+    -- Fullscreen that stays inside its workspace tile.
+    hl.unbind("SUPER + F")
+    hl.bind("SUPER + F", function()
+        hl.plugin.hymission.fullscreen({ mode = "fullscreen", action = "toggle" })
+    end, { description = "Toggle fullscreen" })
+
+    -- Stage: sidebar of live workspace cards.
+    hl.bind("SUPER + comma", hl.plugin.hymission.stage_toggle, { description = "Stage sidebar" })
+
+    -- Workspace tiles: up to three workspaces side by side.
+    hl.bind("SUPER + backslash", function() hl.plugin.hymission.tile_add() end,
+        { description = "Split: add workspace tile" })
+    hl.bind("SUPER + SHIFT + backslash", function() hl.plugin.hymission.tile_remove() end,
+        { description = "Split: remove tile" })
+    hl.bind("SUPER + bracketleft", function() hl.plugin.hymission.tile_focus("left") end,
+        { description = "Split: focus left tile" })
+    hl.bind("SUPER + bracketright", function() hl.plugin.hymission.tile_focus("right") end,
+        { description = "Split: focus right tile" })
+    hl.bind("SUPER + SHIFT + bracketleft", function() hl.plugin.hymission.tile_move_window("left") end,
+        { description = "Split: move window to left tile" })
+    hl.bind("SUPER + SHIFT + bracketright", function() hl.plugin.hymission.tile_move_window("right") end,
+        { description = "Split: move window to right tile" })
+    hl.bind("SUPER + CTRL + bracketleft", function() hl.plugin.hymission.tile_resize({ delta = "-80px" }) end,
+        { repeating = true, description = "Split: shrink tile" })
+    hl.bind("SUPER + CTRL + bracketright", function() hl.plugin.hymission.tile_resize({ delta = "+80px" }) end,
+        { repeating = true, description = "Split: grow tile" })
+
+    -- Gestures. 4-finger vertical: one side opens all workspaces, the other
+    -- the current one. 3-finger horizontal: workspace swipe that also works
+    -- inside the overview (replaces the native one in inputs.lua).
     hl.plugin.hymission.gesture({
         fingers   = 4,
         direction = "vertical",
@@ -220,13 +255,13 @@ if hl.plugin and hl.plugin.hymission then
     hl.plugin.hymission.gesture({
         fingers   = 3,
         direction = "horizontal",
-        action    = "scroll",
-        mode      = "layout",
+        action    = "workspace",
     })
 
     hl.plugin.hymission.gesture({
-        fingers   = 3,
+        fingers   = 4,
         direction = "horizontal",
-        action    = "workspace",
+        mods      = "SUPER",
+        action    = "stage_toggle",
     })
 end
