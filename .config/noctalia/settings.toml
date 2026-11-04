@@ -143,5 +143,8 @@ type = "kv7499/asus-fan:asus_fan"
 [widget.audio_visualizer]
 color_2 = "secondary"
 
+[widget.tray]
+pinned = [ "tray-icon tray app 25255-1" ]
+
 [widget.wallhaven]
 type = "noctalia/wallhaven:wallhaven"

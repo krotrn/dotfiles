@@ -270,3 +270,5 @@ eval "$(zoxide init zsh)"       # `z foo` jumps, `zi` picks interactively
 
 # bun completions
 [ -s "/home/krotrn/.bun/_bun" ] && source "/home/krotrn/.bun/_bun"
+
+. "$HOME/.cargo/env"
