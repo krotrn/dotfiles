@@ -34,6 +34,18 @@ else
     echo "  – no Intel Wi-Fi (iwlwifi) detected, skipping its options"
 fi
 
+# ── Login screen: SDDM with the glyph theme (cp -L copies the real font files the theme links to) ──
+if [ -d /usr/share/sddm/themes ]; then
+    echo "  ↳ installing the glyph login theme"
+    run sudo rm -rf /usr/share/sddm/themes/glyph
+    run sudo cp -rLT "$ROOT/glyph/sddm/glyph" /usr/share/sddm/themes/glyph
+    run sudo chmod -R a+rX /usr/share/sddm/themes/glyph
+    # zz-: SDDM reads conf.d files alphabetically and the last one wins; an empty InputMethod keeps the on-screen keyboard away
+    put 644 "$S/etc/sddm.conf.d/zz-glyph.conf" /etc/sddm.conf.d/zz-glyph.conf || true
+else
+    echo "  – SDDM is not installed, skipping the login theme"
+fi
+
 # ── Groups the desktop uses ──
 for g in input video i2c seat; do
     if getent group "$g" >/dev/null && ! id -nG "$USER" | tr ' ' '\n' | grep -qx "$g"; then

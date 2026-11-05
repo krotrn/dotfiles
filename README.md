@@ -17,6 +17,7 @@ Everything is **symlinked**, so editing your live configs (`~/.config/...`) dire
 | **Shell** | Zsh (Oh My Zsh) |
 | **Prompt** | [Starship](https://starship.rs/) |
 | **File Manager** | Nautilus |
+| **Login screen** | SDDM with the glyph theme (`glyph/sddm/`, installed by `scripts/06c-system.sh`; pick the **Hyprland** session, not the uwsm one). GDM stays installed as a fallback |
 | **Theme** | glyph (black, white, one red accent); colors in `.config/hypr/palette.lua` |
 | **Icons** | Numix Circle / Humanity / Yaru |
 | **Cursor** | Bibata Modern Classic |
