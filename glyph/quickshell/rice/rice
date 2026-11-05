@@ -6,6 +6,8 @@
 #   rice restart|kill   restart (and hypr) / shut down the current one
 #   rice switch <name>  shut down the current one, return hypr to its config, bring up another
 #   rice lock           lock of the current shell (bind, hypridle, power menu)
+# no "Config reloaded" popup from Quickshell itself on every reload (errors are in: qs log)
+export QS_NO_RELOAD_POPUP=1
 q=$HOME/.config/quickshell
 state=${XDG_STATE_HOME:-$HOME/.local/state}/rice
 cur=$(cat "$state/shell" 2>/dev/null)

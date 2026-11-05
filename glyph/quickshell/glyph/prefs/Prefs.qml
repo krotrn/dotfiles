@@ -1167,7 +1167,7 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 18
                     Lb { text: "running now" }
-                    Num { text: root.meta.name ?? "GLYPH"; font.pixelSize: 140 }
+                    Num { text: root.meta.name ?? "DOTS"; font.pixelSize: 140 }
                     Lb { text: root.meta.tagline ?? "" }
                 }
             }
