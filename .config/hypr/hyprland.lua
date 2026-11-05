@@ -1,6 +1,6 @@
 -- ╔══════════════════════════════════════════════════════════════════╗
 -- ║              HYPRLAND v0.57+ LUA CONFIGURATION                 ║
--- ║          Compatible with Hyprland v0.57 & Noctalia v5          ║
+-- ║                  Hyprland v0.57 + glyph shell                  ║
 -- ╚══════════════════════════════════════════════════════════════════╝
 --
 -- Main entry point. Modules are loaded in dependency order.
@@ -80,8 +80,8 @@ hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
 -- Guard: only apply plugin config if hymission is loaded (prevents
 -- "unknown config key" error banner when plugin hasn't been loaded yet)
 if hl.plugin.hymission ~= nil then
-    -- Overview colors follow the Noctalia palette: "rgb(rrggbb)" + alpha.
-    local palette = require("noctalia").colors
+    -- Overview colors follow palette.lua: "rgb(rrggbb)" + alpha.
+    local palette = require("palette").colors
     local function rgba(color, alpha)
         return "rgba(" .. color:match("%x%x%x%x%x%x") .. alpha .. ")"
     end
@@ -140,7 +140,7 @@ if hl.plugin.hymission ~= nil then
                 focus_hover_thickness    = 2,
                 focus_selected_thickness = 3,
 
-                -- Backdrop: none (blur behind Noctalia layers stalls the GPU).
+                -- Backdrop: none (blur behind the shell layers stalls the GPU).
                 backdrop_blur  = 0,
                 backdrop_color = "rgba(00000000)",
 
@@ -171,10 +171,9 @@ if hl.plugin.hymission ~= nil then
     })
 end
 
--- ── Noctalia v5 Integration (loaded last to override colors) ─────
-package.loaded["lua.noctalia"] = nil
-require("lua.noctalia")
+-- ── Shell layers and colors (loaded last to override colors) ─────
+package.loaded["lua.layers"] = nil
+require("lua.layers")
 
--- For Noctalia Color templates
-package.loaded["noctalia"] = nil
-require("noctalia").apply_theme()
+package.loaded["palette"] = nil
+require("palette").apply_theme()

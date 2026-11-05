@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Live list of git changes (top) with a scrollable diff of the selected file (bottom).
+# Usage: git-changes-pane            run the viewer in the current git repo
+#        git-changes-pane --list     print the change list (used by fzf reload)
+#        git-changes-pane --diff ST PATH   print one file's diff (used by fzf preview)
+set -u
+
+list() {
+  git -c color.status=false status --porcelain=v1 2>/dev/null | while IFS= read -r line; do
+    st=${line:0:2} path=${line:3}
+    case $st in
+      '??'|A*) color=32 ;;
+      *D*)     color=31 ;;
+      *)       color=33 ;;
+    esac
+    printf '\033[%sm%s\033[0m\t%s\n' "$color" "$st" "$path"
+  done
+}
+
+diff_one() {
+  local st=$1 path=${2##* -> }
+  if [[ $st == '??' ]]; then
+    git diff --no-index --color=always -- /dev/null "$path"
+  else
+    git diff --color=always HEAD -- "$path"
+  fi | delta --paging=never --width="${FZF_PREVIEW_COLUMNS:-80}" 2>/dev/null \
+     || git diff --color=always HEAD -- "$path"
+}
+
+case ${1:-} in
+  --list) list; exit ;;
+  --diff) diff_one "$2" "$3"; exit ;;
+esac
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Not a git repository: $PWD"
+  read -r -n1 -p "Press any key to close."
+  exit 1
+fi
+
+self=$(realpath "$0")
+sock="${XDG_RUNTIME_DIR:-/tmp}/git-changes-pane.$$.sock"
+
+# Refresh the list every 2s, keeping the cursor on the same file.
+(
+  while sleep 2; do
+    [[ -S $sock ]] || continue
+    curl -s --unix-socket "$sock" -XPOST http://localhost \
+      -d "reload-sync($self --list)+refresh-preview" >/dev/null 2>&1 || break
+  done
+) &
+poller=$!
+trap 'kill $poller 2>/dev/null; rm -f "$sock"' EXIT
+
+branch=$(git branch --show-current 2>/dev/null)
+list | fzf \
+  --height=100% --ansi --listen="$sock" --tabstop=3 \
+  --delimiter=$'\t' --with-nth=1,2 \
+  --layout=reverse --no-sort --cycle \
+  --border=rounded --border-label=" ${branch:-detached} · changes " \
+  --prompt='filter ❯ ' --info=inline-right \
+  --preview="$self --diff {1} {2}" \
+  --preview-window='down,55%,border-top,wrap' \
+  --header='↑↓ file · ctrl-d/u scroll diff · ctrl-o open in $EDITOR · ctrl-r reload' \
+  --bind="ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up" \
+  --bind="shift-down:preview-down,shift-up:preview-up" \
+  --bind="ctrl-r:reload-sync($self --list)" \
+  --bind="ctrl-o:execute(\${EDITOR:-nvim} {2})" \
+  --bind="enter:ignore,esc:clear-query"

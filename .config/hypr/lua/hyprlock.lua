@@ -4,8 +4,8 @@
 -- Custom screen lock configuration for hyprlock written in Lua.
 -- Reference: https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/
 
-local noctalia = require("noctalia")
-local colors = noctalia.colors or {
+local palette = require("palette")
+local colors = palette.colors or {
     primary   = "rgb(58a6ff)",
     surface   = "rgb(010409)",
     secondary = "rgb(bc8cff)",

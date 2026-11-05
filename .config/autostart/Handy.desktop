@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Handy
+Comment=Handystartup script
+Exec=/home/krotrn/.local/share/unpakt/apps/handy/0.9.8/handy.AppImage 
+StartupNotify=false
+Terminal=false

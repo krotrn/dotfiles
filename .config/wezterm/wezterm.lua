@@ -9,7 +9,7 @@ config.hyperlink_rules = wezterm.default_hyperlink_rules()
 config.font_size = 12.5
 config.line_height = 1.1
 config.default_prog = { "/usr/bin/zsh", "-l" }
--- Colors come from the Noctalia-generated scheme in colors/Noctalia.toml
+-- Colors come from the static scheme in colors/Dark.toml
 -- (set via config.color_scheme below) so the terminal follows theme changes.
 
 -- Window
@@ -95,5 +95,5 @@ config.keys = {
 	},
 }
 
-config.color_scheme = "Noctalia"
+config.color_scheme = "Karan Dark"
 return config

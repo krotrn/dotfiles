@@ -84,6 +84,14 @@ hl.window_rule({
 	no_initial_focus = true,
 })
 
+-- Network/VPN menu (Super+Ctrl+P): nmtui in a small centered floating terminal
+hl.window_rule({
+	match = { class = "^nmtui-menu$" },
+	float = true,
+	size = "40% 55%",
+	center = true,
+})
+
 -- Dropdown terminal for the scratchpad (Super+S)
 hl.window_rule({
 	match = { class = "^scratchterm$" },

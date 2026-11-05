@@ -1,0 +1,91 @@
+#!/bin/sh
+# rice — which quickshell shell is live now (demonshot, glyph…) and switching between them.
+#   rice                current
+#   rice list           all shells: folders in ~/.config/quickshell with rice.json
+#   rice start          bring up the current one (hypr at startup)
+#   rice restart|kill   restart (and hypr) / shut down the current one
+#   rice switch <name>  shut down the current one, return hypr to its config, bring up another
+#   rice lock           lock of the current shell (bind, hypridle, power menu)
+q=$HOME/.config/quickshell
+state=${XDG_STATE_HOME:-$HOME/.local/state}/rice
+cur=$(cat "$state/shell" 2>/dev/null)
+[ -f "$q/$cur/rice.json" ] || cur=glyph
+
+# terminal and apps in the spirit of the shell: ~/.config/<f> links to the shell's term/<f>. starship and fastfetch read the config on every
+# launch, open cava (USR1) and btop (USR2) reread on a signal, gtk — on a theme change (we poke it back and forth),
+# qt (qtengine.colors from ~/.config/qtengine/config.json) — on the next launch. A real file (not a link) is left alone
+term() {
+    for f in starship.toml fastfetch cava btop gtk-3.0/gtk.css gtk-4.0/gtk.css qtengine.colors; do
+        [ -e "$q/$1/term/$f" ] || continue
+        [ -L "$HOME/.config/$f" ] || [ ! -e "$HOME/.config/$f" ] || continue
+        ln -sfn "$q/$1/term/$f" "$HOME/.config/$f"
+    done
+    pkill -USR1 -x cava; pkill -USR2 -x btop
+    folders "$1"
+    g=org.gnome.desktop.interface
+    t=$(gsettings get $g gtk-theme)
+    gsettings set $g gtk-theme Adwaita; gsettings set $g gtk-theme "$t"
+    gsettings set $g icon-theme Papirus-Dark; gsettings set $g icon-theme Rice
+}
+
+# folders in the shell's color (term/folders: grey, carmine… — Papirus colors): the Rice icon theme over Papirus-Dark, where folder-*/user-*
+# link to the needed color — the same as papirus-folders does, only in our own ~/.local/share and without sudo. qtengine takes it too
+folders() {
+    c=$(cat "$q/$1/term/folders" 2>/dev/null) || return 0
+    d=${XDG_DATA_HOME:-$HOME/.local/share}/icons/Rice
+    p=/usr/share/icons/Papirus-Dark
+    [ "$(cat "$d/color" 2>/dev/null)" = "$c" ] && return 0
+    rm -rf "$d"
+    dirs=; secs=
+    for s in 22x22 24x24 32x32 48x48 64x64; do
+        mkdir -p "$d/$s/places"
+        for f in "$p/$s/places/folder-$c"*.svg "$p/$s/places/user-$c"*.svg; do
+            [ -e "$f" ] || continue
+            n=${f##*/}
+            ln -s "$f" "$d/$s/places/${n%%-"$c"*}${n#*-"$c"}"
+        done
+        dirs=$dirs${dirs:+,}$s/places
+        secs="$secs
+[$s/places]
+Context=Places
+Size=${s%x*}
+Type=Fixed
+"
+    done
+    printf '[Icon Theme]\nName=Rice\nComment=Papirus-Dark, folders in %s (rice)\nInherits=Papirus-Dark,breeze-dark,hicolor\nDirectories=%s\n%s' "$c" "$dirs" "$secs" > "$d/index.theme"
+    echo "$c" > "$d/color"
+}
+
+# shut down all instances of the shell and wait: qs kill stops one, and extra copies draw everything twice and hold dbus names
+# (notifications, tray) — the new shell will not get them
+pids() { qs list --all 2>/dev/null | awk -v p="$q/$1/shell.qml" '$1 == "Process" { pid = $3 } $1 == "Config" && $3 == p { print pid }'; }
+stop() {
+    pids=$(pids "$1")
+    [ -n "$pids" ] || return 0
+    kill $pids 2>/dev/null
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+        alive=
+        for p in $pids; do kill -0 "$p" 2>/dev/null && alive=1; done
+        [ -n "$alive" ] || return 0
+        sleep 0.2
+    done
+    kill -9 $pids 2>/dev/null
+}
+
+case $1 in
+    "") echo "$cur" ;;
+    list) for f in "$q"/*/rice.json; do basename "$(dirname "$f")"; done ;;
+    start) [ -n "$(pids "$cur")" ] && exit 0; mkdir -p "$state"; term "$cur"; exec qs -p "$q/$cur" -d ;;
+    restart) term "$cur"; stop "$cur"; hyprctl reload >/dev/null; exec qs -p "$q/$cur" -d ;; # reload also clears a stuck hypr error banner
+    kill) stop "$cur" ;;
+    switch)
+        [ -f "$q/$2/rice.json" ] || { echo "rice: no shell «$2»" >&2; exit 1; }
+        mkdir -p "$state"
+        echo "$2" > "$state/shell"
+        stop "$cur"
+        hyprctl reload >/dev/null # remove the look of the previous shell: the new one applies its own over the hypr config
+        term "$2"
+        exec qs -p "$q/$2" -d ;;
+    lock) pgrep -f '^qs .*/lock[.]qml' >/dev/null || exec qs -p "$q/$cur/lock.qml" ;;
+    *) sed -n '2,8s/^# //p' "$0"; exit 1 ;;
+esac

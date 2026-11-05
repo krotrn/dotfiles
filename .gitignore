@@ -33,3 +33,17 @@ Thumbs.db
 .config/Antigravity IDE/Network Persistent State
 .config/Antigravity IDE/Cache/Cache_Data/index-dir/the-real-index
 .config/Code/agent-host/local-endpoint/metadata.json
+
+# glyph shell: files the shell regenerates itself on start
+glyph/state/glyph/
+.config/demonshot/hypridle.conf
+.config/demonshot/kitty.conf
+**/__pycache__/
+
+# app state that lives next to configs (history, generated caches, machine ids)
+.config/wireshark/recent
+.config/wireshark/recent_common
+.config/autostart/mimeinfo.cache
+.config/turborepo/
+.config/uv/
+.config/easyeffects/db/

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Reload the ASUP1205 touchpad driver when it gets stuck.
+set -e
+dev=i2c-ASUP1205:00
+drv=/sys/bus/i2c/drivers/i2c_hid_acpi
+[ -e "$drv/$dev" ] && echo "$dev" > "$drv/unbind"
+sleep 1
+echo "$dev" > "$drv/bind"
+logger -t touchpad-reset "touchpad driver reset"

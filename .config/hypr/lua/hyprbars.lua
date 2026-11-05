@@ -11,7 +11,7 @@ if hl.plugin.hyprbars == nil then
     return
 end
 
-local colors = require("noctalia").colors
+local colors = require("palette").colors
 
 -- Button actions run as shell commands, so they go through hyprctl.
 local function dispatch(lua)

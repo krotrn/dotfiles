@@ -68,17 +68,12 @@ for dotfile in .bashrc .zshrc .gitconfig; do
     safe_link "$ROOT/$dotfile" "$HOME/$dotfile"
 done
 
-# ── Install the dotfiles helper to PATH ──
-echo "Installing dotfiles helper..."
+# ── Link the helper scripts in bin/ to PATH (dotfiles, touchpad-reset, claude-split, git-changes-pane, ...) ──
+echo "Linking helper scripts..."
 mkdir -p "$HOME/.local/bin"
-safe_link "$ROOT/bin/dotfiles" "$HOME/.local/bin/dotfiles"
-
-# ── Symlink Noctalia state settings for live GUI auto-sync ──
-if [ -d "$ROOT/.config/noctalia" ]; then
-    echo "Linking Noctalia state settings..."
-    mkdir -p "$HOME/.local/state/noctalia"
-    touch "$ROOT/.config/noctalia/settings.toml"
-    safe_link "$ROOT/.config/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
-fi
+for script in "$ROOT/bin"/*; do
+    [ -f "$script" ] || continue
+    safe_link "$script" "$HOME/.local/bin/$(basename "$script")"
+done
 
 echo "All configs symlinked."

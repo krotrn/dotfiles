@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Run Claude Code in tmux with a live git-changes pane on the right.
+# Usage: claude-split [claude args...]
+set -eu
+
+width=${CLAUDE_SPLIT_WIDTH:-50%}
+dir=$PWD
+
+if [[ -n ${TMUX:-} ]]; then
+  # Already in tmux: add the changes pane to the right of the current one, then run claude here.
+  tmux set -g mouse on
+  tmux split-window -hd -l "$width" -c "$dir" git-changes-pane
+  exec claude "$@"
+fi
+
+session="claude-$(basename "$dir" | tr -c '[:alnum:]-' '-')"
+session=${session%-}
+if tmux has-session -t "$session" 2>/dev/null; then
+  exec tmux attach -t "$session"
+fi
+
+tmux new-session -d -s "$session" -c "$dir" -x "$(tput cols)" -y "$(tput lines)" \
+  "claude $(printf '%q ' "$@")"
+tmux set -t "$session" mouse on
+tmux split-window -t "$session" -hd -l "$width" -c "$dir" git-changes-pane
+exec tmux attach -t "$session"

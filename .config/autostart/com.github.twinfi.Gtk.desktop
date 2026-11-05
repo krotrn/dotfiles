@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Hotspot (twinfi)
+Comment=Show the hotspot in the system tray
+Exec=/usr/bin/twinfi-gtk --background
+Icon=com.github.twinfi.Gtk
+Terminal=false
+X-GNOME-Autostart-enabled=true

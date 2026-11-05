@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Hotspot (apsta)
+Comment=Show the hotspot in the system tray
+Exec=/usr/bin/apsta-gtk --background
+Icon=com.github.apsta.Gtk
+Terminal=false
+X-GNOME-Autostart-enabled=true
+Hidden=false

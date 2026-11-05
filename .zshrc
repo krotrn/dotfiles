@@ -74,7 +74,7 @@ export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 _fzf_compgen_path() { { eval "$_fzf_fd . ${(q)1}"; eval "$_fzf_env . ${(q)1}"; } 2>/dev/null | awk '!s[$0]++'; }
 _fzf_compgen_dir()  { fd --type d --hidden --follow --exclude .git . "$1"; }
 
-# Colors use ANSI names so fzf follows the terminal (Noctalia) palette.
+# Colors use ANSI names so fzf follows the terminal palette.
 export FZF_DEFAULT_OPTS="
 --height=40%
 --layout=reverse
@@ -128,7 +128,6 @@ alias battery-health="awk 'NR==FNR{a=\$1; next} {printf \"%.1f%%\n\", a*100/\$1}
 alias lg='lazygit'
 alias zshrc='$EDITOR ~/.zshrc'
 alias reload='exec zsh'         # fresh shell; `source ~/.zshrc` stacks state
-alias nd='killall -q -9 noctalia; sleep 2; noctalia >/dev/null 2>&1 & disown'
 
 # ── Functions ────────────────────────────────────────────────────
 mkcd() { mkdir -p "$1" && cd "$1"; }

@@ -1,0 +1,5 @@
+# Projects hidden from the home widgets (projects, git, commits, heatmap).
+# One repo per line: its folder name (dotfiles-clean) or its full path (/home/krotrn/coding/rustlings).
+# Right-clicking a project row on the home screen adds a line here. Delete a line to show the project again.
+ai-job-search
+dotfiles

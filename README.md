@@ -12,14 +12,12 @@ Everything is **symlinked**, so editing your live configs (`~/.config/...`) dire
 |-----------|------|
 | **OS** | Arch Linux |
 | **WM** | [Hyprland](https://hyprland.org/) (Wayland) |
-| **Bar** | Waybar |
-| **Terminal** | Kitty / WezTerm |
-| **Shell** | Zsh (Oh My Zsh) + Fish |
+| **Bar, launcher, notifications, quick settings, lock** | [glyph shell](glyph/README.md) (quickshell) |
+| **Terminal** | WezTerm |
+| **Shell** | Zsh (Oh My Zsh) |
 | **Prompt** | [Starship](https://starship.rs/) |
-| **Launcher** | Rofi / Wofi |
-| **Notifications** | Dunst / SwayNC |
-| **File Manager** | Thunar |
-| **Theme** | Noctalia (custom dark theme) |
+| **File Manager** | Nautilus |
+| **Theme** | glyph (black, white, one red accent); colors in `.config/hypr/palette.lua` |
 | **Icons** | Numix Circle / Humanity / Yaru |
 | **Cursor** | Bibata Modern Classic |
 | **Fonts** | JetBrains Mono Nerd Font |
@@ -117,20 +115,27 @@ dotfiles/
 │   ├── asus.txt               #   ASUS laptop tools (asusctl, rog-control-center)
 │   └── nvidia.txt             #   NVIDIA GPU drivers
 │
-├── bin/
-│   └── dotfiles               # CLI helper (symlinked to ~/.local/bin/dotfiles)
+├── bin/                       # Helper scripts, each symlinked into ~/.local/bin/
+│   └── dotfiles, touchpad-reset, claude-split, git-changes-pane, hyprcapture-*
 │
-├── scripts/                   # Install pipeline (01–10, run in order)
+├── system/                    # Root-owned files, COPIED by 06c-system.sh (not symlinked)
+│   └── etc/                   #   sysctl, iwlwifi options, ASUS battery-limit udev rule
+│
+├── scripts/                   # Install pipeline (01–10 and 06b, run in order)
 │   ├── 01-system.sh
 │   ├── 02-yay.sh
 │   ├── 03-chaotic-aur.sh
 │   ├── 04-packages.sh
 │   ├── 05-omz.sh
 │   ├── 06-configs.sh          # Creates all symlinks
+│   ├── 06b-glyph.sh           # Links the glyph shell and its settings
+│   ├── 06c-system.sh          # Copies the /etc tuning (sudo); ASUS-only parts run only on ASUS
 │   ├── 07-services.sh
 │   ├── 08-hyprpm.sh
 │   ├── 09-shell.sh
 │   └── 10-finish.sh
+│
+├── glyph/                     # The glyph desktop shell (quickshell) + its settings — see glyph/README.md
 │
 ├── .bashrc                    # Bash config (symlinked to ~/.bashrc)
 ├── .zshrc                     # Zsh config (symlinked to ~/.zshrc)
@@ -152,7 +157,6 @@ dotfiles/
     ├── gtk-4.0/               #   GTK4 theme
     ├── qt5ct/                 #   Qt5 theme
     ├── qt6ct/                 #   Qt6 theme
-    ├── noctalia/              #   Noctalia theme engine config
     ├── Code/User/             #   VS Code settings
     ├── vlc/                   #   VLC preferences
     ├── Thunar/                #   Thunar file manager
@@ -221,8 +225,7 @@ The Hyprland config is split into multiple files for clarity:
 ├── hypridle.conf          # Idle/lock behavior
 ├── hyprtoolkit.conf       # Hypr toolkit config
 ├── themes/theme.conf      # Theme (gaps, borders, blur, cursor)
-├── noctalia.conf          # Noctalia color scheme
-├── noctalia/              # Noctalia generated colors
+├── palette.lua            # Static colors: borders, groups, overview, hyprbars, hyprlock
 ├── Scripts/               # Helper scripts
 ├── lua/                   # Lua config alternatives
 └── animations/            # Animation presets
@@ -310,3 +313,17 @@ Fish config is also included at `.config/fish/config.fish` with Starship, zoxide
 ## 📄 License
 
 Personal dotfiles — use as inspiration, fork freely.
+
+
+---
+
+## ⚠️ Not covered by the install (do these by hand on a new machine)
+
+- **Packages from private repos** (`twinfi`, `unpakt`, `chatgpt-bin`): their repos are not configured by the scripts, so they are left out of `packages.txt`.
+- **Tools installed outside pacman:** the `agy` CLI, `oh-my-posh`, `hymission-search-input`.
+- **Hyprland plugins:** step 08 runs `hyprpm update`; after a big Hyprland upgrade run `hyprpm update && hyprpm reload -n` again, or the plugin binds (Super+Tab overview, split tiles) do nothing.
+- **Logins and app data:** browser profiles, `gh auth login`, Docker/registry logins, SSH keys.
+- **Wallpapers:** put pictures in `~/Pictures/Wallpapers` (the shell's picker looks there).
+- **Brave theme lock:** a leftover `/etc/brave/policies/managed/*.json` from an old shell locks Brave's theme; delete it if you see "Theme is set by your organisation".
+
+Refresh the package lists any time with `dotfiles packages`.

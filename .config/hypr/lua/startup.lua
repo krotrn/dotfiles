@@ -36,14 +36,11 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-	-- Noctalia shell (must start first per Noctalia v5 docs)
-	hl.exec_cmd("noctalia")
+	-- Glyph shell (quickshell, picked by ~/.config/quickshell/rice)
+	hl.exec_cmd(os.getenv("HOME") .. "/.config/quickshell/rice/rice start")
 
 	-- Polkit authentication agent (required)
 	hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
-
-	-- GNOME Keyring (optional - browser passwords)
-	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets --foreground")
 
 	-- Idle daemon
 	hl.exec_cmd("hypridle")

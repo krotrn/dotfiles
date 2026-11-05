@@ -30,24 +30,23 @@ hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("wezterm"), { description = "Terminal"
 hl.bind("SUPER + E", hl.dsp.exec_cmd("nautilus --new-window"), { description = "File manager" })
 hl.bind("SUPER + C", hl.dsp.exec_cmd("code"), { description = "VS Code" })
 hl.bind("SUPER + B", hl.dsp.exec_cmd(scrPath .. "/browser-launcher.sh"), { description = "Browser" })
-hl.bind("SUPER + ALT + A", hl.dsp.exec_cmd("agy-ide"), { description = "Antigravity IDE" })
 
 -- ═══════════════════════════════════════════════════════════════════
--- 2. NOCTALIA (v5 IPC)
+-- 2. GLYPH SHELL
 -- ═══════════════════════════════════════════════════════════════════
 
 -- Fires on release, so Super used as a modifier (Super+Q, Super+drag, ...)
 -- doesn't also open the launcher.
-hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"),
+hl.bind("SUPER + Super_L", hl.dsp.global("shell:launcher"),
     { release = true, description = "App launcher" })
-hl.bind("SUPER + L", hl.dsp.exec_cmd("noctalia msg session lock"), { description = "Lock screen" })
-hl.bind("SUPER + T", hl.dsp.exec_cmd("noctalia msg settings-toggle"), { description = "Noctalia settings" })
-hl.bind("SUPER + O", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"), { description = "Control center" })
-hl.bind("SUPER + H", hl.dsp.exec_cmd("noctalia msg panel-toggle kenn/keybind-cheatsheet:cheatsheet"),
-    { description = "Keybind cheatsheet" })
-hl.bind("SUPER + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"), { description = "Clipboard history" })
-hl.bind("SUPER + I", hl.dsp.exec_cmd("noctalia msg caffeine-toggle"), { description = "Caffeine (pause auto-lock)" })
+hl.bind("SUPER + L", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/quickshell/rice/rice lock"), { description = "Lock screen" })
+hl.bind("SUPER + T", hl.dsp.global("shell:settings"), { description = "Shell settings" })
+hl.bind("SUPER + O", hl.dsp.global("shell:quick"), { description = "Quick settings" })
+hl.bind("SUPER + H", hl.dsp.global("shell:cheat"), { description = "Keybind cheatsheet" })
+hl.bind("SUPER + V", hl.dsp.global("shell:clip"), { description = "Clipboard history" })
+hl.bind("SUPER + CTRL + P", hl.dsp.global("shell:ovpn"), { description = "VPN panel" })
 hl.bind("SUPER + K", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Pick color (copies hex)" })
+hl.bind("CTRL + SUPER + ALT + R", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/quickshell/rice/rice restart"), { release = true, description = "Restart the shell" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 3. WINDOW MANAGEMENT
@@ -113,14 +112,20 @@ hl.bind("ALT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hypr
     { description = "Screenshot screen" })
 hl.bind("SUPER + SHIFT + Print", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m region"),
     { description = "Screenshot region (save)" })
-hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region"), { description = "Screenshot region" })
-hl.bind("SUPER + A", hl.dsp.exec_cmd("noctalia msg screenshot-annotate"), { description = "Screenshot and annotate" })
+hl.bind("SUPER + SHIFT + S", hl.dsp.global("shell:shot"), { description = "Screenshot region" })
+hl.bind("SUPER + A", hl.dsp.global("shell:shot"), { description = "Screenshot and annotate" })
 
--- Screen recording (noctalia/screen_recorder → ~/Videos/Recordings). Press again to stop.
-hl.bind("SUPER + R", hl.dsp.exec_cmd("noctalia msg plugin noctalia/screen_recorder:service all toggle focused"),
-    { description = "Record screen (start/stop)" })
-hl.bind("SUPER + SHIFT + R", hl.dsp.exec_cmd("noctalia msg plugin noctalia/screen_recorder:service all toggle region"),
-    { description = "Record region (start/stop)" })
+-- Screen recording (gpu-screen-recorder → ~/Videos). Press again to stop.
+local function record(region)
+    return function()
+        local mon = hl.get_active_monitor()
+        local w = region and '-w region -region "$(slurp -f %wx%h+%x+%y)"' or "-w " .. (mon and mon.name or "region")
+        hl.exec_cmd("pkill -INT -f '^gpu-screen-recorder' || gpu-screen-recorder " .. w ..
+            ' -o "$(xdg-user-dir VIDEOS)/rec-$(date +%F_%H-%M-%S).mp4"')
+    end
+end
+hl.bind("SUPER + R", record(false), { description = "Record screen (start/stop)" })
+hl.bind("SUPER + SHIFT + R", record(true), { description = "Record region (start/stop)" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 5. WORKSPACES
@@ -192,6 +197,15 @@ hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("sudo -n /usr/local/bin/touchpad-re
 -- ═══════════════════════════════════════════════════════════════════
 
 hl.bind("SUPER + SHIFT + CTRL + Q", hl.dsp.exit(), { description = "Exit Hyprland (emergency)" })
+
+-- ═══════════════════════════════════════════════════════════════════
+-- 7b. EXTRAS
+-- ═══════════════════════════════════════════════════════════════════
+
+hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Maximize (keep bar and gaps)" })
+hl.bind("SUPER + SHIFT + U", hl.dsp.exec_cmd("hyprctl kill"), { description = "Click a window to kill it" })
+hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("systemctl suspend"), { locked = true, description = "Sleep" })
+hl.bind("CTRL + ALT + V", hl.dsp.exec_cmd("pavucontrol"), { description = "Audio settings" })
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 8. HYMISSION (Mission Control Overview)

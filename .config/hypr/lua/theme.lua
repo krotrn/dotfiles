@@ -15,7 +15,7 @@ hl.env("QT_CURSOR_SIZE",   "24")
 -- ── General ──────────────────────────────────────────────────────
 -- Edge-to-edge layout: no borders, hairline gaps. Focus is shown by
 -- dimming inactive windows (see decoration). Border/group colors come
--- from Noctalia (noctalia.lua), so none are set here.
+-- from palette.lua, so none are set here.
 hl.config({
     general = {
         gaps_in     = 1,
