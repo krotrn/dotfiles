@@ -281,7 +281,7 @@ PanelWindow {
                     Row {
                         spacing: 10
                         Num { id: usedN; text: home.used; font.pixelSize: 150 }
-                        Num { anchors.baseline: usedN.baseline; text: "/9"; font.pixelSize: 54; color: Theme.mute }
+                        Num { anchors.baseline: usedN.baseline; text: `/${Theme.homeCols * Theme.homeRows}`; font.pixelSize: 54; color: Theme.mute }
                     }
                     Lb {
                         width: parent.width

@@ -285,7 +285,7 @@ Rectangle {
             // on the right the layout and power. Power is always visible: not allowed (or --test-mode, where there is no daemon and all can* are false) —
             // dark and not clickable
             Repeater {
-                model: ["dial", "glyph", "needle", "auth"]
+                model: ["dial", "dots", "needle", "auth"]
                 Arc {
                     required property string modelData
                     required property int index
@@ -488,7 +488,7 @@ Rectangle {
             spacing: 6
             opacity: root.face
             Text {
-                text: "GLYPH"
+                text: "DOTS"
                 font { family: doto.name; pixelSize: 34; weight: Font.Black; variableAxes: ({ "ROND": 100, "wght": 900 }) }
                 topPadding: -0.175 * font.pixelSize
                 bottomPadding: topPadding

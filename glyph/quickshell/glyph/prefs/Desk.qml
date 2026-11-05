@@ -148,7 +148,7 @@ Item {
                     Mono { text: "fastfetch"; color: root.c[6] }
                 }
                 Row {
-                    Mono { text: "glyph"; color: root.p.ansi[4] }
+                    Mono { text: "dots"; color: root.p.ansi[4] }
                     Mono { text: "@"; color: root.c[5] }
                     Mono { text: "rice"; color: root.p.ansi[4] }
                 }
@@ -194,7 +194,7 @@ Item {
             Text {
                 x: 124
                 y: 22
-                text: "Glyph Matrix"
+                text: "Dot Matrix"
                 font { family: Theme.ui; pixelSize: 20 }
                 color: root.c[6]
                 Behavior on color { ColorAnimation { duration: Theme.t } }

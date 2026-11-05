@@ -53,10 +53,9 @@
     "widgets": [
         "projects",
         "docker",
-        "launch",
         "heat",
         "tools",
-        "prs",
+        "launch",
         "ports"
     ]
 }

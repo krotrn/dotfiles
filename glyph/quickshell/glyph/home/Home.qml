@@ -516,7 +516,7 @@ PanelWindow {
                 }
                 Lb { x: 24; y: 192; text: `${Dev.reviews} to review`; px: 9; color: Dev.reviews > 0 ? Theme.accent : Theme.grey }
                 HoverHandler { cursorShape: Qt.PointingHandCursor }
-                TapHandler { onTapped: Qt.openUrlExternally(Dev.prs[0]?.url ?? "https://github.com/pulls") }
+                TapHandler { enabled: Dev.prs.length > 0; onTapped: Qt.openUrlExternally(Dev.prs[0].url) }
             }
         }
 

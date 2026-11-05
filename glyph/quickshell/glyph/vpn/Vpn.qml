@@ -107,14 +107,14 @@ PanelWindow {
                     root.flip();
                     Quickshell.execDetached(["notify-send", "-a", "vpn", "Portal", "tunnel taken down until you log in to the network"]);
                 }
-                gate.restart(); // the browser — once verge has already removed the system proxy
+                // never open a browser by itself: only tell about the login page (the Wi-Fi list opens it on a click)
+                Quickshell.execDetached(["notify-send", "-a", "network", "Network login required", "Click the connected network in the Wi-Fi list to open its login page"]);
             } else if (Networking.connectivity === NetworkConnectivity.Full && root.portal) {
                 root.portal = false;
                 if (!root.connected) root.flip();
             }
         }
     }
-    Timer { id: gate; interval: 1500; onTriggered: Qt.openUrlExternally("http://neverssl.com") }
     // after login NM rechecks connectivity with a growing step up to 5 minutes — we hurry it ourselves
     Timer { running: root.portal; interval: 5000; repeat: true; onTriggered: Networking.checkConnectivity() }
 
