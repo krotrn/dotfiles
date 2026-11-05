@@ -27,5 +27,5 @@ gui:
     defaultFgColor:
       - "#c9d1d9"
 git:
-  pagers:
-    - pager: delta --dark --paging=never --line-numbers --hyperlinks
+  diffRenderers:
+    - command: delta --dark --paging=never --line-numbers --hyperlinks
