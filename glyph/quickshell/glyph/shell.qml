@@ -26,7 +26,7 @@ import "wall"
 ShellRoot {
     id: shell
 
-    Launcher { id: launcher }
+    Launcher { id: launcher; onPowerRequested: power.open() }
     Quick { id: quick; onPowerRequested: power.open(); onSettingsRequested: prefs.open() }
     Power { id: power }
     Prefs { id: prefs; onWallRequested: walls.open() }

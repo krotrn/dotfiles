@@ -5,19 +5,24 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs
 import qs.components
+import qs.control
+import "actions.js" as Act
 
 // launcher: tap Super or Super+Space. Panel 860 in the center, the screen dims to 74%. A search pill with a red caret,
-// modes as chips (Tab): apps / style / windows / calc. Without a query — "recent" and all apps in a grid of 6, the alphabet on the right.
+// modes as chips (Tab): apps / style / windows / calc / actions. Without a query — "recent" and all apps in a grid of 6, the alphabet on the right.
 // style — color, like scheme in caelestia: where from (nothing, wallpaper, palette), under it — wallpaper tones and variants (tonal spot…) or palettes
 // (catppuccin, rosé pine…), the theme (Theme.styles, the same as STYLE in settings). Circles are swatches, the dot is what is set,
 // ↵ applies and does not close the launcher. With palettes the search also matches the group: "catppuccin".
+// actions — the list of Actions (also entered by typing ">" first): ↵ runs one, power ones open the power menu to confirm there.
 // Appears like Charms and Clip: a 24 rise and fade. Icons are monochrome glyphs in circles, unknown ones — the icon itself in dots; the selected one — a white circle
 PanelWindow {
     id: root
 
     property int mode: 0
     property int sel: 0
-    readonly property var modes: ["apps", "style", "windows", "calc"]
+    property bool viaGt: false // actions was entered by typing ">": deleting it goes back to apps
+    signal powerRequested()
+    readonly property var modes: ["apps", "style", "windows", "calc", "actions"]
     readonly property string query: input.text
     property var uses: ({}) // app id → how many times opened
 
@@ -88,12 +93,27 @@ PanelWindow {
         return out.sort((a, b) => b.score - a.score || (uses[b.id] ?? 0) - (uses[a.id] ?? 0));
     }
 
+    // glyphs of the actions, by name
+    readonly property var actionGlyphs: ({
+        "scheme": "\u{F03D8}", "wallpaper": "\u{F02E9}", "variant": "\u{F08B5}", "random wallpaper": "\u{F049D}", "light / dark": "\u{F050E}",
+        "lock": "\u{F033E}", "sleep": "\u{F0904}", "reboot": "\u{F0709}", "shutdown": "\u{F0425}", "logout": "\u{F0343}", "settings": "\u{F0493}"
+    })
+    // a power action is not run from here: the power menu asks first
+    readonly property var actionItems: Actions.list.map(a => ({
+        name: a.name, extra: a.hint.toLowerCase(), glyph: actionGlyphs[a.name] ?? "",
+        run: () => a.danger ? root.powerRequested() : a.run()
+    }))
+
     // blocks: { head, sub, items }; every cell has row/col, which the arrows walk by
     readonly property var blocks: {
         const q = query.trim().toLowerCase();
         let b;
         if (mode === 1) b = Theme.styles.map(x => ({ head: x.head, items: filter(x.items.map(it => Object.assign({ extra: "", keep: true }, it)), q) })).filter(x => x.items.length);
         else if (mode === 3) b = [];
+        else if (mode === 4) {
+            const r = filter(actionItems, Act.parseActionQuery(query).term);
+            b = [{ head: "actions", sub: String(r.length), items: r }];
+        }
         else if (mode === 2) b = [{ head: "windows", sub: String(wins.length), items: filter(wins, q) }];
         else if (q) {
             const r = filter(apps, q);
@@ -161,10 +181,15 @@ PanelWindow {
     Process { id: calc; stdout: StdioCollector { onStreamFinished: root.calcOut = text.trim() } }
     onQueryChanged: {
         sel = 0;
+        const gt = Act.parseActionQuery(query).active;
+        if (gt && mode !== 4) {
+            mode = 4;
+            viaGt = true;
+        } else if (!gt && mode === 4 && viaGt) mode = 0;
         if (mode === 3 && query.trim()) calc.exec(["qalc", "-t", query]); // exec cancels the previous calculation
         else calcOut = "";
     }
-    onModeChanged: { sel = 0; flick.contentY = 0; if (mode === 3) queryChanged(); }
+    onModeChanged: { sel = 0; if (mode !== 4) viaGt = false; flick.contentY = 0; if (mode === 3) queryChanged(); }
     // the list shrank without a new query (a window in windows closed) — the cursor is past the end, cur is empty
     onFlatChanged: sel = Math.max(0, Math.min(sel, flat.length - 1))
 
@@ -226,15 +251,15 @@ PanelWindow {
                     Text {
                         visible: !input.text
                         x: 6
-                        text: ["Search apps", "Color from nothing, the wallpaper or a palette", "Find a window", "2 + 2, 20 usd to eur…"][root.mode]
+                        text: ["Search apps", "Color from nothing, the wallpaper or a palette", "Find a window", "2 + 2, 20 usd to eur…", "Run an action"][root.mode]
                         font: input.font
                         color: Theme.mute
                     }
                     Keys.onPressed: e => {
                         if (e.key === Qt.Key_Escape) root.close();
                         else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) root.launch();
-                        else if (e.key === Qt.Key_Tab) root.mode = (root.mode + 1) % 4;
-                        else if (e.key === Qt.Key_Backtab) root.mode = (root.mode + 3) % 4;
+                        else if (e.key === Qt.Key_Tab) root.mode = (root.mode + 1) % root.modes.length;
+                        else if (e.key === Qt.Key_Backtab) root.mode = (root.mode + root.modes.length - 1) % root.modes.length;
                         else if (e.key === Qt.Key_Down) root.move(1, 0);
                         else if (e.key === Qt.Key_Up) root.move(-1, 0);
                         else if (e.key === Qt.Key_Right && (!input.text || input.cursorPosition === input.text.length) && root.flat.length) root.move(0, 1);
