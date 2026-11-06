@@ -14,7 +14,7 @@ Singleton {
     readonly property alias state: st
     // color source (launcher → style, settings → STYLE), like scheme in caelestia: nothing — black, white and red; wall —
     // from a wallpaper tone by variant, like dynamic in caelestia (tonal spot, fruit salad… — schemes.js); scheme — a ready palette, the theme
-    // comes with it. A palette is { light, c: greys by the roles below, accent, red, ansi: 16 kitty colors }
+    // comes with it; custom — one colour typed by hand, through the same variants as a wallpaper tone. A palette is { light, c: greys by the roles below, accent, red, ansi: 16 kitty colors }
     readonly property var pal: make({})
     readonly property bool light: pal.light
 
@@ -62,8 +62,9 @@ Singleton {
     function wallSrc(p) { return p ? `${wallCache}/${p.slice(p.lastIndexOf("/") + 1)}.jpg` : ""; }
     function url(p) { return p ? "file://" + p.split("/").map(encodeURIComponent).join("/") : ""; }
 
-    // ---- wallpaper tones: up to four to choose from, like android. They are in glyph.json: the lock (a separate process) takes them ready-made and does not flash
+    // ---- wallpaper tones: up to maxTones to choose from, like android. They are in glyph.json: the lock (a separate process) takes them ready-made and does not flash
     // red ----
+    readonly property int maxTones: 8
     readonly property var tones: st.wall ? st.tones : []
     function hueName(c) {
         const h = Qt.color(c).hslHue * 360;
@@ -77,8 +78,8 @@ Singleton {
         // 16 ANSI glyph: in the light theme 0↔15 and 7↔8, so white is not lost on white
         const base = { light: k.light, c: k.light ? glyphLight : glyphDark, accent: nothingRed, red: nothingRed,
                        ansi: k.light ? [15, 1, 2, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 13, 14, 0].map(i => ansi[i]) : ansi };
-        const src = tones[Math.min(k.at, tones.length - 1)];
-        return k.paint === "wall" && src ? Schemes.dynamic(src, k.variant, base) : base;
+        const src = k.paint === "custom" ? st.customColor : tones[Math.min(k.at, tones.length - 1)];
+        return (k.paint === "wall" || k.paint === "custom") && src ? Schemes.dynamic(src, k.variant, base) : base;
     }
     // theme: a palette's own, or the pair from its group (mocha → latte, dawn → main); no pair (nord, dracula…) — the theme is
     // not changed, otherwise st.light would diverge from the screen and surface when the source changes
@@ -95,19 +96,23 @@ Singleton {
     readonly property var styles: {
         const set = (k, v) => () => st[k] = v, at = Math.min(st.paintAt, tones.length - 1);
         const it = (name, p, now, run, fill) => ({ name, pal: p, fill: fill ?? p.c[1], dot: p.accent, now, run });
+        // the circle is the variant's grey mute (shows which color the greys went to), with the accent inside; amount — the share of color, in order
+        const variants = () => Schemes.VARIANTS.map((v, i) => {
+            const p = make({ variant: v.id });
+            return Object.assign(it(v.name, p, st.variant === v.id, set("variant", v.id), p.c[4]), { amount: i / (Schemes.VARIANTS.length - 1) });
+        });
         const own = st.paint === "wall" ? [
             { head: "tones", items: tones.map((t, i) => it(hueName(t), make({ at: i }), at === i, set("paintAt", i), t)) },
-            // the circle is the variant's grey mute (shows which color the greys went to), with the accent inside; amount — the share of color, in order
-            { head: "variant", items: tones.length ? Schemes.VARIANTS.map((v, i) => {
-                const p = make({ variant: v.id });
-                return Object.assign(it(v.name, p, st.variant === v.id, set("variant", v.id), p.c[4]), { amount: i / (Schemes.VARIANTS.length - 1) });
-            }) : [] }
+            { head: "variant", items: tones.length ? variants() : [] }
+        ] : st.paint === "custom" ? [
+            { head: "variant", items: st.customColor ? variants() : [] }
         ] : st.paint === "scheme" ? Schemes.GROUPS.map(g => ({ head: g, items: Schemes.ALL.filter(p => p.group === g).map(p =>
             Object.assign(it(p.name, p, st.scheme === p.id, () => { st.scheme = p.id; st.light = p.light; }), { extra: g })) })) : [];
         return [{ head: "source", items: [
             it("nothing", make({ paint: "" }), !st.paint || st.paint === "wall" && !tones.length, set("paint", ""), nothingRed),
             it("wallpaper", make({ paint: "wall" }), st.paint === "wall" && !!tones.length, set("paint", "wall"), tones[0]),
-            it("palette", make({ paint: "scheme" }), st.paint === "scheme", set("paint", "scheme"))
+            it("palette", make({ paint: "scheme" }), st.paint === "scheme", set("paint", "scheme")),
+            it("custom", make({ paint: "custom" }), st.paint === "custom" && !!st.customColor, () => { if (st.customColor) st.paint = "custom"; }, st.customColor || nothingRed)
         ] }].concat(own.filter(b => b.items.length), [
             { head: "theme", items: [["dark", false], ["light", true]].map(([n, l]) => it(n, make({ light: l, scheme: pair(l)?.id ?? st.scheme }),
                 light === l, () => setLight(l))) }
@@ -115,7 +120,7 @@ Singleton {
     }
     // like score in material you, only simpler: the quantizer cuts the picture into 16 equal-area pieces and returns the average color
     // of each. The vivid ones vote (chroma — max − min of the channels — above 0.12; below that large dull fills win, not the color
-    // of the picture): the hue with more votes goes first (±15°), and among its own the most vivid. Then up to three others, no closer than 30°
+    // of the picture): the hue with more votes goes first (±15°), and among its own the most vivid. Then up to maxTones − 1 others, no closer than 30°
     // to each other. No vivid ones — no tones, red remains. Called by the quantizer in shell.qml (not here: Theme is also loaded by the lock)
     function pick(cols) {
         const ch = c => c.hsvSaturation * c.hsvValue, d = (a, b) => Math.abs((a.hsvHue - b.hsvHue + 1.5) % 1 - 0.5);
@@ -123,7 +128,7 @@ Singleton {
         const score = c => 0.7 * live.filter(o => d(o, c) < 1 / 24).length / all.length + 0.3 * ch(c);
         const out = [];
         for (const c of live.sort((a, b) => score(b) - score(a)))
-            if (out.length < 4 && out.every(o => d(o, c) >= 1 / 12)) out.push(c);
+            if (out.length < maxTones && out.every(o => d(o, c) >= 1 / 12)) out.push(c);
         return out.map(c => c.toString());
     }
     // luminance, relative, as in WCAG
@@ -155,10 +160,11 @@ Singleton {
         JsonAdapter {
             id: st
             property bool light: false
-            property string paint: ""     // where the color comes from: empty — nothing, wall — wallpaper, scheme — palette
+            property string paint: ""     // where the color comes from: empty — nothing, wall — wallpaper, scheme — palette, custom — customColor
             property string scheme: "mocha" // which palette, an id from schemes.js
             property int paintAt: 0       // which of the wallpaper tones
             property var tones: []        // wallpaper tones, written by the quantizer; empty — grey wallpaper or no picture
+            property string customColor: "" // "#RRGGBB" typed by hand, the tone of paint custom; empty — none yet
             property string variant: "tonalspot" // how a wallpaper tone becomes a palette, an id from schemes.js (VARIANTS)
             property bool dnd: false  // new ones are not shown, critical ones always are
             property int unread: 0    // for the lock

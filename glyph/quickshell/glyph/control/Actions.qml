@@ -9,6 +9,7 @@ import qs.settings
 import "../schemes.js" as Schemes
 import "../glyph/toasts.js" as Toasts
 import "../glyph/battery.js" as Battery
+import "../glyph/colour.js" as Colour
 
 // outside control: everything the IPC handlers (control/Control.qml) and the launcher's actions do. Setters return "" on success, otherwise
 // the reason — and then touch nothing
@@ -77,9 +78,17 @@ Singleton {
     }
 
     function setSource(name: string): string {
-        const m = { none: "", wall: "wall", scheme: "scheme" };
-        if (!(name in m)) return "source: none, wall or scheme";
+        const m = { none: "", wall: "wall", scheme: "scheme", custom: "custom" };
+        if (!(name in m)) return "source: none, wall, scheme or custom";
+        if (name === "custom" && !Theme.state.customColor) return "source: no custom colour yet, set one with theme custom <#RRGGBB>";
         Theme.state.paint = m[name];
+        return "";
+    }
+    function setCustom(hex: string): string {
+        const c = Colour.normaliseHex(hex);
+        if (!c) return "custom: a colour as #RRGGBB";
+        Theme.state.customColor = c;
+        Theme.state.paint = "custom";
         return "";
     }
     function setVariant(id: string): string {

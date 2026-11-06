@@ -9,6 +9,7 @@ Scope {
         function wall(path: string): string { return Actions.setWall(path); }
         function randomWall(): string { return Actions.randomWall(); }
         function source(name: string): string { return Actions.setSource(name); }
+        function custom(hex: string): string { return Actions.setCustom(hex); }
         function variant(id: string): string { return Actions.setVariant(id); }
         function scheme(id: string): string { return Actions.setScheme(id); }
         function tone(i: int): string { return Actions.setTone(i); }

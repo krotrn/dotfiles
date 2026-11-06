@@ -8,6 +8,7 @@ import qs.components
 import qs.control
 import qs.services
 import qs.settings
+import "../glyph/colour.js" as Colour
 
 // glyph settings: Super+I. Not a form, but objects. On the left a column of Doto words, like the power menu — the selected one large, with a red
 // dot. On the right the section live: home — a bento mock-up (Theme.homeCols × Theme.homeRows), deck — a screen with the panel at the edge, windows — a desktop with gaps,
@@ -766,7 +767,8 @@ PanelWindow {
             property Item hot: null // swatch under the cursor or in focus
             readonly property var p: hot?.item.pal ?? Theme.pal
             readonly property string src: Theme.state.paint === "scheme" ? (Theme.pal.group === "more" ? "" : Theme.pal.group + " ") + Theme.pal.name
-                : Theme.state.paint === "wall" && Theme.tones.length ? `wallpaper · ${Theme.pal.name}` : "nothing"
+                : Theme.state.paint === "wall" && Theme.tones.length ? `wallpaper · ${Theme.pal.name}`
+                : Theme.state.paint === "custom" && Theme.state.customColor ? `custom ${Theme.state.customColor} · ${Theme.pal.name}` : "nothing"
             caption: `style · ${src} · ${Theme.light ? "light" : "dark"}` + (hot && !hot.item.now ? `   →   ${hot.item.name} · ↵ sets it` : "")
             function block(h) { return Theme.styles.find(b => b.head === h)?.items ?? []; }
             function peek(sw) {
@@ -780,9 +782,9 @@ PanelWindow {
                 spacing: 24
                 Pick {
                     label: "from"
-                    opts: ["nothing", "wall", "palette"]
-                    cur: ["", "wall", "scheme"].indexOf(Theme.state.paint)
-                    onPicked: i => Theme.state.paint = ["", "wall", "scheme"][i]
+                    opts: ["nothing", "wall", "palette", "custom"]
+                    cur: ["", "wall", "scheme", "custom"].indexOf(Theme.state.paint)
+                    onPicked: i => Theme.state.paint = ["", "wall", "scheme", "custom"][i]
                 }
                 Pick { label: "theme"; opts: ["dark", "light"]; cur: Theme.light ? 1 : 0; onPicked: i => Theme.setLight(i === 1) }
             }
@@ -835,8 +837,42 @@ PanelWindow {
                             }
                         }
                     }
+                    // custom: one colour typed as #RRGGBB, applied as soon as it is complete
+                    Rectangle {
+                        visible: Theme.state.paint === "custom"
+                        width: 520
+                        height: 72
+                        radius: Theme.corner(36)
+                        color: Theme.s2
+                        border { width: hex.activeFocus ? 1 : 0; color: Theme.fg }
+                        Lb { id: hexL; x: 30; anchors.verticalCenter: parent.verticalCenter; text: "colour"; color: hex.activeFocus ? Theme.fg : Theme.grey }
+                        TextInput {
+                            id: hex
+                            anchors { left: hexL.right; leftMargin: 24; right: parent.right; rightMargin: 30; verticalCenter: parent.verticalCenter }
+                            text: Theme.state.customColor
+                            maximumLength: 7
+                            activeFocusOnTab: true
+                            font { family: Theme.mono; pixelSize: 24 }
+                            color: text && !Colour.normaliseHex(text) ? Theme.red : Theme.fg
+                            selectionColor: Theme.s3
+                            clip: true
+                            onTextEdited: if (Colour.normaliseHex(text)) Actions.setCustom(text)
+                            cursorDelegate: Rectangle {
+                                width: 2
+                                color: hex.activeFocus ? Theme.accent : "transparent"
+                                Timer { running: hex.activeFocus; interval: 500; repeat: true; onTriggered: parent.opacity = 1 - parent.opacity }
+                            }
+                            Text { visible: !hex.text; text: "#RRGGBB"; font: hex.font; color: Theme.mute }
+                            Keys.onPressed: e => {
+                                if (e.key === Qt.Key_Up || e.key === Qt.Key_Down) root.go(root.sel + (e.key === Qt.Key_Up ? -1 : 1));
+                                else if (e.key === Qt.Key_Escape || e.key === Qt.Key_Return || e.key === Qt.Key_Enter) stage.forceActiveFocus();
+                                else return;
+                                e.accepted = true;
+                            }
+                        }
+                    }
                     Column {
-                        visible: Theme.state.paint === "wall" && Theme.tones.length > 0
+                        visible: Theme.state.paint === "wall" && Theme.tones.length > 0 || Theme.state.paint === "custom" && !!Theme.state.customColor
                         spacing: 6
                         Lb { text: "variant · how much colour, like material you" }
                         Row {
