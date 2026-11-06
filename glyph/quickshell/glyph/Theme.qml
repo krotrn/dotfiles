@@ -7,7 +7,7 @@ import qs.settings
 import "schemes.js" as Schemes
 import "glyph/colour.js" as Colour
 
-// glyph: black, white dots, one red. Palette, fonts, motion, state (theme, quiet) and the look of hypr/kitty live here
+// glyph: black, white dots, one red. Palette, fonts, motion, state (theme, quiet) and the look of hypr/wezterm live here
 Singleton {
     id: root
 
@@ -15,7 +15,7 @@ Singleton {
     readonly property alias state: st
     // color source (launcher → style, settings → STYLE), like scheme in caelestia: nothing — black, white and red; wall —
     // from a wallpaper tone by variant, like dynamic in caelestia (tonal spot, fruit salad… — schemes.js); scheme — a ready palette, the theme
-    // comes with it; custom — one colour typed by hand, through the same variants as a wallpaper tone. A palette is { light, c: greys by the roles below, accent, red, ansi: 16 kitty colors }
+    // comes with it; custom — one colour typed by hand, through the same variants as a wallpaper tone. A palette is { light, c: greys by the roles below, accent, red, ansi: 16 terminal colors }
     readonly property var pal: make({})
     readonly property bool light: pal.light
 
@@ -240,8 +240,8 @@ Singleton {
     // Back to demonshot: `rice switch` runs hyprctl reload, its applyAll will recolor
     function hypr(lua) { Quickshell.execDetached(["hyprctl", "eval", lua]); }
 
-    // kitty includes this file after its own colors (include in kitty.conf); demonshot writes its palette to the same place
-    FileView { id: kitty; path: Quickshell.env("HOME") + "/.config/demonshot/kitty.conf"; printErrors: false }
+    // wezterm loads this file over its color scheme (wezterm.lua) and reloads on change; demonshot writes its palette to the same place
+    FileView { id: terminal; path: Quickshell.env("HOME") + "/.config/demonshot/wezterm.lua"; printErrors: false }
     // 16 ANSI from the concept: pastels only for the terminal. The light theme rearranges them (make)
     readonly property var ansi: ["#0E0E0E", "#D71921", "#9BB59A", "#D9C38A", "#8EA3C2", "#B79BC2", "#8FB8B8", "#C9C9C9",
                                  "#4A4A4A", "#F0434B", "#B5CCB4", "#E8D6A8", "#AABBD4", "#CDB6D6", "#ABCDCD", "#F2F2F2"]
@@ -260,15 +260,16 @@ Singleton {
            + `groupbar = { font_family = "${mono}", text_color = ${c(fg)}, col = { active = ${c(s3)}, inactive = ${c(s1)}, locked_active = ${c(s3)}, locked_inactive = ${c(s1)} } } }, `
            + `misc = { background_color = ${c(bg)} } })`);
 
-        kitty.setText("# glyph: written by Theme.apply(), do not edit by hand\n" + [
-            ["font_family", "Space Mono"], ["window_padding_width", "26 30"], ["cursor_trail", "0"],
-            ["foreground", fg], ["background", s1], ["cursor", fg], ["cursor_text_color", s1],
-            ["selection_foreground", fg], ["selection_background", s3], ["url_color", grey],
-            ["active_border_color", fg], ["inactive_border_color", s3],
-            ["active_tab_foreground", ink], ["active_tab_background", fg],
-            ["inactive_tab_foreground", grey], ["inactive_tab_background", s1], ["tab_bar_background", bg]
-        ].concat(pal.ansi.map((c, i) => ["color" + i, c])).map(([k, v]) => `${k} ${typeof v === "string" ? v : v.toString().slice(0, 7).toUpperCase()}`).join("\n") + "\n");
-        Quickshell.execDetached(["pkill", "-USR1", "-x", "kitty"]);
+        const q = v => `"${typeof v === "string" ? v : v.toString().slice(0, 7).toUpperCase()}"`;
+        const list = a => "{ " + a.map(q).join(", ") + " }";
+        terminal.setText("-- glyph: written by Theme.apply(), do not edit by hand\nreturn {\n"
+            + `  foreground = ${q(fg)}, background = ${q(s1)},\n`
+            + `  cursor_bg = ${q(fg)}, cursor_fg = ${q(s1)}, cursor_border = ${q(fg)},\n`
+            + `  selection_fg = ${q(fg)}, selection_bg = ${q(s3)},\n`
+            + `  ansi = ${list(pal.ansi.slice(0, 8))},\n  brights = ${list(pal.ansi.slice(8, 16))},\n`
+            + `  tab_bar = {\n    background = ${q(bg)},\n`
+            + `    active_tab = { bg_color = ${q(fg)}, fg_color = ${q(ink)} },\n`
+            + `    inactive_tab = { bg_color = ${q(s1)}, fg_color = ${q(grey)} },\n  },\n}\n`);
     }
 
     // gtk and qt — only on color change (shell.qml): apply() is also called on every step of the rounding ring. Templates — glyph's own term/

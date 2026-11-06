@@ -67,7 +67,7 @@ ShellRoot {
     }
 
     // hypr as in demonshot: its Rules (settings/Rules.qml, the same ~/.config/demonshot/rules.json) set the monitor, input,
-    // motion, night light and hypridle; on top Theme.apply — own border colors, rounding and kitty. We also call it when the theme changes
+    // motion, night light and hypridle; on top Theme.apply — own border colors, rounding and the terminal. We also call it when the theme changes
     Component.onCompleted: {
         hypr();
         if (Theme.state.paint) Theme.apps(); // rice start installs links to term/ — the color must be restored
@@ -91,7 +91,7 @@ ShellRoot {
         target: Theme
         function onGreysChanged() { paint.restart(); }
     }
-    // theme or color changed (style, new wallpaper) — windows, kitty, gtk and qt. After 300 ms: the tones of a new wallpaper do not arrive at once,
+    // theme or color changed (style, new wallpaper) — windows, terminal, gtk and qt. After 300 ms: the tones of a new wallpaper do not arrive at once,
     // and gtk should not be poked twice
     Timer { id: paint; interval: 300; onTriggered: { Theme.apply(); Theme.apps(); } }
     // wallpaper tones (Theme.pick) — here, not in Theme: it is also loaded by the lock, which makes do with the ready ones from glyph.json. Empty — the wallpaper copy did not

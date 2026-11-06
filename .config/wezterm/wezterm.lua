@@ -96,4 +96,13 @@ config.keys = {
 }
 
 config.color_scheme = "Karan Dark"
+
+-- glyph writes its palette here; it overrides the scheme and wezterm reloads on change
+local palette = os.getenv("HOME") .. "/.config/demonshot/wezterm.lua"
+wezterm.add_to_config_reload_watch_list(palette)
+local ok, colors = pcall(dofile, palette)
+if ok and type(colors) == "table" then
+	config.colors = colors
+end
+
 return config

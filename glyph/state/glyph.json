@@ -56,7 +56,6 @@
         "docker",
         "heat",
         "tools",
-        "launch",
-        "ports"
+        "launch"
     ]
 }

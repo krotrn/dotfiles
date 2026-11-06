@@ -144,7 +144,6 @@ dotfiles/
 │
 └── .config/                   # All app configs (each dir/file symlinked into ~/.config/)
     ├── hypr/                  #   Hyprland (modular: keybinds, monitors, themes, etc.)
-    ├── kitty/                 #   Kitty terminal
     ├── wezterm/               #   WezTerm terminal
     ├── fish/                  #   Fish shell
     ├── waybar/                #   (if present) Waybar
@@ -174,7 +173,6 @@ The installer creates symlinks so your live system points to the repo:
 
 ```
 ~/.config/hypr       →  ~/dotfiles/.config/hypr/
-~/.config/kitty      →  ~/dotfiles/.config/kitty/
 ~/.config/starship.toml → ~/dotfiles/.config/starship.toml
 ~/.zshrc             →  ~/dotfiles/.zshrc
 ~/.bashrc            →  ~/dotfiles/.bashrc

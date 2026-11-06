@@ -37,7 +37,7 @@ Thumbs.db
 # glyph shell: files the shell regenerates itself on start
 glyph/state/glyph/
 .config/demonshot/hypridle.conf
-.config/demonshot/kitty.conf
+.config/demonshot/wezterm.lua
 **/__pycache__/
 
 # app state that lives next to configs (history, generated caches, machine ids)

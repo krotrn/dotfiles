@@ -61,7 +61,7 @@ Singleton {
             // Colors
             property int palette: 0
             property bool paintHypr: true
-            property bool paintKitty: true
+            property bool paintTerm: true
             // Input — as in hyprland/input.lua
             property int kbSwitch: 0      // index into switches
             property int repeatDelay: 250
@@ -94,8 +94,8 @@ Singleton {
 
     function toastOn(key) { return Toasts.resolve(adapter.toast, key); }
 
-    // kitty: an include file with the palette colors (kitty.conf includes it), SIGUSR1 — reread the config
-    FileView { id: kitty; path: root.dir + "/kitty.conf"; printErrors: false }
+    // terminal: a lua file with the palette colors (wezterm.lua loads it and reloads on change)
+    FileView { id: terminal; path: root.dir + "/wezterm.lua"; printErrors: false }
 
     function hypr(lua) { Quickshell.execDetached(["hyprctl", "eval", lua]); }
 
@@ -187,15 +187,15 @@ Singleton {
             hypr(`hl.config({ general = { col = { active_border = { colors = { "rgb(${h[5]})", "rgb(${h[4]})", "rgb(${h[5]})" }, angle = 135 }, `
                + `inactive_border = "rgb(${h[2]})" } }, decoration = { shadow = { color = "rgba(${h[5]}20)" } } })`);
         }
-        if (store.paintKitty) {
-            kitty.setText([
-                ["foreground", c[7]], ["background", c[1]], ["cursor", c[7]], ["cursor_text_color", c[1]],
-                ["selection_foreground", c[7]], ["selection_background", c[3]], ["url_color", c[4]],
-                ["active_border_color", c[5]], ["inactive_border_color", c[2]],
-                ["active_tab_foreground", c[7]], ["active_tab_background", c[5]],
-                ["inactive_tab_foreground", c[6]], ["inactive_tab_background", c[1]], ["tab_bar_background", c[0]]
-            ].map(([k, v]) => `${k} ${v}`).join("\n") + "\n");
-            Quickshell.execDetached(["pkill", "-USR1", "-x", "kitty"]);
+        if (store.paintTerm) {
+            const q = v => `"${v}"`;
+            terminal.setText("-- demonshot: written by Rules.paint(), do not edit by hand\nreturn {\n"
+                + `  foreground = ${q(c[7])}, background = ${q(c[1])},\n`
+                + `  cursor_bg = ${q(c[7])}, cursor_fg = ${q(c[1])}, cursor_border = ${q(c[7])},\n`
+                + `  selection_fg = ${q(c[7])}, selection_bg = ${q(c[3])},\n`
+                + `  tab_bar = {\n    background = ${q(c[0])},\n`
+                + `    active_tab = { bg_color = ${q(c[5])}, fg_color = ${q(c[7])} },\n`
+                + `    inactive_tab = { bg_color = ${q(c[1])}, fg_color = ${q(c[6])} },\n  },\n}\n`);
         }
     }
 
