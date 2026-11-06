@@ -23,11 +23,20 @@ Singleton {
         return s ? `${Math.round(s.width * s.devicePixelRatio)}x${Math.round(s.height * s.devicePixelRatio)}^` : "2880x1800^";
     }
 
-    // the wallpaper is drawn from a screen-sized copy (Theme.wallSrc): make it if it is missing or older, only then switch
+    // the wallpaper is drawn from a screen-sized copy (Theme.wallSrc): make it if it is missing or older, only then switch.
+    // The file is probed by a blocking read, since an IPC call can only answer at once
     property string target: ""
+    Component { id: probe; FileView { blockLoading: true } }
+    function exists(path: string): bool {
+        const f = probe.createObject(null, { path });
+        const ok = f.text().length > 0;
+        f.destroy();
+        return ok;
+    }
     function setWall(path: string): string {
         if (!path.startsWith("/")) return "path must be absolute";
         if (!image.test(path)) return "not an image (jpg, png, webp)";
+        if (!exists(path)) return "no such file: " + path;
         target = path;
         copy.running = false;
         copy.running = true;
@@ -36,7 +45,6 @@ Singleton {
     Process {
         id: copy
         command: ["bash", "-c", `mkdir -p "$2"; b=\${1##*/}
-[ -f "$1" ] || exit 2
 [ "$2/$b.jpg" -nt "$1" ] || { magick "$1[0]" -resize "$3" -quality 90 "$2/.$b.jpg" && mv "$2/.$b.jpg" "$2/$b.jpg"; }`,
             "bash", root.target, Theme.wallCache, root.res]
         stderr: StdioCollector { id: copyErr }
@@ -46,21 +54,23 @@ Singleton {
         }
     }
 
-    function randomWall(): string {
-        pick.running = false;
-        pick.running = true;
-        return "";
-    }
+    // the images of the wallpaper folder, kept by a scan (also on a folder change): a random pick answers from it at once
+    property var files: []
+    property var found: []
+    onDirChanged: Qt.callLater(() => scan.running = true)
     Process {
-        id: pick
-        command: ["bash", "-c", `shopt -s nullglob nocaseglob; f=("$1"/*.{jpg,jpeg,png,webp}); [ \${#f[@]} -gt 0 ] && printf '%s\\n' "\${f[RANDOM % \${#f[@]}]}"`,
-            "bash", root.dir]
-        stdout: StdioCollector { id: pickOut }
-        onExited: code => {
-            const p = pickOut.text.trim();
-            if (code === 0 && p) root.setWall(p);
-            else console.warn(`glyph: no wallpapers in ${root.dir}`);
-        }
+        id: scan
+        running: true
+        command: ["bash", "-c", `shopt -s nullglob nocaseglob; printf '%s\\n' "$1"/*.{jpg,jpeg,png,webp}`, "bash", root.dir]
+        stdout: SplitParser { onRead: f => { if (f) root.found.push(f); } }
+        onStarted: root.found = []
+        onExited: root.files = root.found
+    }
+    function randomWall(): string {
+        const f = files;
+        scan.running = true;
+        if (!f.length) return "no wallpapers in " + dir;
+        return setWall(f[Math.floor(Math.random() * f.length)]);
     }
 
     function setSource(name: string): string {
