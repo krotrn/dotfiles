@@ -13,7 +13,7 @@ import "actions.js" as Act
 // style — color, like scheme in caelestia: where from (nothing, wallpaper, palette), under it — wallpaper tones and variants (tonal spot…) or palettes
 // (catppuccin, rosé pine…), the theme (Theme.styles, the same as STYLE in settings). Circles are swatches, the dot is what is set,
 // ↵ applies and does not close the launcher. With palettes the search also matches the group: "catppuccin".
-// actions — the list of Actions (also entered by typing ">" first): ↵ runs one, power ones open the power menu to confirm there.
+// actions — the list of Actions (also entered by typing ">" first): ↵ runs one, power ones open the power menu on their word to confirm there.
 // Appears like Charms and Clip: a 24 rise and fade. Icons are monochrome glyphs in circles, unknown ones — the icon itself in dots; the selected one — a white circle
 PanelWindow {
     id: root
@@ -21,7 +21,7 @@ PanelWindow {
     property int mode: 0
     property int sel: 0
     property bool viaGt: false // actions was entered by typing ">": deleting it goes back to apps
-    signal powerRequested()
+    signal powerRequested(string item) // the power menu word of a power action
     readonly property var modes: ["apps", "style", "windows", "calc", "actions"]
     readonly property string query: input.text
     property var uses: ({}) // app id → how many times opened
@@ -98,10 +98,11 @@ PanelWindow {
         "scheme": "\u{F03D8}", "wallpaper": "\u{F02E9}", "variant": "\u{F08B5}", "random wallpaper": "\u{F049D}", "light / dark": "\u{F050E}",
         "lock": "\u{F033E}", "sleep": "\u{F0904}", "reboot": "\u{F0709}", "shutdown": "\u{F0425}", "logout": "\u{F0343}", "settings": "\u{F0493}"
     })
-    // a power action is not run from here: the power menu asks first
+    // a power action is not run from here: the power menu opens on its word and asks first
+    readonly property var powerWords: ({ "reboot": "REBOOT", "shutdown": "SHUT DOWN", "logout": "LOG OUT" })
     readonly property var actionItems: Actions.list.map(a => ({
         name: a.name, extra: a.hint.toLowerCase(), glyph: actionGlyphs[a.name] ?? "",
-        run: () => a.danger ? root.powerRequested() : a.run()
+        run: () => a.danger ? root.powerRequested(powerWords[a.name]) : a.run()
     }))
 
     // blocks: { head, sub, items }; every cell has row/col, which the arrows walk by

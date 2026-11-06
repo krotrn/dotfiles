@@ -20,8 +20,10 @@ PanelWindow {
         ["LOG OUT", () => Hyprland.dispatch("hl.dsp.exit()")]
     ]
 
-    function open() {
-        sel = 2;
+    // item — the label of the word to start on (the launcher passes its action); by default SHUT DOWN
+    function open(item = "") {
+        const at = items.findIndex(x => x[0] === item);
+        sel = at >= 0 ? at : 2;
         SysStats.sample(); // fresh uptime
         visible = true;
     }
