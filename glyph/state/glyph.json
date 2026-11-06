@@ -15,6 +15,7 @@
     "briSteps": 20,
     "clock24": true,
     "corners": 0,
+    "customColor": "",
     "deck": [
         "clock",
         "weather",
@@ -40,7 +41,7 @@
     "recFps": 60,
     "recQuality": 2,
     "rounding": 0,
-    "scheme": "mocha",
+    "scheme": "frappe",
     "tones": [
     ],
     "unread": 0,

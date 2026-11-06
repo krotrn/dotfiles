@@ -1,4 +1,7 @@
 {
+    "batCrit": 5,
+    "batToasts": true,
+    "batWarn": 20,
     "blur": true,
     "border": 0,
     "brightness": 62,
@@ -30,6 +33,9 @@
     "shadow": true,
     "sleepAfter": 10,
     "tap": true,
+    "toast": {
+        "caps": true
+    },
     "typingOff": false,
     "ultra": false,
     "warmth": 4500

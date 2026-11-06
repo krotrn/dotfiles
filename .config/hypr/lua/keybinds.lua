@@ -45,6 +45,12 @@ hl.bind("SUPER + O", hl.dsp.global("shell:quick"), { description = "Quick settin
 hl.bind("SUPER + H", hl.dsp.global("shell:cheat"), { description = "Keybind cheatsheet" })
 hl.bind("SUPER + V", hl.dsp.global("shell:clip"), { description = "Clipboard history" })
 hl.bind("SUPER + CTRL + P", hl.dsp.global("shell:ovpn"), { description = "VPN panel" })
+
+-- Theme control through the glyph command (qs ipc under the hood).
+local glyph = os.getenv("HOME") .. "/.local/bin/glyph"
+hl.bind("SUPER + ALT + W", hl.dsp.exec_cmd(glyph .. " theme randomWall"), { description = "Random wallpaper" })
+hl.bind("SUPER + ALT + D", hl.dsp.exec_cmd(glyph .. " theme light toggle"), { description = "Toggle dark / light" })
+hl.bind("SUPER + ALT + N", hl.dsp.exec_cmd(glyph .. " shell run variant"), { description = "Next color variant" })
 hl.bind("SUPER + K", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Pick color (copies hex)" })
 hl.bind("CTRL + SUPER + ALT + R", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/quickshell/rice/rice restart"), { release = true, description = "Restart the shell" })
 
