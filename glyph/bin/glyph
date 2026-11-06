@@ -1,0 +1,10 @@
+#!/bin/sh
+# outside control of the glyph shell: glyph <target> <function> [args]
+case "$1" in
+    ""|-h|--help)
+        echo "usage: glyph <target> <function> [args]"
+        echo
+        qs ipc -c glyph show
+        ;;
+    *) exec qs ipc -c glyph call "$@" ;;
+esac

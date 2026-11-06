@@ -7,6 +7,7 @@ import "cal"
 import "charms"
 import "cheat"
 import "clip"
+import "control"
 import "deck"
 import "glyph"
 import "home"
@@ -40,6 +41,12 @@ ShellRoot {
     OVpn { id: ovpn }
     Cheat { id: cheat }
     Walls { id: walls }
+    Control {}
+    Connections {
+        target: Actions
+        function onSettingsRequested() { prefs.open(); }
+        function onWallRequested() { walls.open(); }
+    }
 
     Variants {
         model: Quickshell.screens
