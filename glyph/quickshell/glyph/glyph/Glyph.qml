@@ -113,14 +113,33 @@ Scope {
     }
     Connections {
         target: Sys.mic?.audio ?? null
-        function onMutedChanged() { root.toast("audioIn", "microphone", Sys.micOn ? "Microphone on" : "Microphone muted", Sys.micOn ? "\u{F036C}" : "\u{F036D}"); }
+        function onMutedChanged() {
+            if (!root.micSettled) { micSettle.restart(); return; }
+            root.toast("audioIn", "microphone", Sys.micOn ? "Microphone on" : "Microphone muted", Sys.micOn ? "\u{F036C}" : "\u{F036D}");
+        }
     }
+    // The microphone and the vpn are derived from objects that appear some time after the shell starts (pipewire node, the tray item and its
+    // menu): what they report while that goes on is the state that was already there, not a change. Each source is settled after its
+    // window passes without a change; a change inside the window only prolongs it
+    property bool micSettled: false
+    property bool vpnSettled: false
+    Timer { id: micSettle; running: true; interval: 1500; onTriggered: root.micSettled = true }
+    Timer { id: vpnSettle; running: true; interval: 2500; onTriggered: root.vpnSettled = true }
     function deviceName(n) { return n ? (n.description || n.nickname || n.name) : ""; }
     Connections {
         target: Sys
         function onSinkChanged() { if (Sys.sink) root.toast("audioOut", "sound", "Output", "\u{F04C3}", root.deviceName(Sys.sink)); }
-        function onMicChanged() { if (Sys.mic) root.toast("audioIn", "microphone", "Input", "\u{F036C}", root.deviceName(Sys.mic)); }
-        function onVpnChanged() { root.toast("vpn", "vpn", Sys.vpn ? "VPN on" : "VPN off", "\u{F0582}"); }
+        function onMicChanged() {
+            const was = root.micSettled;
+            root.micSettled = false;
+            micSettle.restart();
+            if (was && Sys.mic) root.toast("audioIn", "microphone", "Input", "\u{F036C}", root.deviceName(Sys.mic));
+        }
+        function onVergeChanged() { root.vpnSettled = false; vpnSettle.restart(); }
+        function onVpnChanged() {
+            if (!root.vpnSettled) { vpnSettle.restart(); return; }
+            root.toast("vpn", "vpn", Sys.vpn ? "VPN on" : "VPN off", "\u{F0582}");
+        }
         function onLayoutChanged() {
             const first = !root.lastLayout;
             root.lastLayout = Sys.layout;
