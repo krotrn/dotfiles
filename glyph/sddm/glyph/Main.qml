@@ -514,34 +514,6 @@ Rectangle {
 
         // power buttons in the bottom right corner: always visible; dark and not clickable when the system does not allow the action
         // (the same actions as the small labels on the dial and the keyboard ring)
-        Column {
-            anchors { right: parent.right; bottom: parent.bottom; rightMargin: 36; bottomMargin: 36 }
-            spacing: 10
-            opacity: root.face
-            Repeater {
-                model: root.power
-                Rectangle {
-                    id: pb
-                    required property var modelData
-                    readonly property string label: modelData.t === "reboot" ? "restart" : modelData.t === "power off" ? "shut down" : modelData.t
-                    width: 132
-                    height: 44
-                    radius: 22
-                    color: pbh.hovered && modelData.can ? root.fg : "transparent"
-                    border { width: 1; color: modelData.can ? root.grey : root.s3 }
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                    Lb {
-                        id: pbl
-                        anchors.centerIn: parent
-                        px: 11
-                        text: pb.label
-                        color: !pb.modelData.can ? root.mute : pbh.hovered ? root.bg : root.fg
-                    }
-                    HoverHandler { id: pbh; cursorShape: pb.modelData.can ? Qt.PointingHandCursor : Qt.ArrowCursor }
-                    TapHandler { enabled: pb.modelData.can; onTapped: pb.modelData.go() }
-                }
-            }
-        }
 
     }
 }
