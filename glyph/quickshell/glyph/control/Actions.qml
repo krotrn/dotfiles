@@ -82,6 +82,8 @@ Singleton {
         if (!(name in m)) return "source: none, wall, scheme or custom";
         if (name === "custom" && !Theme.state.customColor) return "source: no custom colour yet, set one with theme custom <#RRGGBB>";
         Theme.state.paint = m[name];
+        // the theme goes with the palette, as in Theme.pair
+        if (name === "scheme") Theme.state.light = (Schemes.ALL.find(x => x.id === Theme.state.scheme) ?? Schemes.ALL[0]).light;
         return "";
     }
     function setCustom(hex: string): string {
@@ -100,7 +102,7 @@ Singleton {
         const p = Schemes.ALL.find(x => x.id === id);
         if (!p) return "scheme: " + Schemes.ALL.map(x => x.id).join(", ");
         Theme.state.scheme = id;
-        Theme.state.light = p.light;
+        if (Theme.state.paint === "scheme") Theme.state.light = p.light; // otherwise the palette is not on screen: the theme stays
         return "";
     }
     function setTone(i: int): string {
@@ -136,7 +138,7 @@ Singleton {
 
     // run — what the launcher does on a click; danger — the caller confirms first
     readonly property var list: [
-        { name: "scheme", hint: "next palette", danger: false, run: () => { setSource("scheme"); setScheme(next(Schemes.ALL.map(p => p.id), Theme.state.scheme)); } },
+        { name: "scheme", hint: "next palette", danger: false, run: () => setSource("scheme") || setScheme(next(Schemes.ALL.map(p => p.id), Theme.state.scheme)) },
         { name: "wallpaper", hint: "pick a wallpaper", danger: false, run: () => root.wallRequested() },
         { name: "variant", hint: "next variant", danger: false, run: () => setVariant(next(Schemes.VARIANTS.map(v => v.id), Theme.state.variant)) },
         { name: "random wallpaper", hint: "from the wallpaper folder", danger: false, run: () => randomWall() },
@@ -152,7 +154,7 @@ Singleton {
     function run(name: string): string {
         const a = list.find(x => x.name === name);
         if (!a) return "actions: " + list.map(x => x.name).join(", ");
-        a.run();
-        return "";
+        const r = a.run();
+        return typeof r === "string" ? r : "";
     }
 }

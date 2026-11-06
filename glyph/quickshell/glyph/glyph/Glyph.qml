@@ -105,6 +105,9 @@ Scope {
     Connections {
         target: Rules.store
         function onGameChanged() { root.toast("game", "game", Rules.store.game ? "Game mode on" : "Game mode off", "\u{F0297}"); }
+        // new levels re-arm the warnings: the next percentage tick judges the charge against them afresh
+        function onBatWarnChanged() { root.warned = 100; }
+        function onBatCritChanged() { root.warned = 100; }
     }
     Connections {
         target: Theme.state
@@ -150,7 +153,8 @@ Scope {
             if (!first) root.toast("layout", "keyboard", Sys.layout.toUpperCase(), "\u{F030C}", "layout");
         }
     }
-    property string lastLayout: Sys.layout // the first answer of hyprctl is not a switch
+    property string lastLayout: "" // seeded once at start: the first answer of hyprctl is not a switch
+    Component.onCompleted: lastLayout = Sys.layout
     Connections {
         target: Media.player
         function onTrackTitleChanged() {

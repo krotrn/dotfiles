@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.settings
 import "schemes.js" as Schemes
+import "glyph/colour.js" as Colour
 
 // glyph: black, white dots, one red. Palette, fonts, motion, state (theme, quiet) and the look of hypr/kitty live here
 Singleton {
@@ -78,7 +79,7 @@ Singleton {
         // 16 ANSI glyph: in the light theme 0↔15 and 7↔8, so white is not lost on white
         const base = { light: k.light, c: k.light ? glyphLight : glyphDark, accent: nothingRed, red: nothingRed,
                        ansi: k.light ? [15, 1, 2, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 13, 14, 0].map(i => ansi[i]) : ansi };
-        const src = k.paint === "custom" ? st.customColor : tones[Math.min(k.at, tones.length - 1)];
+        const src = k.paint === "custom" ? Colour.normaliseHex(st.customColor) : tones[Math.min(k.at, tones.length - 1)];
         return (k.paint === "wall" || k.paint === "custom") && src ? Schemes.dynamic(src, k.variant, base) : base;
     }
     // theme: a palette's own, or the pair from its group (mocha → latte, dawn → main); no pair (nord, dracula…) — the theme is
