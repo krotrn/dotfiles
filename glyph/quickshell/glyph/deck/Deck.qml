@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Services.UPower
 import Quickshell.Wayland
 import qs
 import qs.components
@@ -182,18 +183,28 @@ Scope {
                 }
             }
 
-            // cpu/mem/gpu rings with temperatures, top processes as segments, cores as a matrix
+            // cpu/mem/gpu/disk (and battery on a laptop) rings with temperatures, top processes as segments, mounts under them, cores as a matrix
             Component {
                 id: perfC
                 Column {
-                    width: 300
+                    // five 64 px rings do not fit in 300: on a laptop the section is as wide as the rings
+                    width: Math.max(300, gauges.width)
                     Row {
-                        spacing: 18
-                        Gauge { on: win.open; f: SysStats.cpu; label: `cpu · ${Math.round(SysStats.cpuTemp)}°` }
-                        Gauge { on: win.open; f: SysStats.mem; label: `mem · ${SysStats.memUsed.toFixed(1)}g` }
-                        Gauge { on: win.open; f: SysStats.gpu; label: `gpu · ${Math.round(SysStats.gpuTemp)}°` }
+                        id: gauges
+                        spacing: 10
+                        Gauge { d: 64; on: win.open; f: SysStats.cpu; label: `cpu · ${Math.round(SysStats.cpuTemp)}°` }
+                        Gauge { d: 64; on: win.open; f: SysStats.mem; label: `mem · ${SysStats.memUsed.toFixed(1)}g` }
+                        Gauge { d: 64; on: win.open; f: SysStats.gpu; label: `gpu · ${Math.round(SysStats.gpuTemp)}°` }
+                        Gauge { d: 64; on: win.open; f: SysStats.disks[0]?.used ?? 0; label: `disk · ${Math.round((SysStats.disks[0]?.used ?? 0) * 100)}%` }
+                        Gauge {
+                            visible: UPower.displayDevice.isLaptopBattery
+                            d: 64
+                            on: win.open
+                            f: UPower.displayDevice.percentage
+                            label: `bat · ${Math.round(UPower.displayDevice.percentage * 100)}%`
+                        }
                     }
-                    Item { width: 1; height: 18 }
+                    Item { width: 1; height: 12 }
                     Row {
                         spacing: 14
                         Column {
@@ -208,6 +219,17 @@ Scope {
                                     Lb { width: 78; elide: Text.ElideRight; text: modelData[0]; px: 10; color: Theme.fg }
                                     Lb { width: 34; horizontalAlignment: Text.AlignRight; text: Math.round(modelData[1]) + "%"; px: 10 }
                                     Seg { anchors.verticalCenter: parent.verticalCenter; width: 36; height: 5; n: 6; spacing: 3; f: modelData[1] / 100 }
+                                }
+                            }
+                            Lb { topPadding: 4; bottomPadding: 2; text: "disks"; px: 10 }
+                            Repeater {
+                                model: SysStats.disks
+                                Row {
+                                    required property var modelData
+                                    spacing: 6
+                                    Lb { width: 78; elide: Text.ElideRight; text: modelData.mount; px: 10; color: Theme.fg }
+                                    Lb { width: 34; horizontalAlignment: Text.AlignRight; text: Math.round(modelData.used * 100) + "%"; px: 10 }
+                                    Seg { anchors.verticalCenter: parent.verticalCenter; width: 36; height: 5; n: 6; spacing: 3; f: modelData.used }
                                 }
                             }
                         }
@@ -337,13 +359,14 @@ Scope {
         property real f
         property bool on
         property string label
+        property real d: 88 // ring diameter
         spacing: 8
         Item {
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 88
-            height: 88
-            Ring { anchors.fill: parent; n: 32; dot: 4; f: g.on ? g.f : 0 }
-            Num { anchors.centerIn: parent; text: Math.round(g.f * 100); font.pixelSize: 30 }
+            width: g.d
+            height: g.d
+            Ring { anchors.fill: parent; n: 32; dot: g.d < 70 ? 3 : 4; f: g.on ? g.f : 0 }
+            Num { anchors.centerIn: parent; text: Math.round(g.f * 100); font.pixelSize: Math.round(g.d * 30 / 88) }
         }
         Lb { anchors.horizontalCenter: parent.horizontalCenter; text: g.label; px: 10 }
     }
