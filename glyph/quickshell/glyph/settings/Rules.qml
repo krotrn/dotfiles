@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
+import "../glyph/toasts.js" as Toasts
 
 // house rules: ~/.config/demonshot/rules.json — the single source of truth for settings.
 // An edit from Settings writes the file (writeAdapter) and calls the needed apply itself. applyAll is called only by shell.qml at startup:
@@ -82,8 +83,12 @@ Singleton {
             property bool dnd: false
             property int noteTime: 6      // s, if the app did not set its own; 0 — wait until swiped away
             property int noteDeck: 5      // how many are visible in the deck
+            // Toasts: key → bool overrides of toasts.js DEFAULTS; a key that is not here has its default
+            property var toast: ({})
         }
     }
+
+    function toastOn(key) { return Toasts.resolve(adapter.toast, key); }
 
     // kitty: an include file with the palette colors (kitty.conf includes it), SIGUSR1 — reread the config
     FileView { id: kitty; path: root.dir + "/kitty.conf"; printErrors: false }

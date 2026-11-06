@@ -5,7 +5,9 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import qs
+import qs.settings
 import "../schemes.js" as Schemes
+import "../glyph/toasts.js" as Toasts
 
 // outside control: everything the IPC handlers (control/Control.qml) and the launcher's actions do. Setters return "" on success, otherwise
 // the reason — and then touch nothing
@@ -101,6 +103,13 @@ Singleton {
         Theme.setLight(mode === "toggle" ? !Theme.light : mode === "light");
         return "";
     }
+
+    function setToast(key: string, on: bool): string {
+        if (!Object.keys(Toasts.DEFAULTS).includes(key)) return "toast: " + Object.keys(Toasts.DEFAULTS).join(", ");
+        Rules.store.toast = Object.assign({}, Rules.store.toast, { [key]: on });
+        return "";
+    }
+    function toastList(): string { return Object.keys(Toasts.DEFAULTS).map(k => `${k}\t${Rules.toastOn(k) ? "on" : "off"}`).join("\n"); }
 
     // next entry of a list after the current one (ids), for the launcher's cycling actions
     function next(ids: var, cur: string): string { return ids[(ids.indexOf(cur) + 1) % ids.length]; }

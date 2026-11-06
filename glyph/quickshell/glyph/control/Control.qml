@@ -19,4 +19,12 @@ Scope {
         function run(name: string): string { return Actions.run(name); }
         function actions(): string { return Actions.list.map(a => a.hint ? `${a.name}\t${a.hint}` : a.name).join("\n"); }
     }
+    IpcHandler {
+        target: "toast"
+        function set(key: string, state: string): string {
+            if (state !== "on" && state !== "off") return "toast: on or off";
+            return Actions.setToast(key, state === "on");
+        }
+        function list(): string { return Actions.toastList(); }
+    }
 }

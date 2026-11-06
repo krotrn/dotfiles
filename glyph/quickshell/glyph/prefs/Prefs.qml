@@ -5,6 +5,7 @@ import Quickshell.Services.UPower
 import Quickshell.Wayland
 import qs
 import qs.components
+import qs.control
 import qs.services
 import qs.settings
 
@@ -19,10 +20,10 @@ PanelWindow {
 
     property int sel: 0
     signal wallRequested // wallpaper — its own screen (wall/Walls), opened by shell.qml
-    readonly property var sections: ["HOME", "DECK", "BAR", "LOOK", "STYLE", "WINDOWS", "DISPLAY", "POWER", "INPUT", "IDLE", "SHELL"]
+    readonly property var sections: ["HOME", "DECK", "BAR", "LOOK", "STYLE", "WINDOWS", "DISPLAY", "POWER", "INPUT", "IDLE", "TOASTS", "SHELL"]
     readonly property string moves: "shift ←→ move · ↵ swap · del drop · drag"
     readonly property string rings: "drag round the rings · scroll"
-    readonly property var hints: [moves, moves, moves, "", "hover to preview · ↵ or click sets it", rings, rings, "↵ or click a mode", rings, "drag the marks", ""]
+    readonly property var hints: [moves, moves, moves, "", "hover to preview · ↵ or click sets it", rings, rings, "↵ or click a mode", rings, "drag the marks", "which events show a card at the top", ""]
     readonly property var r: Rules.store
 
     // glyphs of the home kinds, deck sections and bar tray
@@ -1150,9 +1151,30 @@ PanelWindow {
             }
         }
 
-        // ---- SHELL: the rice mark and the name of the live shell; the switcher is the Rice app ----
+        // ---- TOASTS: which events show a card in the island at the top; the same switches as `glyph toast` ----
         Page {
             k: 10
+            caption: "toasts · top card"
+
+            Grid {
+                columns: 3
+                spacing: 20
+                Repeater {
+                    model: [["charging", "charging"], ["charged", "fully charged"], ["game", "game mode"], ["dnd", "do not disturb"], ["audioOut", "sound out"], ["audioIn", "microphone"],
+                            ["caps", "caps lock"], ["num", "num lock"], ["layout", "layout"], ["vpn", "vpn"], ["config", "config loaded"], ["nowPlaying", "now playing"]]
+                    Toggle {
+                        required property var modelData
+                        text: modelData[1]
+                        on: Rules.toastOn(modelData[0])
+                        onFlip: Actions.setToast(modelData[0], !Rules.toastOn(modelData[0]))
+                    }
+                }
+            }
+        }
+
+        // ---- SHELL: the rice mark and the name of the live shell; the switcher is the Rice app ----
+        Page {
+            k: 11
             caption: "shell · quickshell"
 
             Row {

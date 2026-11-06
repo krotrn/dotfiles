@@ -1,11 +1,14 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Services.UPower
 import Quickshell.Wayland
 import qs
 import qs.components
+import qs.services
+import qs.settings
 
 // Glyph: the screen edges as LEDs on the back, instead of OSD and popups in the middle of the screen.
 // On top — a flash for a notification (red for critical ones) and an "island" with it, on the right — volume/brightness from the bottom up,
@@ -17,7 +20,7 @@ Scope {
     property string kind: "vol"
     property real value: 0
     property bool armed: false // we do not show the first values at startup
-    Timer { running: true; interval: 1500; onTriggered: root.armed = true }
+    Timer { running: true; interval: 1500; onTriggered: { root.armed = true; root.toast("config", "config", "Config loaded", "\u{F0493}"); } }
     function level(k, v) {
         if (!armed || !Theme.state.edges) return;
         kind = k;
@@ -68,26 +71,92 @@ Scope {
     readonly property int pct: Math.round((bat?.percentage ?? 0) * 100)
     property int warned: 100
     function hm(s) { const m = Math.round(s / 60); return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} m` : `${m} m`; }
-    function power(summary, glyph, crit, time) {
+    // key — the toast switch (toasts.js); empty — always shown
+    function power(key, summary, glyph, crit, time) {
+        if (key && !Rules.toastOn(key)) return;
         if (root.armed && root.bat?.isLaptopBattery) root.push({ app: "power", summary, body: `${root.pct}%` + (time ? ` · ${time}` : ""), glyph, crit: !!crit });
+    }
+    // a toast for an event: shown only when its switch is on (Rules.toastOn) and not at startup
+    function toast(key, app, summary, glyph, body) {
+        if (root.armed && Rules.toastOn(key)) root.push({ app, summary, body: body ?? "", glyph });
     }
     Connections {
         target: UPower
         function onOnBatteryChanged() {
             root.warned = 100;
-            if (UPower.onBattery) root.power("On battery", "\u{F0079}", false, root.bat.timeToEmpty ? `${root.hm(root.bat.timeToEmpty)} left` : "");
-            else root.power("Charging", "\u{F0084}", false, root.bat.timeToFull ? `full in ${root.hm(root.bat.timeToFull)}` : "");
+            if (UPower.onBattery) root.power("charging", "On battery", "\u{F0079}", false, root.bat.timeToEmpty ? `${root.hm(root.bat.timeToEmpty)} left` : "");
+            else root.power("charging", "Charging", "\u{F0084}", false, root.bat.timeToFull ? `full in ${root.hm(root.bat.timeToFull)}` : "");
         }
     }
     Connections {
         target: root.bat
-        function onStateChanged() { if (root.bat.state === UPowerDeviceState.FullyCharged && !UPower.onBattery) root.power("Fully charged", "\u{F0079}"); }
+        function onStateChanged() { if (root.bat.state === UPowerDeviceState.FullyCharged && !UPower.onBattery) root.power("charged", "Fully charged", "\u{F0079}"); }
         function onPercentageChanged() {
             if (!UPower.onBattery) return;
-            if (root.pct <= 5 && root.warned > 5) { root.warned = 5; root.power("Battery critical", "\u{F0083}", true, "plug in now"); }
-            else if (root.pct <= 15 && root.warned > 15) { root.warned = 15; root.power("Battery low", "\u{F0083}", false, "plug in soon"); }
+            if (root.pct <= 5 && root.warned > 5) { root.warned = 5; root.power("", "Battery critical", "\u{F0083}", true, "plug in now"); }
+            else if (root.pct <= 15 && root.warned > 15) { root.warned = 15; root.power("", "Battery low", "\u{F0083}", false, "plug in soon"); }
         }
     }
+    // ---- toasts for events: game mode, do not disturb, sound, keyboard, vpn, music. Each has its own switch ----
+    Connections {
+        target: Rules.store
+        function onGameChanged() { root.toast("game", "game", Rules.store.game ? "Game mode on" : "Game mode off", "\u{F0297}"); }
+    }
+    Connections {
+        target: Theme.state
+        function onDndChanged() { root.toast("dnd", "notifications", Theme.state.dnd ? "Do not disturb on" : "Do not disturb off", Theme.state.dnd ? "\u{F009B}" : "\u{F009A}"); }
+    }
+    // the audio object of the device itself: a switch of the default device is not a mute
+    Connections {
+        target: Sys.sink?.audio ?? null
+        function onMutedChanged() { root.toast("audioOut", "sound", Sys.muted ? "Sound muted" : "Sound on", Sys.muted ? "\u{F0581}" : "\u{F057E}"); }
+    }
+    Connections {
+        target: Sys.mic?.audio ?? null
+        function onMutedChanged() { root.toast("audioIn", "microphone", Sys.micOn ? "Microphone on" : "Microphone muted", Sys.micOn ? "\u{F036C}" : "\u{F036D}"); }
+    }
+    function deviceName(n) { return n ? (n.description || n.nickname || n.name) : ""; }
+    Connections {
+        target: Sys
+        function onSinkChanged() { if (Sys.sink) root.toast("audioOut", "sound", "Output", "\u{F04C3}", root.deviceName(Sys.sink)); }
+        function onMicChanged() { if (Sys.mic) root.toast("audioIn", "microphone", "Input", "\u{F036C}", root.deviceName(Sys.mic)); }
+        function onVpnChanged() { root.toast("vpn", "vpn", Sys.vpn ? "VPN on" : "VPN off", "\u{F0582}"); }
+        function onLayoutChanged() {
+            const first = !root.lastLayout;
+            root.lastLayout = Sys.layout;
+            if (!first) root.toast("layout", "keyboard", Sys.layout.toUpperCase(), "\u{F030C}", "layout");
+        }
+    }
+    property string lastLayout: Sys.layout // the first answer of hyprctl is not a switch
+    Connections {
+        target: Media.player
+        function onTrackTitleChanged() {
+            const p = Media.player;
+            if (p?.trackTitle) root.toast("nowPlaying", "music", p.trackTitle, "\u{F075A}", p.trackArtist);
+        }
+    }
+
+    // caps and num lock: the keyboard LEDs in sysfs, read twice a second only while one of the two toasts is on. "01" — caps off, num on;
+    // the first reading after the poll starts is only remembered
+    readonly property bool ledsWanted: Rules.toastOn("caps") || Rules.toastOn("num")
+    property string leds: ""
+    onLedsWantedChanged: if (!ledsWanted) leds = ""
+    Timer { running: root.ledsWanted; repeat: true; triggeredOnStart: true; interval: 500; onTriggered: ledProc.running = true }
+    Process {
+        id: ledProc
+        command: ["sh", "-c", 'for t in capslock numlock; do v=0; for f in /sys/class/leds/*::$t/brightness; do [ "$(cat "$f" 2>/dev/null)" = 1 ] && v=1; done; printf %s "$v"; done']
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const was = root.leds, now = text.trim();
+                if (!root.ledsWanted || now.length !== 2) return;
+                root.leds = now;
+                if (!was) return;
+                if (was[0] !== now[0]) root.toast("caps", "keyboard", now[0] === "1" ? "Caps lock on" : "Caps lock off", "\u{F030C}");
+                if (was[1] !== now[1]) root.toast("num", "keyboard", now[1] === "1" ? "Num lock on" : "Num lock off", "\u{F030C}");
+            }
+        }
+    }
+
     function dismiss(key) { for (let i = 0; i < stack.count; i++) if (stack.get(i).key === key) return stack.setProperty(i, "leaving", true); }
     function forget(key) {
         delete refs[key];
