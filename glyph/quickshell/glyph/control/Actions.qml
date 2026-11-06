@@ -8,6 +8,7 @@ import qs
 import qs.settings
 import "../schemes.js" as Schemes
 import "../glyph/toasts.js" as Toasts
+import "../glyph/battery.js" as Battery
 
 // outside control: everything the IPC handlers (control/Control.qml) and the launcher's actions do. Setters return "" on success, otherwise
 // the reason — and then touch nothing
@@ -110,6 +111,16 @@ Singleton {
         return "";
     }
     function toastList(): string { return Object.keys(Toasts.DEFAULTS).map(k => `${k}\t${Rules.toastOn(k) ? "on" : "off"}`).join("\n"); }
+
+    // the levels go through clampLevels; if it moved them, the answer says what is stored (a clamp is not an error: it is stored)
+    function setBatteryLevels(warn: int, crit: int): string {
+        if (!Number.isInteger(warn) || !Number.isInteger(crit)) return "battery levels: whole numbers";
+        const l = Battery.clampLevels(warn, crit);
+        Rules.store.batWarn = l.warn;
+        Rules.store.batCrit = l.crit;
+        return l.warn === warn && l.crit === crit ? "" : `stored warn ${l.warn}, crit ${l.crit}`;
+    }
+    function batteryLevels(): string { return `warn ${Rules.store.batWarn}\ncrit ${Rules.store.batCrit}`; }
 
     // next entry of a list after the current one (ids), for the launcher's cycling actions
     function next(ids: var, cur: string): string { return ids[(ids.indexOf(cur) + 1) % ids.length]; }

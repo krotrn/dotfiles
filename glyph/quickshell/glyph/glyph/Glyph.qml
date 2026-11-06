@@ -9,6 +9,7 @@ import qs
 import qs.components
 import qs.services
 import qs.settings
+import "battery.js" as Battery
 
 // Glyph: the screen edges as LEDs on the back, instead of OSD and popups in the middle of the screen.
 // On top — a flash for a notification (red for critical ones) and an "island" with it, on the right — volume/brightness from the bottom up,
@@ -65,7 +66,7 @@ Scope {
         }
     }
 
-    // ---- power: charging plugged in/unplugged, charged, running low (15% — warn, 5% — in red). As a card into the island,
+    // ---- power: charging plugged in/unplugged, charged, running low (Rules batWarn — warn, batCrit — in red). As a card into the island,
     // bypassing the notification history. armed — not at startup ----
     readonly property var bat: UPower.displayDevice
     readonly property int pct: Math.round((bat?.percentage ?? 0) * 100)
@@ -84,6 +85,7 @@ Scope {
         target: UPower
         function onOnBatteryChanged() {
             root.warned = 100;
+            if (!Rules.store.batToasts) return;
             if (UPower.onBattery) root.power("charging", "On battery", "\u{F0079}", false, root.bat.timeToEmpty ? `${root.hm(root.bat.timeToEmpty)} left` : "");
             else root.power("charging", "Charging", "\u{F0084}", false, root.bat.timeToFull ? `full in ${root.hm(root.bat.timeToFull)}` : "");
         }
@@ -93,8 +95,10 @@ Scope {
         function onStateChanged() { if (root.bat.state === UPowerDeviceState.FullyCharged && !UPower.onBattery) root.power("charged", "Fully charged", "\u{F0079}"); }
         function onPercentageChanged() {
             if (!UPower.onBattery) return;
-            if (root.pct <= 5 && root.warned > 5) { root.warned = 5; root.power("", "Battery critical", "\u{F0083}", true, "plug in now"); }
-            else if (root.pct <= 15 && root.warned > 15) { root.warned = 15; root.power("", "Battery low", "\u{F0083}", false, "plug in soon"); }
+            const w = Battery.nextWarning(root.pct, root.warned, Rules.store.batWarn, Rules.store.batCrit);
+            root.warned = w.warned;
+            if (w.level === "crit") root.power("", "Battery critical", "\u{F0083}", true, "plug in now");
+            else if (w.level === "warn") root.power("", "Battery low", "\u{F0083}", false, "plug in soon");
         }
     }
     // ---- toasts for events: game mode, do not disturb, sound, keyboard, vpn, music. Each has its own switch ----

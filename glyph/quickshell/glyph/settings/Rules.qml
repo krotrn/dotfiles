@@ -85,6 +85,10 @@ Singleton {
             property int noteDeck: 5      // how many are visible in the deck
             // Toasts: key → bool overrides of toasts.js DEFAULTS; a key that is not here has its default
             property var toast: ({})
+            // Battery: the warning cards at warn % and, in red, at crit % (battery.js clampLevels keeps crit below warn); batToasts — the cards for plugging in and out
+            property int batWarn: 20
+            property int batCrit: 5
+            property bool batToasts: true
         }
     }
 

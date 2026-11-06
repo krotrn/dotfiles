@@ -27,4 +27,9 @@ Scope {
         }
         function list(): string { return Actions.toastList(); }
     }
+    IpcHandler {
+        target: "battery"
+        function levels(warn: int, crit: int): string { return Actions.setBatteryLevels(warn, crit); }
+        function get(): string { return Actions.batteryLevels(); }
+    }
 }

@@ -1170,6 +1170,13 @@ PanelWindow {
                     }
                 }
             }
+            Row {
+                spacing: 40
+                // both go through clampLevels (Actions.setBatteryLevels): warn stays above critical
+                Dial { label: "low · %"; from: 2; to: 50; value: Rules.store.batWarn; onMoved: v => Actions.setBatteryLevels(v, Rules.store.batCrit) }
+                Dial { label: "critical · %"; from: 1; to: 30; value: Rules.store.batCrit; onMoved: v => Actions.setBatteryLevels(Rules.store.batWarn, v) }
+                Toggle { anchors.verticalCenter: parent.verticalCenter; text: "plug in/out cards"; on: Rules.store.batToasts; onFlip: Rules.store.batToasts = !Rules.store.batToasts }
+            }
         }
 
         // ---- SHELL: the rice mark and the name of the live shell; the switcher is the Rice app ----
