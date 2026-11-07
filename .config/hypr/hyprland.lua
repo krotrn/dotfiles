@@ -51,7 +51,7 @@ hl.config({
         force_default_wallpaper  = 0,
         anr_missed_pings         = 5,
         allow_session_lock_restore = true,
-        bell_sound               = "none",  -- app/terminal bells stay silent
+        bell_sound              = "none",  -- app/terminal bells stay silent
     },
 })
 

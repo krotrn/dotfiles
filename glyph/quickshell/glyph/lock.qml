@@ -52,12 +52,41 @@ ShellRoot {
         function onRawEvent(e) { if (e.name === "activelayout") shell.layout = shell.short(e.data.split(",").pop()); }
     }
 
+    // After suspend Hyprland re-adds the keyboard but never sends a keyboard enter to a surface that stayed mapped, so the field
+    // is drawn and gets no keys. A surface created after resume is focused again. Only the surface is rebuilt: the process and the
+    // session lock stay up, so the screen never shows the "lock died" fallback.
+    function makeSurface() {
+        return Qt.createQmlObject('import QtQuick; import "lock"; Component { LockSurface { auth: gate; layout: shell.layout } }',
+                                  shell, Qt.resolvedUrl("lock.qml"));
+    }
+    property Component surfaceComp: makeSurface()
+
+    // Timers do not tick while suspended but the wall clock keeps going, so a jump between ticks means the machine just woke up
+    property double lastTick: Date.now()
+    Timer {
+        running: true; repeat: true; interval: 1000
+        onTriggered: {
+            const now = Date.now();
+            if (now - shell.lastTick > 4000) rebuildT.restart();
+            shell.lastTick = now;
+        }
+    }
+    // give the keyboard time to come back before the new surface asks for focus
+    Timer {
+        id: rebuildT
+        interval: 1500
+        onTriggered: {
+            shell.surfaceComp = shell.makeSurface();
+            console.log("lock: surface rebuilt after resume");
+        }
+    }
+
     WlSessionLock {
         id: lock
         locked: true
         // ponytail: lockedChanged does not arrive after locked = false (quickshell 0.3.2), and secure drops — we exit on it
         onSecureChanged: if (!secure) Qt.quit()
 
-        LockSurface { auth: gate; layout: shell.layout }
+        surface: shell.surfaceComp
     }
 }
