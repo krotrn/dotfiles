@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# Show what is taking reclaimable disk space, then delete it.
+#
+#   diskclean        show and delete
+#   diskclean -n     show only, delete nothing
+#
+# Only regenerable data is touched. Never deleted: Docker volumes, containers,
+# images a container uses, local-only builds, and anything matching KEEP_RE.
+set -uo pipefail
+
+CODE_DIR="$HOME/coding"
+STALE_DAYS=14   # build output and local images untouched for this long are removed
+KEEP_RE='^(firmloop-|(localhost:[0-9]+/)?alumini-|nitap-web:p16$|(alpine|archlinux|debian|fedora|ubuntu|opensuse/tumbleweed|python|node|postgres|redis|rust):)'
+
+DRY=0
+case "${1:-}" in
+  -n|--dry-run) DRY=1 ;;
+  "") ;;
+  *) echo "usage: diskclean [-n|--dry-run]" >&2; exit 2 ;;
+esac
+
+have()  { command -v "$1" >/dev/null 2>&1; }
+title() { printf '\n\033[1m== %s\033[0m\n' "$1"; }
+free()  { df -h --output=avail,pcent / | tail -1 | awk '{print $1" free, "$2" used"}'; }
+run()   { if ((DRY)); then echo "  would run: $*"; else "$@" 2>&1 | tail -1 | sed 's/^/  /'; fi; }
+remove_dir() {
+  printf '  %-8s %s\n' "$(du -sh "$1" 2>/dev/null | cut -f1)" "$1"
+  ((DRY)) || rm -rf -- "$1"
+}
+busy() { pgrep -f "$1" | grep -qvx "$$"; }
+
+echo "Disk: $(free)"
+((DRY)) && echo "Dry run: nothing will be deleted."
+
+title "Stale build output (unused for $STALE_DAYS+ days)"
+if busy '(^|/)(cargo|rustc|next-server)( |$)|next (dev|build)'; then
+  echo "  skipped: a build is running"
+else
+  while IFS= read -r tag; do
+    dir=$(dirname "$tag")
+    [[ -n $(find "$dir/.rustc_info.json" -mtime -"$STALE_DAYS" 2>/dev/null) ]] || remove_dir "$dir"
+  done < <(find "$CODE_DIR" -type d -name node_modules -prune -o \
+             -type f -path '*/target/CACHEDIR.TAG' -print 2>/dev/null)
+
+  while IFS= read -r dir; do
+    [[ -n $(find "$dir" -type f -mtime -"$STALE_DAYS" -print -quit 2>/dev/null) ]] || remove_dir "$dir"
+  done < <(find "$CODE_DIR" -type d -name node_modules -prune -o \
+             -type d -path '*/.next/cache' -print -prune 2>/dev/null)
+fi
+
+title "Package caches"
+have pnpm && run pnpm store prune
+have uv   && run uv cache prune
+have yarn && run yarn cache clean
+have npm  && run npm cache clean --force
+
+if have docker && docker info >/dev/null 2>&1; then
+  title "Docker"
+  if busy 'docker (build|buildx|compose)'; then
+    echo "  skipped: a Docker build is running"
+  else
+    run docker builder prune -f
+
+    declare -A used=()
+    while read -r id; do
+      [[ -n $id ]] && used[$id]=1
+    done < <(docker ps -aq | xargs -r docker inspect --format '{{.Image}}')
+
+    cutoff=$(date -d "-$STALE_DAYS days" +%s)
+    while read -r ref size; do
+      [[ $ref == *"<none>"* || $ref =~ $KEEP_RE ]] && continue
+      read -r id created digests < <(docker image inspect \
+        --format '{{.Id}} {{.Created}} {{range .RepoDigests}}{{.}},{{end}}' "$ref" 2>/dev/null)
+      [[ -z ${id:-} || -n ${used[$id]:-} ]] && continue
+
+      if [[ $ref == localhost[:/]* || ${ref##*:} == drill* ]]; then
+        (( $(date -d "$created" +%s) < cutoff )) || continue
+      elif ! tr ',' '\n' <<<"${digests:-}" | grep -v '^localhost' | grep -q .; then
+        continue   # no remote registry has it, so it cannot be pulled back
+      fi
+
+      printf '  %-8s %s\n' "$size" "$ref"
+      ((DRY)) || docker rmi "$ref" >/dev/null 2>&1 || echo "    could not remove $ref"
+    done < <(docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}')
+  fi
+fi
+
+if have paccache; then
+  title "Pacman cache (keeps the 2 newest versions)"
+  if ((DRY)); then
+    paccache -dk2 2>&1 | tail -1 | sed 's/^/  /'
+    paccache -duk0 2>&1 | tail -1 | sed 's/^/  /'
+  elif [[ -t 0 ]]; then
+    sudo paccache -rk2 2>&1 | tail -1 | sed 's/^/  /'
+    sudo paccache -ruk0 2>&1 | tail -1 | sed 's/^/  /'
+  else
+    echo "  skipped: needs a terminal for the sudo password"
+  fi
+fi
+
+printf '\nDisk: %s\n' "$(free)"

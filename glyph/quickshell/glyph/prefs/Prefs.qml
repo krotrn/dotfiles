@@ -35,7 +35,7 @@ PanelWindow {
         commits: "\u{F0718}", heat: "\u{F0628}", focus: "\u{F051B}", launch: "\u{F0463}", tools: "\u{F05B7}", prs: "\u{F062C}",
         clock: "\u{F0150}", perf: "\u{F04C5}", net: "\u{F05A9}", media: "\u{F075A}",
         layout: "\u{F030C}", wifi: "\u{F05A9}", bluetooth: "\u{F00AF}", sound: "\u{F057E}", notes: "\u{F009A}",
-        mode: "\u{F04C5}", power: "\u{F0425}"
+        apps: "\u{F003B}", power: "\u{F0425}"
     })
     // round home widgets, the rest are a 40 square. ponytail: ram/gpu/disk/battery — a guess (rings); Home will decide — fix then
     readonly property var rounds: ["weather", "cpu", "ram", "gpu", "disk", "battery", "buds", "cava", "focus"]

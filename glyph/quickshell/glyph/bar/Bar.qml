@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Hyprland
 import Quickshell.Networking
+import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
 import Quickshell.Wayland
 import qs
@@ -140,7 +141,7 @@ PanelWindow {
             }
 
             // tray — Theme.state.bar in order (settings, the BAR section). Layout, network, bluetooth, sound (wheel — volume),
-            // notifications, battery, the running cat: a click opens quick settings. Power mode and power — their own clicks
+            // notifications, battery, the running cat: a click opens quick settings. Apps (other programs' tray icons) and power — their own clicks
             // the quick settings button: the far right end of the bar (the bottom end when the bar is on the left)
             Item {
                 id: qbtn
@@ -162,7 +163,7 @@ PanelWindow {
                     Loader {
                         id: part
                         required property string modelData
-                        readonly property bool quick: modelData !== "mode" && modelData !== "power"
+                        readonly property bool quick: modelData !== "apps" && modelData !== "power"
                         // these buttons have their own card (bar/Tip): it opens on hover or click and goes out when the pointer leaves
                         readonly property bool hasTip: ["wifi", "bluetooth", "sound", "notes", "layout"].includes(modelData)
                         sourceComponent: root.parts[modelData] ?? null
@@ -182,7 +183,7 @@ PanelWindow {
             }
         }
     }
-    readonly property var parts: ({ layout: layoutC, wifi: wifiC, bluetooth: btC, sound: soundC, notes: notesC, battery: batC, mode: modeC, power: powerC, cat: catC })
+    readonly property var parts: ({ layout: layoutC, wifi: wifiC, bluetooth: btC, sound: soundC, notes: notesC, battery: batC, apps: appsC, power: powerC, cat: catC })
     Component { id: layoutC; Lb { text: Sys.layout; px: 10 } }
     // RunCat cat: the more cpu, the faster it runs (250 ms per frame idle, 50 at full load). cpu is polled while it is in the tray;
     // a Binding is not in the delegate — a destroyed one returns no value. Grey as is, in the light theme it is lost on white — black, like buds
@@ -281,31 +282,54 @@ PanelWindow {
             Lb { id: full; visible: false; text: "100"; px: 10 }
         }
     }
-    // power mode as ticks (Rules.modes): ultra — one, performance — all; click — next,
-    // hover (also on the battery) — a card with a choice
+    // apps: other programs' tray icons (StatusNotifierItem — twinfi, clash verge, blueman…), a column on the side, a row on top.
+    // Left click — activate (an item that is only a menu opens its menu), middle — secondary activate, right — its menu, wheel — scroll
     Component {
-        id: modeC
-        Item {
-            id: ticks
-            width: 40
-            height: 22
-            Row {
-                anchors.centerIn: parent
-                spacing: 2
-                Repeater {
-                    model: Rules.modeCount
-                    Rectangle {
-                        required property int index
-                        anchors.bottom: parent.bottom
-                        width: 3
-                        height: 5 + index * 3
-                        radius: 1.5
-                        color: index <= Rules.mode ? Theme.fg : Theme.s3
+        id: appsC
+        Pile {
+            spacing: 14
+            Repeater {
+                model: SystemTray.items
+                Image {
+                    id: ti
+                    required property SystemTrayItem modelData
+                    width: 20
+                    height: 20
+                    sourceSize: Qt.size(40, 40)
+                    // "name?path=dir": quickshell looks only in dir itself and, when it misses, hands back its magenta checker instead
+                    // of an error — so read the files ourselves: dir, then its hicolor folders (twinfi ships one), one per load error
+                    readonly property var at: modelData.icon.includes("?path=") ? modelData.icon.split("?path=") : null
+                    readonly property var tries: at ? [].concat(...["", "/hicolor/scalable/apps", "/hicolor/symbolic/apps"]
+                        .map(d => [".svg", ".png"].map(x => `file://${at[1]}${d}/${at[0].split("/").pop()}${x}`))) : [modelData.icon]
+                    property int n: 0
+                    onTriesChanged: n = 0
+                    source: tries[n] ?? ""
+                    // a missing local file errors synchronously, inside the source binding (a binding loop) — load asynchronously
+                    asynchronous: true
+                    onStatusChanged: if (status === Image.Error && n < tries.length - 1) n++
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                    // symbolic icons are drawn in currentColor, which comes out black: on the dark theme — white
+                    layer.enabled: modelData.icon.includes("-symbolic") && !Theme.light
+                    layer.effect: MultiEffect { brightness: 1 }
+                    opacity: modelData.status === Status.Passive ? 0.5 : 1
+                    function menu() {
+                        if (!modelData.hasMenu) return;
+                        if (trayMenu.open && trayMenu.item === modelData) return trayMenu.close();
+                        trayMenu.show(modelData, root.vert ? ti.mapToItem(pill, 0, 0) : ti.mapToItem(pill, 0, ti.height));
                     }
+                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                    TapHandler {
+                        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                        onTapped: (_, button) => {
+                            if (button === Qt.RightButton || (button === Qt.LeftButton && ti.modelData.onlyMenu)) ti.menu();
+                            else if (button === Qt.MiddleButton) ti.modelData.secondaryActivate();
+                            else ti.modelData.activate();
+                        }
+                    }
+                    WheelHandler { onWheel: e => ti.modelData.scroll(e.angleDelta.y, false) }
                 }
             }
-            HoverHandler { cursorShape: Qt.PointingHandCursor; onHoveredChanged: { root.tickHot = hovered; root.peek(ticks); } Component.onDestruction: root.tickHot = false }
-            TapHandler { onTapped: Rules.setMode((Rules.mode + 1) % Rules.modeCount) }
         }
     }
     Component {
@@ -318,14 +342,13 @@ PanelWindow {
         }
     }
 
-    // ---- battery and power mode: hover the battery or the ticks — a card beside the bar (on the screen side), like a caelestia popover.
+    // ---- battery and power mode: hover the battery — a card beside the bar (on the screen side), like a caelestia popover.
     // Doto charge, status, a scale; below the modes as circles with ticks — click selects, under the cursor — what it does.
     // Left both the bar and the card — it goes out ----
     property bool batHot: false
-    property bool tickHot: false
-    readonly property bool powHot: batHot || tickHot || popHov.hovered
+    readonly property bool powHot: batHot || popHov.hovered
     readonly property bool batLow: UPower.onBattery && root.bat.percentage < 0.15
-    // the card is placed by what was hovered (battery or ticks): on the side — its bottom to its bottom, on top — its right edge to its right edge;
+    // the card is placed by the battery: on the side — its bottom to its bottom, on top — its right edge to its right edge;
     // while visible — it does not jump
     property point popAt
     function peek(it) { if (!pop.visible) popAt = it.mapToItem(pill, it.width, it.height); }
@@ -356,6 +379,7 @@ PanelWindow {
     onTipHotChanged: if (!tipHot) tipCloseT.restart()
     Timer { id: tipCloseT; interval: 350; onTriggered: if (!root.tipHot) root.tipOpen = false }
     Tip { id: tip; anchorItem: pill; vert: root.vert; at: root.tipAt; tipId: root.tipId; open: root.tipOpen }
+    TrayMenu { id: trayMenu; anchorItem: pill; vert: root.vert }
 
     PopupWindow {
         id: pop

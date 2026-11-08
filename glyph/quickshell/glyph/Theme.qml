@@ -191,7 +191,7 @@ Singleton {
             property bool quickHover: false // quick settings on hovering the right edge
             property bool deckHover: true  // deck — a panel at the bottom center, slides out on hovering the edge
             property var deck: ["clock", "weather", "perf", "net", "media"] // its sections in order, see decks
-            property var bar: ["layout", "wifi", "bluetooth", "sound", "notes", "battery", "mode", "power"] // bar tray from top to bottom, see bars
+            property var bar: ["layout", "wifi", "bluetooth", "sound", "notes", "battery", "apps", "power"] // bar tray from top to bottom, see bars
             property bool barTitle: true   // window title as a column in the bar
             property string barAt: "left" // left or top; the calendar, battery card, home, island and Glyph flash follow the bar
             // recording (quick/Rec, Sys.recArgs)
@@ -231,7 +231,7 @@ Singleton {
     // deck sections
     readonly property var decks: ["clock", "weather", "perf", "net", "media"]
     // bar tray
-    readonly property var bars: ["layout", "wifi", "bluetooth", "sound", "notes", "battery", "mode", "power", "cat"]
+    readonly property var bars: ["layout", "wifi", "bluetooth", "sound", "notes", "battery", "apps", "power", "cat"]
 
     // ---- the look of everything outside the shell. Called only by shell.qml: at startup, on theme and color change ----
     // hypr inherits demonshot: monitor, input, idle, night light and motion are set by its own Rules (shell.qml), animations — from the

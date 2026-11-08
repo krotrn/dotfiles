@@ -8,6 +8,8 @@
 #   rice lock           lock of the current shell (bind, hypridle, power menu)
 # no "Config reloaded" popup from Quickshell itself on every reload (errors are in: qs log)
 export QS_NO_RELOAD_POPUP=1
+# no per-font "OpenType support missing" lines: Qt logs one for every mono font it tries before it falls back to a font that has the script
+export QT_LOGGING_RULES="${QT_LOGGING_RULES:+$QT_LOGGING_RULES;}qt.text.font.db.info=false"
 q=$HOME/.config/quickshell
 state=${XDG_STATE_HOME:-$HOME/.local/state}/rice
 cur=$(cat "$state/shell" 2>/dev/null)
