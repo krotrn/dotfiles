@@ -143,7 +143,6 @@ Singleton {
         { name: "variant", hint: "next variant", danger: false, run: () => setVariant(next(Schemes.VARIANTS.map(v => v.id), Theme.state.variant)) },
         { name: "random wallpaper", hint: "from the wallpaper folder", danger: false, run: () => randomWall() },
         { name: "light / dark", hint: "switch the theme", danger: false, run: () => setLight("toggle") },
-        { name: "lock", hint: "lock the screen", danger: false, run: () => Quickshell.execDetached([Quickshell.env("HOME") + "/.config/quickshell/rice/rice", "lock"]) },
         { name: "sleep", hint: "suspend", danger: false, run: () => Quickshell.execDetached(["systemctl", "suspend"]) },
         { name: "reboot", hint: "restart the machine", danger: true, run: () => Quickshell.execDetached(["systemctl", "reboot"]) },
         { name: "shutdown", hint: "power off", danger: true, run: () => Quickshell.execDetached(["systemctl", "poweroff"]) },

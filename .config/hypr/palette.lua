@@ -1,4 +1,4 @@
--- Static color palette: border, group and overview colors for Hyprland, hyprbars and hyprlock.
+-- Static color palette: border, group and overview colors for Hyprland and hyprbars.
 -- Change a color here and it applies everywhere that requires "palette".
 
 local primary = "rgb(58a6ff)"

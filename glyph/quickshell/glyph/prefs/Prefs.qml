@@ -1131,7 +1131,7 @@ PanelWindow {
             Pick { label: "layout switch"; opts: Rules.switches.map(s => s[0]); cur: root.r.kbSwitch; onPicked: i => { root.r.kbSwitch = i; Rules.input(); } }
         }
 
-        // ---- IDLE: a minutes scale without input. The dots dim on every event: awake → locked → screen off → asleep.
+        // ---- IDLE: a minutes scale without input. The dots dim on every event: awake → screen off → asleep.
         // The labels are dragged along, to the right of 60 — never ----
         Page {
             k: 9
@@ -1141,7 +1141,7 @@ PanelWindow {
                 id: line
                 width: 1000
                 height: 300
-                readonly property var at: [lk.v, dpms.v, zz.v]
+                readonly property var at: [dpms.v, zz.v]
 
                 Repeater {
                     model: 61
@@ -1153,7 +1153,7 @@ PanelWindow {
                         width: 8
                         height: 8
                         radius: 4
-                        color: [Theme.fg, Theme.grey, Theme.mute, Theme.s3][lvl]
+                        color: [Theme.fg, Theme.mute, Theme.s3][lvl]
                     }
                 }
                 // never — an empty ring past the scale
@@ -1164,14 +1164,13 @@ PanelWindow {
                 }
                 Lb { x: 62 * 15 - width / 2; y: 272; text: "never"; px: 10 }
 
-                Mark { id: lk; row: 0; label: "lock"; value: root.r.lockAfter; onMoved: v => { root.r.lockAfter = v; Rules.idle(); } }
-                Mark { id: dpms; row: 1; label: "screen off"; value: root.r.dpmsAfter; onMoved: v => { root.r.dpmsAfter = v; Rules.idle(); } }
-                Mark { id: zz; row: 2; label: Rules.hibernateOn ? "sleep · hibernate" : "sleep"; value: root.r.sleepAfter; onMoved: v => { root.r.sleepAfter = v; Rules.idle(); } }
+                Mark { id: dpms; row: 0; label: "screen off"; value: root.r.dpmsAfter; onMoved: v => { root.r.dpmsAfter = v; Rules.idle(); } }
+                Mark { id: zz; row: 1; label: Rules.hibernateOn ? "sleep · hibernate" : "sleep"; value: root.r.sleepAfter; onMoved: v => { root.r.sleepAfter = v; Rules.idle(); } }
             }
             Row {
                 spacing: 26
                 Repeater {
-                    model: [["awake", Theme.fg], ["locked", Theme.grey], ["dark", Theme.mute], ["asleep", Theme.s3]]
+                    model: [["awake", Theme.fg], ["dark", Theme.mute], ["asleep", Theme.s3]]
                     Row {
                         required property var modelData
                         spacing: 10

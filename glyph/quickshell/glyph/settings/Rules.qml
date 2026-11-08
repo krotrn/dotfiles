@@ -8,7 +8,6 @@ import "../glyph/toasts.js" as Toasts
 
 // house rules: ~/.config/demonshot/rules.json — the single source of truth for settings.
 // An edit from Settings writes the file (writeAdapter) and calls the needed apply itself. applyAll is called only by shell.qml at startup:
-// the lock (lock.qml) also reads Theme → Rules, but applies nothing
 Singleton {
     id: root
 
@@ -73,7 +72,6 @@ Singleton {
             property int sens: 0          // -100…100 → sensitivity -1…1
             property bool flat: false
             // Idle: minutes, 0 — never
-            property int lockAfter: 3
             property int dpmsAfter: 5
             property int sleepAfter: 10
             property bool hibernate: true // suspend-then-hibernate
@@ -148,7 +146,7 @@ Singleton {
            + `tap_to_click = ${s.tap}, disable_while_typing = ${s.typingOff}, scroll_factor = ${s.scroll / 100} } } })`);
     }
     // hibernation is not available everywhere (needs swap for resume, zram will not do) — we ask logind. None — plain sleep, the hibernation
-    // items are hidden. The answer came after idle() — rewrite the config (the lock does not call idle(), it is not affected)
+    // items are hidden. The answer came after idle() — rewrite the config
     property bool canHibernate: false
     property bool idleDone: false
     readonly property bool hibernateOn: store.hibernate && canHibernate
@@ -159,17 +157,14 @@ Singleton {
         stdout: StdioCollector { onStreamFinished: root.canHibernate = text.includes('"yes"') }
     }
     // hypridle does not reread its config on the fly: we write our own and restart. The same text and hypridle alive — we do not touch it,
-    // so a shell reload does not reset the idle counter. inhibit_sleep = 3 — sleep waits until the lock is up (hypridle itself
-    // waits like that only for hyprlock): otherwise the lock falls asleep half-raised, and on wake the monitors blink — a monitor that drops
-    // in the first ~0.5 s of the lock's life kills qs (#5)
+    // so a shell reload does not reset the idle counter
     function idle() {
         idleDone = true;
         const s = store, dpms = a => `hyprctl dispatch 'hl.dsp.dpms({action = "${a}"})'`;
         const at = (min, on, back) => min ? `\nlistener {\n    timeout = ${min * 60}\n    on-timeout = ${on}${back ? `\n    on-resume = ${back}` : ""}\n}\n` : "";
         const conf = "# demonshot: written by Rules.idle() from rules.json, do not edit by hand\n"
-            + "general {\n    lock_cmd = ~/.config/quickshell/rice/rice lock\n    inhibit_sleep = 3\n"
-            + `    before_sleep_cmd = loginctl lock-session\n    after_sleep_cmd = ${dpms("on")}\n}\n`
-            + at(s.lockAfter, "loginctl lock-session") + at(s.dpmsAfter, dpms("off"), dpms("on"))
+            + `general {\n    after_sleep_cmd = ${dpms("on")}\n}\n`
+            + at(s.dpmsAfter, dpms("off"), dpms("on"))
             + at(s.sleepAfter, hibernateOn ? "systemctl suspend-then-hibernate" : "systemctl suspend");
         Quickshell.execDetached(["sh", "-c", 'f="$1/hypridle.conf"; printf %s "$2" | cmp -s - "$f" && pgrep -x hypridle >/dev/null && exit; '
                                        + 'printf %s "$2" > "$f"; pkill -x hypridle; exec hypridle -c "$f"', "sh", dir, conf]);

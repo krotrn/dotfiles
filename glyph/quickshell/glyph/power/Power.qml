@@ -11,9 +11,8 @@ import qs.services
 PanelWindow {
     id: root
 
-    property int sel: 2
+    property int sel: 1
     readonly property var items: [
-        ["LOCK", () => Quickshell.execDetached([Quickshell.env("HOME") + "/.config/quickshell/rice/rice", "lock"])],
         ["SLEEP", () => Quickshell.execDetached(["systemctl", "suspend"])],
         ["SHUT DOWN", () => Quickshell.execDetached(["systemctl", "poweroff"])],
         ["REBOOT", () => Quickshell.execDetached(["systemctl", "reboot"])],
@@ -23,7 +22,7 @@ PanelWindow {
     // item — the label of the word to start on (the launcher passes its action); by default SHUT DOWN
     function open(item = "") {
         const at = items.findIndex(x => x[0] === item);
-        sel = at >= 0 ? at : 2;
+        sel = at >= 0 ? at : 1;
         SysStats.sample(); // fresh uptime
         visible = true;
     }
@@ -51,8 +50,8 @@ PanelWindow {
         id: stage
         focus: true
         Keys.onPressed: e => {
-            if (e.key === Qt.Key_Up || e.key === Qt.Key_K) root.sel = (root.sel + 4) % 5;
-            else if (e.key === Qt.Key_Down || e.key === Qt.Key_J || e.key === Qt.Key_Tab) root.sel = (root.sel + 1) % 5;
+            if (e.key === Qt.Key_Up || e.key === Qt.Key_K) root.sel = (root.sel + 3) % 4;
+            else if (e.key === Qt.Key_Down || e.key === Qt.Key_J || e.key === Qt.Key_Tab) root.sel = (root.sel + 1) % 4;
             else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) root.accept();
             else if (e.key === Qt.Key_Escape) root.close();
             else return;

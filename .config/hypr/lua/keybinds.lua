@@ -39,7 +39,6 @@ hl.bind("SUPER + B", hl.dsp.exec_cmd(scrPath .. "/browser-launcher.sh"), { descr
 -- doesn't also open the launcher.
 hl.bind("SUPER + Super_L", hl.dsp.global("shell:launcher"),
     { release = true, description = "App launcher" })
-hl.bind("SUPER + L", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/quickshell/rice/rice lock"), { description = "Lock screen" })
 hl.bind("SUPER + T", hl.dsp.global("shell:settings"), { description = "Shell settings" })
 hl.bind("SUPER + O", hl.dsp.global("shell:quick"), { description = "Quick settings" })
 hl.bind("SUPER + H", hl.dsp.global("shell:cheat"), { description = "Keybind cheatsheet" })

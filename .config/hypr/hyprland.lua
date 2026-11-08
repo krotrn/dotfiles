@@ -7,8 +7,8 @@
 -- Each module is a self-contained Lua file under lua/.
 --
 -- To add/remove a module, simply comment/uncomment the require line.
--- Hyprland no longer reads .conf; the remaining .conf files belong to
--- hypridle and hyprlock.
+-- Hyprland no longer reads .conf; the remaining .conf file belongs to
+-- hypridle.
 
 -- ── Load Modules ─────────────────────────────────────────────────
 local modules = {
@@ -17,7 +17,6 @@ local modules = {
     "lua.inputs",
     "lua.theme",
     "lua.animations",
-    "lua.hyprlock",
     "lua.keybinds",
     "lua.windowrules",
     "lua.hyprbars"

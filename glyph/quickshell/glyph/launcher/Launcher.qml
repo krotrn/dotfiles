@@ -96,7 +96,7 @@ PanelWindow {
     // glyphs of the actions, by name
     readonly property var actionGlyphs: ({
         "scheme": "\u{F03D8}", "wallpaper": "\u{F02E9}", "variant": "\u{F08B5}", "random wallpaper": "\u{F049D}", "light / dark": "\u{F050E}",
-        "lock": "\u{F033E}", "sleep": "\u{F0904}", "reboot": "\u{F0709}", "shutdown": "\u{F0425}", "logout": "\u{F0343}", "settings": "\u{F0493}"
+        "sleep": "\u{F0904}", "reboot": "\u{F0709}", "shutdown": "\u{F0425}", "logout": "\u{F0343}", "settings": "\u{F0493}"
     })
     // a power action is not run from here: the power menu opens on its word and asks first
     readonly property var powerWords: ({ "reboot": "REBOOT", "shutdown": "SHUT DOWN", "logout": "LOG OUT" })
