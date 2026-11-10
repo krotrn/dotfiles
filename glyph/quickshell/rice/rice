@@ -5,6 +5,7 @@
 #   rice start          bring up the current one (hypr at startup)
 #   rice restart|kill   restart (and hypr) / shut down the current one
 #   rice switch <name>  shut down the current one, return hypr to its config, bring up another
+#   rice lock           lock the session with the current shell's lock (glyph's when it has none)
 # no "Config reloaded" popup from Quickshell itself on every reload (errors are in: qs log)
 export QS_NO_RELOAD_POPUP=1
 # no per-font "OpenType support missing" lines: Qt logs one for every mono font it tries before it falls back to a font that has the script
@@ -89,5 +90,9 @@ case $1 in
         hyprctl reload >/dev/null # remove the look of the previous shell: the new one applies its own over the hypr config
         term "$2"
         exec qs -p "$q/$2" -d ;;
-    *) sed -n '2,7s/^# //p' "$0"; exit 1 ;;
+    lock)
+        pgrep -f '^qs .*/lock[.]qml' >/dev/null && exit 0
+        l="$q/$cur/lock.qml"; [ -f "$l" ] || l="$q/glyph/lock.qml"
+        exec qs -p "$l" ;;
+    *) sed -n '2,8s/^# //p' "$0"; exit 1 ;;
 esac

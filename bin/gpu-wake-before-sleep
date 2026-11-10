@@ -8,8 +8,9 @@
 # again. The machine then sits at "PM: suspend entry" with the lights on.
 #
 # This holds a logind sleep delay lock. When suspend starts it makes one call
-# into the driver, which keeps the GPU awake for ~15 s, and then releases the
-# lock so suspend goes on. After resume it takes the lock again.
+# into the driver, which keeps the GPU awake for ~15 s, locks the screen if it
+# is not locked yet and waits (up to 3 s) until the lock is drawn, and then
+# releases the delay lock so suspend goes on. After resume it takes it again.
 # Started once per session from Hyprland's autostart.
 
 set -u
@@ -20,7 +21,7 @@ inhibitor=
 hold() {
     [ -n "$inhibitor" ] && return
     systemd-inhibit --what=sleep --mode=delay --who="$tag" \
-        --why="Wake the NVIDIA GPU before sleep" sleep infinity &
+        --why="Wake the NVIDIA GPU before sleep" sleep infinity 9>&- &
     inhibitor=$!
 }
 
@@ -31,24 +32,44 @@ release() {
     inhibitor=
 }
 
-# One instance per session
+# The lock writes this file once the compositor shows it on every output
+marker="${XDG_RUNTIME_DIR:-/tmp}/glyph-lock.secure"
+
+lock_screen() {
+    pgrep -f '^qs .*/lock[.]qml' >/dev/null && return
+    rm -f "$marker"
+    setsid -f "$HOME/.config/quickshell/rice/rice" lock >/dev/null 2>&1 9>&-
+}
+
+wait_lock_drawn() {
+    for _ in $(seq 30); do
+        [ -e "$marker" ] && { logger -t "$tag" "lock drawn before sleep"; return; }
+        sleep 0.1
+    done
+    logger -t "$tag" "lock not drawn within 3 s, suspending anyway"
+}
+
+# One instance per session. Children get fd 9 closed (9>&-), so a child left
+# behind after this script dies cannot keep holding the lock.
 exec 9>"${XDG_RUNTIME_DIR:-/tmp}/$tag.lock"
 flock -n 9 || exit 0
 
-trap 'release; exit 0' INT TERM HUP
+trap 'release; pkill -P $$; exit 0' INT TERM HUP
 hold
 
 while read -r line; do
     case $line in
         *PrepareForSleep*true*)
+            lock_screen
             nvidia-smi -L >/dev/null 2>&1
             logger -t "$tag" "GPU woken before sleep: $(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null)"
+            wait_lock_drawn
             release
             ;;
         *PrepareForSleep*false*)
             hold
             ;;
     esac
-done < <(gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1)
+done < <(exec 9>&-; exec gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1)
 
 release
