@@ -45,6 +45,9 @@ hl.on("hyprland.start", function()
 	-- Idle daemon
 	hl.exec_cmd("hypridle")
 
+	-- Wake the NVIDIA GPU before suspend (suspending with it in runtime sleep freezes the machine)
+	hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/gpu-wake-before-sleep")
+
 	-- Clipboard history
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")

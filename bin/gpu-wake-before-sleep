@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Wake the NVIDIA GPU just before the system suspends.
+#
+# Suspending while the dGPU is in runtime sleep (it drops into it ~15 s after
+# the screen turns off) deadlocks the driver: the console switch at suspend
+# redraws the console on the NVIDIA GPU while holding the console lock, the
+# GPU has to wake up for that, and the wake-up path takes the console lock
+# again. The machine then sits at "PM: suspend entry" with the lights on.
+#
+# This holds a logind sleep delay lock. When suspend starts it makes one call
+# into the driver, which keeps the GPU awake for ~15 s, and then releases the
+# lock so suspend goes on. After resume it takes the lock again.
+# Started once per session from Hyprland's autostart.
+
+set -u
+
+tag=gpu-wake-before-sleep
+inhibitor=
+
+hold() {
+    [ -n "$inhibitor" ] && return
+    systemd-inhibit --what=sleep --mode=delay --who="$tag" \
+        --why="Wake the NVIDIA GPU before sleep" sleep infinity &
+    inhibitor=$!
+}
+
+release() {
+    [ -n "$inhibitor" ] || return
+    kill "$inhibitor" 2>/dev/null
+    wait "$inhibitor" 2>/dev/null
+    inhibitor=
+}
+
+# One instance per session
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/$tag.lock"
+flock -n 9 || exit 0
+
+trap 'release; exit 0' INT TERM HUP
+hold
+
+while read -r line; do
+    case $line in
+        *PrepareForSleep*true*)
+            nvidia-smi -L >/dev/null 2>&1
+            logger -t "$tag" "GPU woken before sleep: $(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null)"
+            release
+            ;;
+        *PrepareForSleep*false*)
+            hold
+            ;;
+    esac
+done < <(gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1)
+
+release
