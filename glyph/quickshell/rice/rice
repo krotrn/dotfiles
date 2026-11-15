@@ -6,6 +6,7 @@
 #   rice restart|kill   restart (and hypr) / shut down the current one
 #   rice switch <name>  shut down the current one, return hypr to its config, bring up another
 #   rice lock           lock the session with the current shell's lock (glyph's when it has none)
+#   rice lock again     the same, and restart a running lock (its field gets no keys)
 # no "Config reloaded" popup from Quickshell itself on every reload (errors are in: qs log)
 export QS_NO_RELOAD_POPUP=1
 # no per-font "OpenType support missing" lines: Qt logs one for every mono font it tries before it falls back to a font that has the script
@@ -91,8 +92,52 @@ case $1 in
         term "$2"
         exec qs -p "$q/$2" -d ;;
     lock)
-        pgrep -f '^qs .*/lock[.]qml' >/dev/null && exit 0
+        # Between two lock processes Hyprland paints its "lock died" screen. With the screen off nothing is painted, so a
+        # restart shows as a short dark moment and then the new lock powering up.
+        # Hyprland paints the "lock died" screen on the very next frame after the lock dies, so the panel has to be dark before
+        # the old lock goes: wait until every output reports DPMS off, then a little more for the last frame to leave the panel.
+        screen() { timeout 3 hyprctl dispatch "hl.dsp.dpms({ action = \"$1\" })" >/dev/null 2>&1; }
+        dark_now() {
+            screen off
+            for _ in $(seq 40); do
+                timeout 1 hyprctl monitors -j 2>/dev/null | grep -q '"dpmsStatus": *true' || break
+                sleep 0.05
+            done
+            sleep 0.3
+        }
+        marker="${XDG_RUNTIME_DIR:-/tmp}/glyph-lock.secure" # the lock writes it once Hyprland confirms the lock
+        if pgrep -f '^qs .*/lock[.]qml' >/dev/null; then
+            # `rice lock again` (SUPER+L, also while locked): restart a lock whose field gets no keys; the loop below brings it back
+            if [ "${2:-}" = again ]; then dark_now; pkill -f '^qs .*/lock[.]qml'; fi
+            exit 0
+        fi
         l="$q/$cur/lock.qml"; [ -f "$l" ] || l="$q/glyph/lock.qml"
-        exec qs -p "$l" ;;
+        # 0 means the password was accepted. Any other exit (75: no keyboard after a wake, a crash, a kill) starts the lock
+        # again while Hyprland keeps the session locked. Five quick deaths in a row stop the loop instead of spinning.
+        quick=0 dark=
+        while :; do
+            start=$(date +%s)
+            qs -p "$l" &
+            pid=$!
+            if [ -n "$dark" ]; then
+                for _ in $(seq 50); do [ -e "$marker" ] && break; sleep 0.1; done
+                # with every output off Hyprland confirms the lock at once, before the surface is drawn; the lock draws its
+                # first frame ~0.2 s after start, and Hyprland waits 1 s (lockdead_screen_delay) before it calls a new lock missing
+                sleep 0.6
+                screen on
+                dark=
+            fi
+            wait "$pid" && exit 0
+            code=$?
+            if [ $(( $(date +%s) - start )) -lt 5 ]; then quick=$((quick + 1)); else quick=0; fi
+            if [ "$quick" -ge 5 ]; then
+                screen on
+                logger -t rice-lock "lock keeps dying (exit $code), giving up"
+                exit 1
+            fi
+            dark_now; dark=1
+            rm -f "$marker"
+            logger -t rice-lock "lock exited with $code without an unlock, starting it again"
+        done ;;
     *) sed -n '2,8s/^# //p' "$0"; exit 1 ;;
 esac

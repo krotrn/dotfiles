@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Turn the screen back on after resume and make Hyprland draw a fresh frame.
+#
+# On the NVIDIA-driven panel, Hyprland can resume with the screen on but
+# showing a stale frame until the pointer moves. Nudging the cursor 1 px and
+# back gives it damage to render, so the screen updates without touching the
+# mouse. Run from hypridle's after_sleep_cmd.
+
+set -u
+
+log() { logger -t repaint-after-sleep -- "$*"; }
+
+log "resume: turning screen on"
+if out=$(timeout 5 hyprctl dispatch 'hl.dsp.dpms({ action = "on" })' 2>&1); then
+    log "dpms on: $out"
+else
+    log "dpms on failed (exit $?): $out"
+fi
+
+pos=$(timeout 5 hyprctl cursorpos 2>/dev/null) || { log "cursorpos failed, Hyprland not answering"; exit 0; }
+x=${pos%%,*}
+y=${pos##*, }
+case "$x$y" in *[!0-9]*|'') exit 0 ;; esac
+
+hyprctl dispatch "hl.dsp.cursor.move({ x = $((x + 1)), y = $y })" >/dev/null
+sleep 0.05
+hyprctl dispatch "hl.dsp.cursor.move({ x = $x, y = $y })" >/dev/null

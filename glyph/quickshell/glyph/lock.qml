@@ -29,6 +29,7 @@ ShellRoot {
         property string layout: ""
         readonly property double since: Date.now()
         readonly property bool busy: pam.active
+        property int keyed: 0         // surfaces whose window has keyboard focus
 
         function submit() {
             if (!buffer || pam.active || leaving) return;
@@ -82,38 +83,47 @@ ShellRoot {
         function onRawEvent(e) { if (e.name === "activelayout") gate.refreshKeys(); }
     }
 
-    // After suspend Hyprland re-adds the keyboard but never sends keyboard enter to a surface that stayed mapped, so the field
-    // would be drawn and get no keys. A surface created after resume gets focus again. Only the surface is rebuilt: the process
-    // and the session lock stay up, so the screen never shows Hyprland's "lock died" fallback.
-    function makeSurface() {
-        return Qt.createQmlObject('import QtQuick; import "lock"; Component { LockSurface { auth: gate } }',
-                                  shell, Qt.resolvedUrl("lock.qml"));
-    }
-    property Component surfaceComp: makeSurface()
-
-    // timers do not tick while suspended but the wall clock keeps going: a jump between ticks means the machine just woke up
+    // After suspend Hyprland re-adds the keyboard but sometimes never sends keyboard enter to the lock surface that stayed
+    // mapped, so the field is drawn and gets no keys (a VT switch does not bring them back either). Quickshell cannot replace a
+    // surface while locked, so the whole lock exits with 75 and `rice lock` starts it again: Hyprland keeps the session locked
+    // in between (allow_session_lock_restore) with the screen off, and the new surface gets the keyboard.
+    // The surfaces count themselves in gate.keyed while their window has keyboard focus.
     property double lastTick: Date.now()
     Timer {
         running: true; repeat: true; interval: 1000
         onTriggered: {
             const now = Date.now();
-            if (now - shell.lastTick > 4000) rebuildT.restart();
+            // timers do not tick while suspended but the wall clock keeps going: a jump means the machine just woke up
+            if (now - shell.lastTick > 4000) {
+                console.info(`lock: woke up, ${gate.keyed} surface(s) have the keyboard`);
+                keysT.restart();
+            }
             shell.lastTick = now;
         }
     }
     Timer {
-        id: rebuildT
-        interval: 1500 // give the keyboard time to come back before the new surface asks for focus
+        id: keysT
+        interval: 4000 // the keyboard comes back within ~1 s of the wake; leave it time to send keyboard enter
         onTriggered: {
-            shell.surfaceComp = shell.makeSurface();
-            gate.refreshKeys();
+            if (gate.keyed > 0 || gate.leaving) {
+                console.info("lock: keyboard is back after wake");
+                gate.refreshKeys();
+                return;
+            }
+            console.warn("lock: no keyboard 4 s after wake, restarting the lock");
+            // screen off first, so Hyprland's "lock died" screen is never seen; `rice lock` turns it on with the new lock
+            Quickshell.execDetached(["hyprctl", "dispatch", 'hl.dsp.dpms({ action = "off" })']);
+            Quickshell.execDetached(["rm", "-f", shell.marker]);
+            exitT.start();
         }
     }
+    // DPMS off takes a moment to reach the panel, and the frame after this exit is Hyprland's "lock died" screen
+    Timer { id: exitT; interval: 600; onTriggered: Qt.exit(75) }
 
     WlSessionLock {
         id: lock
         locked: true
-        surface: shell.surfaceComp
+        LockSurface { auth: gate }
 
         // secure: the compositor shows our surfaces on every output. It drops after locked = false, and then we are done
         property bool wasSecure: false

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Hold an idle virtual keyboard open in the Hyprland session, so the lock screen keeps the keyboard across suspend
+# (src/keep-keyboard/keep-keyboard.c says why). Builds the program into the cache on first run and whenever its source
+# changes, then runs it. Started from .config/hypr/lua/startup.lua.
+
+set -eu
+
+src="$(dirname "$(readlink -f "$0")")/../src/keep-keyboard"
+out="${XDG_CACHE_HOME:-$HOME/.cache}/keep-keyboard"
+bin="$out/keep-keyboard"
+
+if [ ! -x "$bin" ] || [ "$src/keep-keyboard.c" -nt "$bin" ] || [ "$src/virtual-keyboard-unstable-v1.xml" -nt "$bin" ]; then
+    mkdir -p "$out"
+    wayland-scanner client-header "$src/virtual-keyboard-unstable-v1.xml" "$out/vk.h"
+    wayland-scanner private-code "$src/virtual-keyboard-unstable-v1.xml" "$out/vk.c"
+    # shellcheck disable=SC2046
+    gcc -O2 -Wall -Wextra -I"$out" -o "$bin.new" "$src/keep-keyboard.c" "$out/vk.c" \
+        $(pkg-config --cflags --libs wayland-client xkbcommon)
+    mv "$bin.new" "$bin"
+fi
+
+# one per session
+pgrep -xf "$bin" >/dev/null && exit 0
+exec "$bin"

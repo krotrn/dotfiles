@@ -48,6 +48,9 @@ hl.on("hyprland.start", function()
 	-- Wake the NVIDIA GPU before suspend (suspending with it in runtime sleep freezes the machine)
 	hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/gpu-wake-before-sleep")
 
+	-- An idle virtual keyboard: suspend removes every real keyboard, and without one left the lock screen never gets the keyboard back
+	hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/keep-keyboard")
+
 	-- Clipboard history
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")

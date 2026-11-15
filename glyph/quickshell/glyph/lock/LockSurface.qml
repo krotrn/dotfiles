@@ -10,14 +10,22 @@ import qs.services
 // The lock as a combination dial — the login screen's language (knurl, text on arcs, LED glyphs, a red tip, a staged power-up),
 // seen face-on in the middle of the wallpaper. Every letter turns the dial a notch and lights the next dot of the ring; Enter
 // runs a wave around the ring while PAM thinks; a wrong one flashes red and spins the dial back to zero; a right one spins it open.
-// It powers up again after every wake (the surface is rebuilt then): the knurl lights around, the ring fills and empties, the face appears.
+// It powers up whenever the lock starts, also after a wake that lost the keyboard: the knurl lights around, the ring fills and empties, the face appears.
 // ↑ — the power arcs on the right: ←→ select, Enter run, ↓ or Esc back, a letter goes back to the password. Tab held — peek, Esc — clear.
 WlSessionLockSurface {
     id: root
 
-    required property var auth // gate from lock.qml: buffer, fail, fails, note, busy, leaving, caps, num, layout, since, submit(), type(), refreshKeys()
+    required property var auth // gate from lock.qml: buffer, fail, fails, note, busy, keyed, leaving, caps, num, layout, since, submit(), type(), refreshKeys()
 
     color: Theme.bg
+
+    // whether Hyprland gave this surface the keyboard; lock.qml restarts the lock when none has it after a wake
+    readonly property bool hasKeys: stage.Window.active
+    onHasKeysChanged: {
+        root.auth.keyed += hasKeys ? 1 : -1;
+        console.info(`lock: keyboard ${hasKeys ? "entered" : "left"} the surface on ${root.screen ? root.screen.name : "?"}`);
+    }
+    Component.onDestruction: if (hasKeys) root.auth.keyed -= 1
 
     SystemClock { id: clock; precision: SystemClock.Seconds }
     property bool blink: true
