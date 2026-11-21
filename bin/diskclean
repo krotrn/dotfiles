@@ -85,6 +85,16 @@ if have docker && docker info >/dev/null 2>&1; then
   fi
 fi
 
+title "App caches (rebuilt or re-downloaded on next use)"
+clear_cache() {   # clear_cache <dir> <process pattern that must not be running>
+  [[ -d $1 ]] || return 0
+  if busy "$2"; then echo "  skipped: $1 is in use"; else remove_dir "$1"; fi
+}
+clear_cache "$HOME/.cache/JetBrains"      '(rustrover|idea|pycharm|clion|webstorm|goland|jetbrains-toolbox)'
+clear_cache "$HOME/.cache/codex-runtimes" 'codex-runtimes/'
+clear_cache "$HOME/.cache/ms-playwright"  'ms-playwright/'
+clear_cache "$HOME/.cache/hyprcapture"    'hyprcapture'
+
 if have paccache; then
   title "Pacman cache (keeps the 2 newest versions)"
   if ((DRY)); then
