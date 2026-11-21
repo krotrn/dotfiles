@@ -46,6 +46,12 @@ else
     echo "  – SDDM is not installed, skipping the login theme"
 fi
 
+# ── pacman: refresh packages.txt / aur-packages.txt after every install or removal ──
+hook="$(mktemp)"
+sed -e "s|@USER@|$USER|" -e "s|@DOTFILES@|$ROOT|" "$S/etc/pacman.d/hooks/dotfiles-packages.hook" > "$hook"
+put 644 "$hook" /etc/pacman.d/hooks/dotfiles-packages.hook || true
+rm -f "$hook"
+
 # ── Groups the desktop uses ──
 for g in input video i2c seat; do
     if getent group "$g" >/dev/null && ! id -nG "$USER" | tr ' ' '\n' | grep -qx "$g"; then

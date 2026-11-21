@@ -1,0 +1,13 @@
+# Keeps packages.txt / aur-packages.txt in step with what is installed.
+# @USER@ and @DOTFILES@ are filled in by scripts/06c-system.sh. The export runs as that user, never as root:
+# the script lives in a user-writable repo.
+[Trigger]
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Updating dotfiles package lists...
+When = PostTransaction
+Exec = /usr/bin/runuser -u @USER@ -- @DOTFILES@/bin/dotfiles packages

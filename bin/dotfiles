@@ -74,13 +74,22 @@ cmd_diff() {
 cmd_packages() {
     echo -e "${CYAN}Exporting package lists...${NC}"
 
-    # Official (native) explicitly-installed packages
-    pacman -Qqen | sort > "$DOTFILES_DIR/packages.txt"
+    # Only repos the install scripts can reach; packages from private repos (twinfi, unpakt) stay out
+    local repos="core extra multilib chaotic-aur"
+    local tmp; tmp="$(mktemp -d)"
+    # shellcheck disable=SC2086
+    pacman -Sl $repos 2>/dev/null | awk '{print $2}' | sort -u > "$tmp/reachable"
+    # Hardware packages live in hardware/*.txt and are installed only on matching machines
+    grep -hvE '^\s*(#|$)' "$DOTFILES_DIR"/hardware/*.txt | sort -u > "$tmp/hardware"
+
+    # Explicitly installed repo packages
+    pacman -Qqen | sort | comm -12 - "$tmp/reachable" | comm -23 - "$tmp/hardware" > "$DOTFILES_DIR/packages.txt"
     echo -e "  ✔ packages.txt      ($(wc -l < "$DOTFILES_DIR/packages.txt") packages)"
 
-    # AUR (foreign) explicitly-installed packages
-    pacman -Qqem | sort > "$DOTFILES_DIR/aur-packages.txt"
+    # Explicitly installed AUR (foreign) packages
+    pacman -Qqem | sort | comm -23 - "$tmp/hardware" > "$DOTFILES_DIR/aur-packages.txt"
     echo -e "  ✔ aur-packages.txt  ($(wc -l < "$DOTFILES_DIR/aur-packages.txt") packages)"
+    rm -rf "$tmp"
 
     echo -e "${GREEN}Package lists updated.${NC}"
     echo -e "${YELLOW}Run 'dotfiles save' to commit the changes.${NC}"

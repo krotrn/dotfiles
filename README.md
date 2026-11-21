@@ -17,7 +17,7 @@ Everything is **symlinked**, so editing your live configs (`~/.config/...`) dire
 | **Shell** | Zsh (Oh My Zsh) |
 | **Prompt** | [Starship](https://starship.rs/) |
 | **File Manager** | Nautilus |
-| **Login screen** | SDDM with the glyph theme (`glyph/sddm/`, installed by `scripts/06c-system.sh`; pick the **Hyprland** session, not the uwsm one). GDM stays installed as a fallback |
+| **Login screen** | SDDM with the glyph theme (`glyph/sddm/`, installed by `scripts/06c-system.sh`; pick the **Hyprland** session, not the uwsm one). |
 | **Theme** | glyph (black, white, one red accent); colors in `.config/hypr/palette.lua` |
 | **Icons** | Numix Circle / Humanity / Yaru |
 | **Cursor** | Bibata Modern Classic |
@@ -197,12 +197,13 @@ If you add a **new config directory** to the repo (e.g., `.config/neofetch/`), r
 
 ### Updating Package Lists
 
-To sync the repo with what's currently installed on your system:
+The lists update themselves: `scripts/06c-system.sh` installs a pacman hook (`/etc/pacman.d/hooks/dotfiles-packages.hook`) that runs `dotfiles packages` as your user after every install or removal. You only commit:
 
 ```bash
-dotfiles packages       # exports pacman -Qqen → packages.txt, pacman -Qqem → aur-packages.txt
 dotfiles save "updated packages"
 ```
+
+`dotfiles packages` (also runnable by hand) writes explicitly installed packages from core, extra, multilib and chaotic-aur to `packages.txt`, and AUR packages to `aur-packages.txt`. It leaves out packages listed in `hardware/*.txt` and packages from private repos. `pacman -D --asdeps/--asexplicit` does not fire the hook; run `dotfiles packages` after it.
 
 > **Note:** `dotfiles packages` overwrites the categorized comments in the package files with a plain sorted list. This is expected — it's a snapshot of your current system.
 
@@ -318,7 +319,7 @@ Personal dotfiles — use as inspiration, fork freely.
 
 ## ⚠️ Not covered by the install (do these by hand on a new machine)
 
-- **Packages from private repos** (`twinfi`, `unpakt`, `chatgpt-bin`): their repos are not configured by the scripts, so they are left out of `packages.txt`.
+- **Packages from private repos** (`twinfi`, `unpakt`): their repos are not configured by the scripts, so they are left out of `packages.txt`.
 - **Tools installed outside pacman:** the `agy` CLI, `oh-my-posh`, `hymission-search-input`.
 - **Hyprland plugins:** step 08 runs `hyprpm update`; after a big Hyprland upgrade run `hyprpm update && hyprpm reload -n` again, or the plugin binds (Super+Tab overview, split tiles) do nothing.
 - **Logins and app data:** browser profiles, `gh auth login`, Docker/registry logins, SSH keys.
