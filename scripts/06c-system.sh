@@ -52,6 +52,33 @@ sed -e "s|@USER@|$USER|" -e "s|@DOTFILES@|$ROOT|" "$S/etc/pacman.d/hooks/dotfile
 put 644 "$hook" /etc/pacman.d/hooks/dotfiles-packages.hook || true
 rm -f "$hook"
 
+# ── zram swap: half of RAM; the new size applies when the zram device is set up again ──
+if put 644 "$S/etc/systemd/zram-generator.conf" /etc/systemd/zram-generator.conf; then
+    run sudo systemctl daemon-reload
+    run sudo systemctl restart systemd-zram-setup@zram0.service || true
+fi
+
+# ── Mirrors: reflector refreshes the mirrorlist weekly ──
+if command -v reflector >/dev/null 2>&1; then
+    put 644 "$S/etc/xdg/reflector/reflector.conf" /etc/xdg/reflector/reflector.conf || true
+    run sudo systemctl enable --now reflector.timer
+fi
+
+# ── pacman: 10 parallel downloads ──
+if ! grep -qx 'ParallelDownloads = 10' /etc/pacman.conf; then
+    run sudo sed -i -E 's/^#?ParallelDownloads *=.*/ParallelDownloads = 10/' /etc/pacman.conf
+    echo "  ✔ /etc/pacman.conf (ParallelDownloads = 10)"
+fi
+
+# ── btrfs: noatime, so reading a file never writes metadata ──
+if grep -qE '^[^#].*\sbtrfs\s.*relatime' /etc/fstab; then
+    run sudo cp /etc/fstab /etc/fstab.bak
+    run sudo sed -i -E '/^[^#].*\sbtrfs\s/ s/(^|[,[:space:]])relatime/\1noatime/' /etc/fstab
+    run sudo systemctl daemon-reload
+    run sudo mount -o remount,noatime /
+    echo "  ✔ /etc/fstab (btrfs: noatime, old copy in /etc/fstab.bak)"
+fi
+
 # ── Groups the desktop uses ──
 for g in input video i2c seat; do
     if getent group "$g" >/dev/null && ! id -nG "$USER" | tr ' ' '\n' | grep -qx "$g"; then
