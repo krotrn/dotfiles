@@ -1,7 +1,6 @@
 7zip
 adw-gtk-theme
 alsa-utils
-awww
 baobab
 base
 base-devel
@@ -14,7 +13,6 @@ bluez-utils
 brave-bin
 brightnessctl
 btop
-btrfs-assistant
 btrfs-progs
 cava
 chaotic-keyring
@@ -41,7 +39,6 @@ fastfetch
 fd
 ffmpegthumbnailer
 file-roller
-frameworkintegration
 fwupd
 fzf
 git
@@ -67,7 +64,6 @@ hostapd
 hypridle
 hyprland
 hyprland-protocols
-hyprlock
 hyprpicker
 hyprpm
 hyprshot
@@ -77,8 +73,6 @@ iotop
 iperf3
 iw
 jq
-kvantum
-kvantum-qt5
 lazydocker
 lazygit
 libgepub
@@ -95,7 +89,6 @@ mesa-utils
 meson
 mkinitcpio
 mpv
-mpvpaper
 mtr
 nano
 neovim
@@ -109,7 +102,6 @@ ntfs-3g
 nvidia-container-toolkit
 nvm
 openbsd-netcat
-os-prober
 otf-font-awesome
 pacman-contrib
 pamixer
@@ -126,7 +118,6 @@ polkit-gnome
 power-profiles-daemon
 python-jeepney
 python-pip
-python-pypdf
 qt5-wayland
 qt6ct
 qt6-positioning
@@ -137,19 +128,15 @@ reflector
 resvg
 ripgrep
 rsync
-satty
-sbctl
 sddm
 shellcheck-bin
 slurp
 smartmontools
-snapper
 snapshot
 sof-firmware
 starship
 stow
 sudo
-syntax-highlighting
 tcpdump
 tmux
 traceroute
@@ -164,7 +151,6 @@ tumbler
 ufw
 unrar
 unzip
-update-grub
 uwsm
 visual-studio-code-bin
 vulkan-tools
@@ -173,8 +159,6 @@ wget
 wireless-regdb
 wireplumber
 wl-clipboard
-wlogout
-wlsunset
 wpa_supplicant
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
